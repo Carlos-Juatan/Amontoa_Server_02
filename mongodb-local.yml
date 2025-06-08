@@ -11,8 +11,8 @@ services:
       - mongodb_data:/data/db # Volume persistente para os dados
     environment:
       # Opcional: Defina usuário e senha para maior segurança (descomente e configure)
-      MONGO_INITDB_ROOT_USERNAME: adminLocal
-      MONGO_INITDB_ROOT_PASSWORD: S9Cj6K3tRNUtkdnVrySn
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
     restart: always # Garante que o MongoDB reinicie com o Docker
     networks:
       - app-network # Rede para comunicação entre containers
