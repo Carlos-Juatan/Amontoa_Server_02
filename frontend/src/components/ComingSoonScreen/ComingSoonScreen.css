@@ -1,0 +1,28 @@
+/* src/components/ComingSoonScreen/ComingSoonScreen.css */
+.coming-soon-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Ocupa a altura total da viewport para centralizar */
+  width: 100%; /* Ocupa a largura total do pai */
+  text-align: center;
+  background-color: var(--background-dark);
+  color: var(--text-light);
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.coming-soon-screen h2 {
+  font-size: 3em;
+  margin-bottom: 25px;
+  color: var(--highlight-blue);
+  text-shadow: 0 0 10px rgba(97, 218, 251, 0.4);
+}
+
+.coming-soon-screen p {
+  font-size: 1.3em;
+  margin-bottom: 40px;
+  max-width: 600px;
+  line-height: 1.6;
+}

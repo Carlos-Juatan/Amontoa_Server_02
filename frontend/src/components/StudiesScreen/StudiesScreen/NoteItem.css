@@ -1,0 +1,59 @@
+/* src/components/StudiesScreen/NoteItem.css */
+.note-item {
+  background-color: var(--card-background);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px var(--shadow-color);
+  padding: 20px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  border: 1px solid var(--border-color);
+}
+
+.note-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px var(--shadow-color);
+  background-color: var(--secondary-purple);
+}
+
+.note-item-icon-container {
+  flex-shrink: 0; /* Não permite que o ícone encolha */
+  margin-right: 20px;
+  width: 50px; /* Tamanho fixo para o container do ícone */
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-purple);
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.note-item-icon {
+  font-size: 1.8em;
+  color: var(--text-light); /* Ícone claro no fundo roxo */
+}
+
+.note-item-content {
+  flex-grow: 1; /* Permite que o conteúdo ocupe o espaço restante */
+}
+
+.note-item-title {
+  font-size: 1.4em;
+  color: var(--highlight-blue); /* Título em azul para destaque */
+  margin-bottom: 5px;
+}
+
+.note-item-description {
+  font-size: 0.95em;
+  color: var(--text-light);
+  opacity: 0.7;
+}
+
+.note-item-arrow {
+  margin-left: 20px;
+  color: var(--primary-purple);
+  font-size: 1.2em;
+}

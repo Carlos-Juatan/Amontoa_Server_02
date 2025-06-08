@@ -1,0 +1,58 @@
+/* src/index.css */
+
+/* Variáveis de Cor */
+:root {
+  --background-dark: #1a1a2e; /* Fundo escuro */
+  --card-background: #1f2041; /* Fundo dos cards/itens */
+  --text-light: #e0e0e0; /* Texto claro */
+  --primary-purple: #8c73cc; /* Roxo principal */
+  --secondary-purple: #5e548e; /* Roxo secundário */
+  --highlight-blue: #61dafb; /* Azul claro para realces */
+  --border-color: rgba(255, 255, 255, 0.1); /* Borda sutil */
+  --shadow-color: rgba(0, 0, 0, 0.4);
+  --header-height: 80px; /* Variável para altura do cabeçalho */
+}
+
+/* Garante que HTML, Body e #root ocupem 100% da tela e sem margens/padding globais */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-y: auto; /* Permite scroll vertical no nível do documento */
+}
+
+#root {
+  height: 100%; /* Ocupa 100% da altura do body */
+  width: 100%;  /* Ocupa 100% da largura do body */
+  display: flex; /* Adiciona flexbox ao root */
+  flex-direction: column; /* Para que o App.jsx possa preencher a altura */
+  /* Removido: max-width, margin: 0 auto, padding, text-align */
+}
+
+/* Estilos do Body */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-dark); /* Aplica o fundo escuro */
+  color: var(--text-light); /* Aplica a cor do texto clara */
+}
+
+/* Estilos para elementos de código genéricos */
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* O .app-container agora é o contêiner principal do App.jsx */
+/* Mantido para compatibilidade, mas o #root já é flex column */
+.app-container {
+  min-height: 100vh; /* Garante que o contêiner principal do App ocupe pelo menos 100% da altura */
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}

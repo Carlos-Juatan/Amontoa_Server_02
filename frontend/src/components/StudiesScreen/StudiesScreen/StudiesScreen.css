@@ -1,0 +1,73 @@
+/* src/components/StudiesScreen/StudiesScreen.css */
+.studies-screen-container {
+  padding: 40px 20px;
+  background-color: var(--background-dark);
+  min-height: 100vh; /* Permite que o conteúdo se estenda e o body role */
+  color: var(--text-light);
+  width: 100%; /* Ocupa a largura total do pai */
+  box-sizing: border-box;
+}
+
+.studies-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.studies-header .back-button {
+  background: none;
+  border: none;
+  color: var(--highlight-blue);
+  font-size: 1.1em;
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.studies-header .back-button:hover {
+  color: var(--primary-purple);
+}
+
+.studies-header .back-button i {
+  font-size: 1.2em;
+}
+
+.studies-title {
+  flex-grow: 1;
+  text-align: center;
+  font-size: 3em;
+  color: var(--primary-purple);
+  text-shadow: 0 0 10px rgba(140, 115, 204, 0.4);
+  margin: 0 auto;
+  padding-left: 100px;
+  padding-right: 100px;
+}
+
+.notes-list { /* Este é o estilo para GenericList em StudiesScreen */
+  max-width: 900px; /* A lista de notas é centralizada */
+  margin: 30px auto;
+  padding: 0 10px;
+}
+
+.studies-message {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.5em;
+  color: var(--text-light);
+}
+
+.studies-message.error {
+  color: #dc3545;
+}
+.generic-list-container {
+  width: 70%;
+  margin: 0 auto;
+}

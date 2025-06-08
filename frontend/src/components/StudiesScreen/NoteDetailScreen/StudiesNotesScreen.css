@@ -1,0 +1,92 @@
+/* src/components/StudiesScreen/NoteDetailScreen.css */
+
+.note-detail-screen-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Ocupa 100% da altura do viewport */
+  width: 100vw;  /* Ocupa 100% da largura do viewport */
+  background-color: var(--background-dark);
+  color: var(--text-light);
+}
+
+
+/* Main Content Area (Sidebar + Lesson Content) */
+.note-detail-main-content {
+  display: flex;
+  flex-grow: 1; /* Ocupa o espaço restante verticalmente */
+  gap: 25px;
+  max-width: 1600px; /* Mantém a largura máxima para o conteúdo interno */
+  margin: 0 auto; /* Centraliza o conteúdo principal */
+  width: 100%; /* Ocupa 100% da largura do pai (que é 100vw) */
+  padding: 25px; /* Padding geral para o conteúdo principal */
+  padding-top: calc(var(--header-height) + 25px); /* Espaço para o header fixo */
+  box-sizing: border-box;
+}
+
+/* Main Lesson Content Area */
+.lesson-content-area {
+  flex-grow: 1;
+  background-color: var(--card-background);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 15px var(--shadow-color);
+  border: 1px solid var(--border-color);
+  overflow-y: auto; /* Scroll para o conteúdo da aula */
+  max-height: calc(100vh - var(--header-height) - 50px); /* Altura dinâmica */
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+.current-lesson-title {
+  font-size: 2.5em;
+  color: var(--primary-purple);
+  margin-bottom: 25px;
+  border-bottom: 2px solid var(--highlight-blue);
+  padding-bottom: 15px;
+  text-align: left;
+  text-shadow: 0 0 5px rgba(140, 115, 204, 0.2);
+}
+
+.lesson-notes-display {
+  flex-grow: 1;
+  margin-bottom: 30px;
+}
+
+.note-detail-message {
+  font-style: italic;
+  color: var(--text-light);
+  opacity: 0.6;
+  text-align: center;
+  padding: 30px;
+  font-size: 1.1em;
+}
+
+.note-detail-message.error {
+    color: #dc3545; /* Estilo para mensagens de erro específicas */
+}
+
+/* Botões de navegação inferior */
+.lesson-bottom-nav {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  margin-top: auto; /* Empurra para o final do container flex */
+}
+
+.lesson-bottom-nav .common-button {
+  padding: 10px 20px;
+  font-size: 1em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lesson-bottom-nav .common-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--secondary-purple);
+  border-color: var(--secondary-purple);
+}

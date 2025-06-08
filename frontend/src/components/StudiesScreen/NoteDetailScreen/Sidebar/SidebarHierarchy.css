@@ -1,0 +1,198 @@
+/* src/components/StudiesScreen/SidebarHierarchy.css */
+
+.sidebar-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1; /* Allows the navigation to take remaining space */
+  overflow-y: auto; /* Adds internal scroll if content overflows */
+  padding-bottom: 20px;
+}
+
+.module-container,
+.submodule-container {
+  margin-bottom: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--background-dark);
+  border: 1px solid var(--border-color);
+}
+
+.module-summary,
+.submodule-summary {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  cursor: pointer;
+  font-weight: bold;
+  color: var(--text-light);
+  transition: background-color 0.2s ease;
+  position: relative;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.module-summary {
+  font-size: 1.2em;
+  color: var(--primary-purple);
+  background-color: rgba(140, 115, 204, 0.08);
+  border-bottom: 1px solid rgba(140, 115, 204, 0.2);
+}
+.module-summary:hover {
+  background-color: rgba(140, 115, 204, 0.15);
+}
+
+.submodule-summary {
+  font-size: 1.1em;
+  color: var(--highlight-blue);
+  padding-left: 30px;
+  background-color: rgba(97, 218, 251, 0.05);
+  border-bottom: 1px solid rgba(97, 218, 251, 0.1);
+}
+.submodule-summary:hover {
+  background-color: rgba(97, 218, 251, 0.1);
+}
+
+.module-icon,
+.submodule-icon {
+  margin-right: 10px;
+  font-size: 1.1em;
+  flex-shrink: 0;
+  color: var(--highlight-blue);
+}
+
+/* --- ADJUSTMENTS FOR EXPAND ICON POSITION --- */
+.expand-icon {
+  margin-right: 10px; /* Space between arrow and folder/text */
+  font-size: 0.9em;
+  transition: transform 0.2s ease;
+  color: var(--text-light-muted);
+  flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+/* Adjust initial icon rotation if needed (already set to 0 in your code) */
+.module-summary .expand-icon.fa-chevron-up,
+.submodule-summary .expand-icon.fa-chevron-up {
+  /* No rotation, points up */
+}
+
+.module-summary .expand-icon.fa-chevron-down,
+.submodule-summary .expand-icon.fa-chevron-down {
+  /* No rotation, points down */
+}
+
+
+/* Actions (add/edit/delete) within Module/Submodule/Lesson summaries */
+.module-summary .edit-actions,
+.submodule-summary .edit-actions,
+.lesson-item .edit-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto; /* Pushes actions to the far right */
+  flex-shrink: 0;
+  padding-left: 10px;
+  background: linear-gradient(to left, var(--card-background) 50%, transparent 100%);
+  z-index: 1;
+}
+
+/* Adjust padding for edit actions when they are present, to avoid text cutting */
+/* This rule is no longer directly relevant for pushing expand-icon as it's left */
+/* .module-summary .edit-actions + .expand-icon,
+.submodule-summary .edit-actions + .expand-icon {
+  margin-left: 5px;
+} */
+
+
+.module-content,
+.submodule-content {
+  /* No specific styles needed here */
+}
+
+.lessons-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.lesson-item {
+  padding: 10px 15px 10px 50px;
+  cursor: pointer;
+  color: var(--text-light);
+  transition: background-color 0.2s ease, color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.lesson-item:last-child {
+  border-bottom: none;
+}
+
+.lesson-item:hover {
+  background-color: rgba(97, 218, 251, 0.08);
+  color: var(--highlight-blue);
+}
+
+.lesson-item.active {
+  background-color: var(--primary-purple);
+  color: white;
+  font-weight: bold;
+  border-left: 5px solid var(--highlight-blue);
+  padding-left: 45px;
+}
+
+.lesson-item.active .lesson-icon {
+  color: white;
+}
+
+.lesson-icon {
+  font-size: 0.9em;
+  color: var(--primary-purple);
+  flex-shrink: 0;
+}
+
+/* Edit/Delete Icons in Sidebar */
+.edit-actions .action-icon {
+  cursor: pointer;
+  color: var(--text-light-muted);
+  font-size: 0.9em;
+  padding: 5px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.edit-actions .action-icon:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.edit-actions .action-icon.add {
+  color: var(--success-green);
+}
+.edit-actions .action-icon.add:hover {
+  color: var(--success-green-dark);
+}
+
+.edit-actions .action-icon.edit:hover {
+  color: var(--highlight-blue);
+}
+
+.edit-actions .action-icon.delete:hover {
+  color: var(--error-red);
+}
+
+.no-content-message {
+  font-style: italic;
+  color: var(--text-light);
+  opacity: 0.6;
+  text-align: center;
+  padding: 30px;
+  font-size: 1.1em;
+}

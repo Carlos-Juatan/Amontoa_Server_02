@@ -1,0 +1,46 @@
+/* src/components/Dashboard/DashboardItem.css */
+.dashboard-item {
+  background-color: var(--card-background); /* Fundo dos cards */
+  border-radius: 12px;
+  box-shadow: 0 6px 12px var(--shadow-color);
+  padding: 25px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid var(--border-color); /* Borda sutil */
+}
+
+.dashboard-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px var(--shadow-color);
+  background-color: var(--secondary-purple); /* Um pouco de roxo no hover */
+}
+
+.dashboard-item-icon {
+  font-size: 3.5em;
+  margin-bottom: 20px;
+  color: var(--primary-purple); /* Roxo principal para ícones */
+  text-shadow: 0 0 10px rgba(140, 115, 204, 0.3);
+}
+
+.dashboard-item:hover .dashboard-item-icon {
+  color: var(--highlight-blue); /* Azul no hover para ícones */
+}
+
+.dashboard-item-title {
+  font-size: 1.8em;
+  margin-bottom: 12px;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+.dashboard-item-description {
+  font-size: 1em;
+  color: var(--text-light);
+  opacity: 0.8;
+  line-height: 1.5;
+}
