@@ -67,8 +67,8 @@ function StudiesNotesScreen({ noteData }) {
     }, [handleAddOrEdit, refetchData, noteData.db_collection, mutationError, onClose]);
     */
 
-    const handleNoteEditScreen = useCallback(() => {
-        navigateTo('noteEditScreen', { noteData: noteData });
+    const handleNoteEditScreen = useCallback((lessonData) => {
+      navigateTo('noteEditScreen', { noteData: noteData, lessonData: lessonData});
     }, [navigateTo]);
 
     const handleEditNameWrapper = useCallback(async (formData) => {

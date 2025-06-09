@@ -6,10 +6,10 @@ import Button from '../../Common/Button/Button';
 
 import './NoteEditScreen.css';
 
-function NoteEditScreen({ noteData }) {
+function NoteEditScreen({ noteData, lessonData }) {
   const { navigateTo } = useScreenManager();
 
-  console.log(noteData);
+  console.log(lessonData);
 
   const handleBackToStudies = useCallback(() => {
     navigateTo('studiesNotesScreen', { noteData: noteData });
