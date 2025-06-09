@@ -1,0 +1,396 @@
+/* src/components/StudiesScreen/NoteContentRenderer.css */
+
+/* Geral */
+.note-paragraph {
+  font-size: 1em;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  color: var(--text-light);
+  opacity: 0.9;
+  text-align: left; /* Garante alinhamento à esquerda */
+}
+
+.highlighted-text {
+  color: var(--primary-purple);
+  font-weight: bold;
+}
+
+/* Imagens */
+.note-image-container {
+  margin: 20px 0;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.note-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  display: block;
+  margin: 0 auto;
+}
+
+.note-image-caption {
+  font-size: 0.85em;
+  color: var(--text-light);
+  opacity: 0.7;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* Títulos */
+.note-heading {
+  margin-top: 30px;
+  margin-bottom: 15px;
+  color: var(--highlight-blue);
+  font-weight: 600;
+  text-align: left; /* Garante alinhamento à esquerda */
+}
+
+.note-heading.level-1 { font-size: 2.5em; }
+.note-heading.level-2 { font-size: 2em; }
+.note-heading.level-3 { font-size: 1.7em; }
+.note-heading.level-4 { font-size: 1.4em; }
+.note-heading.level-5 { font-size: 1.2em; }
+.note-heading.level-6 { font-size: 1em; }
+
+/* Blocos de Código */
+.note-code-snippet {
+  background-color: #282a36; /* Cor de fundo de código (Dracula) */
+  border-radius: 8px;
+  padding: 15px;
+  margin: 20px 0;
+  position: relative;
+  overflow-x: auto;
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.code-snippet-title {
+  font-size: 0.9em;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 5px;
+  text-align: left;
+}
+
+.code-block {
+  margin: 0;
+  padding: 0;
+}
+
+.code-block code {
+  display: block;
+  font-family: 'Fira Code', 'Consolas', 'Courier New', monospace;
+  font-size: 0.9em;
+  color: #f8f8f2;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Highlight.js styles are imported via 'dracula.css' */
+
+.copy-code-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: var(--primary-purple);
+  color: var(--text-light);
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8em;
+  transition: background-color 0.2s ease;
+}
+
+.copy-code-button:hover {
+  background-color: var(--secondary-purple);
+}
+
+/* Feedback de cópia */
+.copy-feedback {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeInOut 1.5s forwards;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Listas (Melhor Design) */
+.note-list {
+  list-style: none; /* Remove bullet padrão */
+  padding-left: 0; /* Remove padding padrão */
+  margin-bottom: 15px;
+  color: var(--text-light);
+}
+
+.list-title {
+  font-size: 1.1em;
+  color: var(--highlight-blue);
+  margin-bottom: 10px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-bottom: 5px;
+  text-align: left;
+}
+
+.note-list .list-item {
+  position: relative;
+  padding-left: 25px; /* Espaço para o bullet customizado */
+  margin-bottom: 8px;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.note-list .list-item::before {
+  content: '\2022'; /* Bullet Unicode */
+  color: var(--primary-purple); /* Cor do bullet */
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.note-list .sub-list {
+  list-style: none;
+  padding-left: 20px; /* Indentação para sub-listas */
+  margin-top: 5px;
+}
+
+.note-list .sub-list .list-item::before {
+  content: '\25E6'; /* Bullet de círculo vazado para sub-listas */
+  color: var(--highlight-blue);
+}
+
+
+/* Links */
+.note-link-container {
+  font-size: 1em;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  color: var(--text-light);
+  opacity: 0.9;
+  text-align: left; /* Garante alinhamento à esquerda */
+}
+
+.note-link {
+  color: var(--highlight-blue);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  display: inline; /* Permite que o link esteja dentro do texto */
+}
+
+.note-link:hover {
+  color: var(--primary-purple);
+  text-decoration: underline;
+}
+
+.note-link.clickable-part {
+  /* Estilos específicos para a parte clicável dentro de um parágrafo */
+  text-decoration: underline; /* Sempre sublinhado para indicar clicável */
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.link-icon {
+  font-size: 0.9em;
+  margin-left: 5px; /* Espaço para o ícone, se estiver no final do link */
+  vertical-align: middle;
+}
+
+/* Blockquotes */
+.note-blockquote {
+  background-color: rgba(140, 115, 204, 0.1);
+  border-left: 5px solid var(--primary-purple);
+  padding: 15px 20px;
+  margin: 20px 0;
+  font-style: italic;
+  color: var(--text-light);
+  opacity: 0.9;
+  border-radius: 0 8px 8px 0;
+  text-align: left;
+}
+
+/* Tabelas */
+.note-table-container {
+  margin: 20px 0;
+  overflow-x: auto;
+  background-color: var(--card-background);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  padding: 15px;
+  text-align: left;
+}
+
+.table-title {
+  font-size: 1.1em;
+  color: var(--highlight-blue);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.note-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+.note-table th,
+.note-table td {
+  border: 1px solid var(--border-color);
+  padding: 12px;
+  text-align: left;
+  color: var(--text-light);
+}
+
+.note-table th {
+  background-color: var(--secondary-purple);
+  font-weight: bold;
+  color: white;
+}
+
+.note-table tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Vídeos */
+.note-video-container {
+  margin: 20px 0;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.note-video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  display: block;
+  margin: 0 auto;
+  background-color: black;
+}
+
+.note-video-caption {
+  font-size: 0.85em;
+  color: var(--text-light);
+  opacity: 0.7;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* Placeholder para vídeo não encontrado/inválido */
+.video-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 255, 0.6);
+  border-radius: 6px;
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  font-size: 1.1em;
+}
+
+.video-placeholder i {
+  font-size: 3em;
+  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+
+/* Alertas */
+.note-alert {
+  padding: 15px 20px;
+  margin: 20px 0;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  font-size: 1em;
+  line-height: 1.5;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  text-align: left;
+}
+
+.alert-icon {
+  font-size: 1.5em;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.alert-content {
+  flex-grow: 1;
+}
+
+.alert-info {
+  background-color: rgba(97, 218, 251, 0.1);
+  border-left: 5px solid var(--highlight-blue);
+  color: var(--text-light);
+}
+.alert-info .alert-icon { color: var(--highlight-blue); }
+
+.alert-note {
+  background-color: rgba(140, 115, 204, 0.1);
+  border-left: 5px solid var(--primary-purple);
+  color: var(--text-light);
+}
+.alert-note .alert-icon { color: var(--primary-purple); }
+
+.alert-tip {
+  background-color: rgba(255, 193, 7, 0.1);
+  border-left: 5px solid #ffc107;
+  color: var(--text-light);
+}
+.alert-tip .alert-icon { color: #ffc107; }
+
+.alert-important {
+  background-color: rgba(220, 53, 69, 0.1);
+  border-left: 5px solid #dc3545;
+  color: var(--text-light);
+}
+.alert-important .alert-icon { color: #dc3545; }
+
+.alert-warning {
+  background-color: rgba(253, 126, 20, 0.1);
+  border-left: 5px solid #fd7e14;
+  color: var(--text-light);
+}
+.alert-warning .alert-icon { color: #fd7e14; }
+
+.alert-caution {
+  background-color: rgba(108, 117, 125, 0.1);
+  border-left: 5px solid #6c757d;
+  color: var(--text-light);
+}
+.alert-caution .alert-icon { color: #6c757d; }
+
+/* Fallback */
+.note-unknown-content {
+  color: #dc3545;
+  font-style: italic;
+  padding: 10px;
+  border: 1px dashed #dc3545;
+  border-radius: 5px;
+  text-align: center;
+}

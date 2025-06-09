@@ -3,7 +3,7 @@ import Button from "../../../Common/Button/Button";
 
 import './header.css';
 
-function Header({ onBackToStudies, icon, title, filteredItems, selectedIndex, onPrev, onNext, onAdd }) {
+function Header({ onBackToStudies, icon, title, filteredItems, currentIndex, onPrev, onNext, onAdd }) {
 
   return (
     <header className="note-detail-header">
@@ -20,10 +20,10 @@ function Header({ onBackToStudies, icon, title, filteredItems, selectedIndex, on
       </div>
 
       <div className="header-nav-buttons">
-        <Button onClick={onPrev} disabled={selectedIndex === 0 || filteredItems.length === 0}>
+        <Button onClick={onPrev} disabled={currentIndex === 0 || filteredItems.length === 0}>
           <i className="fas fa-chevron-left"></i> Anterior
         </Button>
-        <Button onClick={onNext} disabled={selectedIndex === filteredItems.length - 1 || filteredItems.length === 0}>
+        <Button onClick={onNext} disabled={currentIndex === filteredItems.length - 1 || filteredItems.length === 0}>
           Próxima <i className="fas fa-chevron-right"></i>
         </Button>
       </div>

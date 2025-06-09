@@ -82,10 +82,3 @@
   align-items: center;
   gap: 5px;
 }
-
-.header-nav-buttons .common-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background-color: var(--secondary-purple);
-  border-color: var(--secondary-purple);
-}
