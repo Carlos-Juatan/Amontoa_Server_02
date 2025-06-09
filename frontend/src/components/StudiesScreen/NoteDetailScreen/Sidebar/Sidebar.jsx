@@ -5,7 +5,7 @@ import Button from '../../../Common/Button/Button';
 import SearchBar from '../../../Common/SearchBar/SearchBar';
 import SidebarHierarchy from './SidebarHierarchy';
 
-import './sidebar.css';
+import './Sidebar.css';
 
 function Sidebar({ searchTerm, onSearchChange, filteredItems, currentLesson, dbCollection, onItemSelect, onAddOrEdit, onModelEdit, onModelDelete }) {
   const [editMode, setEditMode] = useState(false);

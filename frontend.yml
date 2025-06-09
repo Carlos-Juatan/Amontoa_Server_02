@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   frontend:
+    restart: always # Garante que o frontend reinicie com o Docker
     container_name: frontend
     build:
       context: ./frontend

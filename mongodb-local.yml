@@ -4,21 +4,22 @@ version: '3.8'
 services:
   mongodb:
     image: mongo:latest
+    restart: always
     container_name: mongodb-local
     ports:
-      - "27017:27017" # Mapeia a porta padrão do MongoDB
+      - "27017:27017"
     volumes:
-      - mongodb_data:/data/db # Volume persistente para os dados
+      # Use um bind mount para o diretório no seu SSD
+      - D:\_Shared_files\_Amontoa-Server\mongodb_data:/data/db # <--- ALTERE ESTA LINHA
     environment:
-      # Opcional: Defina usuário e senha para maior segurança (descomente e configure)
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
-    restart: always # Garante que o MongoDB reinicie com o Docker
     networks:
-      - app-network # Rede para comunicação entre containers
+      - app-network
 
-volumes:
-  mongodb_data: # Define o volume persistente
+# Você NÃO precisa mais da seção 'volumes' se estiver usando apenas o bind mount
+# volumes:
+#   mongodb_data:
 
 networks:
   app-network:

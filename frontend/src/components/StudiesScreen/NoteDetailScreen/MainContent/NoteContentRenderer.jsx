@@ -3,26 +3,32 @@ import React, { useRef, useEffect } from 'react';
 import GenericList from '../../../Common/GenericList/GenericList'; // Certifique-se de que o caminho está correto
 import './NoteContentRenderer.css'; // Crie este CSS para estilizar o conteúdo
 
+// ==============================================================================
 // Importe e registre apenas as linguagens que você realmente usa
 import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';
 import bash from 'highlight.js/lib/languages/bash';
 import yaml from 'highlight.js/lib/languages/yaml';
-import json from 'highlight.js/lib/languages/json';
+import hljsJson from 'highlight.js/lib/languages/json'; // Renomeie para evitar conflito
 import css from 'highlight.js/lib/languages/css';
 import xml from 'highlight.js/lib/languages/xml'; // Para HTML
 
 // Registra as linguagens uma única vez
+// Este bloco deve ser executado apenas uma vez na aplicação,
+// idealmente no seu ponto de entrada principal (ex: main.jsx ou App.jsx)
+// ou em um arquivo de configuração/utilitário importado uma única vez.
 let hljsInitialized = false;
 if (!hljsInitialized) {
   hljs.registerLanguage('javascript', javascript);
   hljs.registerLanguage('bash', bash);
   hljs.registerLanguage('yaml', yaml);
-  hljs.registerLanguage('json', json);
+  hljs.registerLanguage('json', hljsJson); // Use o nome renomeado aqui
   hljs.registerLanguage('css', css);
   hljs.registerLanguage('html', xml); // Usamos XML para HTML no highlight.js
   hljsInitialized = true;
+  console.log("Highlight.js languages registered.");
 }
+// ==============================================================================
 
 // Funções auxiliares para renderizar partes específicas do conteúdo
 // Estas poderiam ser movidas para um arquivo utils/contentRenderHelpers.js
@@ -186,17 +192,31 @@ const renderAlert = (content) => {
 function NoteContentRenderer({ content }) {
   const codeRef = useRef(null);
 
+  // useEffect para aplicar o destaque do Highlight.js
   useEffect(() => {
-    // Aplica highlight.js ao bloco de código
+    // Só aplica se o tipo de conteúdo for 'code_snippet' e a ref estiver disponível
     if (content.type === 'code_snippet' && codeRef.current) {
+      // 1. Resetar o estado do elemento para garantir uma nova aplicação do highlight
+      // Isso é crucial para evitar a mensagem "Element previously highlighted"
+      // e para garantir que o highlight seja re-aplicado corretamente se o código mudar.
+      delete codeRef.current.dataset.highlighted; // Remove a flag que o HLJS usa
+      codeRef.current.innerHTML = ''; // Limpa o conteúdo HTML gerado pelo HLJS
+
+      // 2. Injeta o código bruto no textContent para que o Highlight.js o processe
+      // Use textContent para evitar problemas de injeção de HTML e para que o HLJS
+      // tenha o texto puro para trabalhar.
+      codeRef.current.textContent = content.code;
+
+      // 3. Aplica o destaque
+      // Verifica se a linguagem está registrada antes de tentar destacar
       if (hljs.getLanguage(content.language)) {
         hljs.highlightElement(codeRef.current);
       } else {
-        console.warn(`Highlight.js: Language "${content.language}" not registered. Highlighting without specific language.`);
-        hljs.highlightElement(codeRef.current);
+        console.warn(`Highlight.js: Language "${content.language}" not registered. Attempting auto-detection or plain highlighting.`);
+        hljs.highlightElement(codeRef.current); // Tenta destacar sem linguagem específica
       }
     }
-  }, [content]); // Dependência em content para re-renderizar se o conteúdo mudar
+  }, [content.type, content.code, content.language]); // Dependências: re-executa se o tipo, código ou linguagem mudarem
 
   switch (content.type) {
     case 'paragraph':
@@ -211,7 +231,18 @@ function NoteContentRenderer({ content }) {
         <div className="note-code-snippet">
           {content.title && <h4 className="code-snippet-title">{content.title}</h4>}
           <pre className="code-block">
-            <code ref={codeRef} className={`language-${content.language}`}>{content.code}</code>
+            {/*
+              O elemento <code> é o alvo para o Highlight.js.
+              Seu conteúdo será manipulado diretamente no useEffect via innerHTML
+              após a aplicação do destaque.
+            */}
+            <code ref={codeRef} className={`language-${content.language}`}>
+              {/* O conteúdo inicial aqui pode ser vazio ou um placeholder,
+                  pois o useEffect irá preenchê-lo e o Highlight.js irá transformá-lo.
+                  Importante: as quebras de linha (\n) do content.code são respeitadas
+                  pela tag <pre> que é a pai do <code>.
+              */}
+            </code>
           </pre>
           <button
             className="copy-code-button"

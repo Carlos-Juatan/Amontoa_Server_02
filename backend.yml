@@ -3,6 +3,7 @@ version: '3.8'
 
 services:
   backend:
+    restart: always # Garante que o backend reinicie com o Docker
     container_name: backend
     build:
       context: ./backend

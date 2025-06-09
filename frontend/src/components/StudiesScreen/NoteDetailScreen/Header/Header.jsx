@@ -1,7 +1,7 @@
 // src/components/StudiesScreen/NoteDetailScreen/Header/Header.jsx
 import Button from "../../../Common/Button/Button";
 
-import './header.css';
+import './Header.css';
 
 function Header({ onBackToStudies, icon, title, filteredItems, currentIndex, onPrev, onNext, onAdd }) {
 
