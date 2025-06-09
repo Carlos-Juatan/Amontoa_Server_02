@@ -16,7 +16,7 @@ function Sidebar({ searchTerm, onSearchChange, filteredItems, currentLesson, dbC
       <div className="sidebar-controls">
         {/* Botão "Adicionar" principal - agora só para módulos */}
         <Button onClick={() => onAddOrEdit(null)} className="add-button">
-          <i className="fas fa-plus"></i> Adicionar Módulo
+          <i className="fas fa-plus"></i> Adicionar
         </Button>
         <Button onClick={() => setEditMode(!editMode)} className={`edit-toggle-button ${editMode ? 'active' : ''}`}>
           <i className="fas fa-edit"></i> {editMode ? 'Sair do Modo Edição' : 'Editar'}

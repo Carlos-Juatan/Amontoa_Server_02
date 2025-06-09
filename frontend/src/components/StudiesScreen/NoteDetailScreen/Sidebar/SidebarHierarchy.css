@@ -44,6 +44,33 @@
   background-color: rgba(140, 115, 204, 0.15);
 }
 
+.hover-title {
+    max-width: 100%; /* Garante que a div não ultrapasse a largura do pai */
+    overflow: hidden; /* Esconde o texto que ultrapassa a largura da div */
+    white-space: nowrap; /* Garante que o texto fique em uma única linha */
+    box-sizing: border-box; /* Inclui padding e border na largura total */
+}
+
+/* Aplica o movimento APENAS se o texto for muito longo */
+.hover-title:hover span {
+    /* ou .subhover-title.scrolling-active span */
+    animation: marquee 4s linear infinite; /* Tempo de animação, linear, infinito */
+}
+
+/* O texto precisa estar DENTRO de um <span> para se mover independentemente */
+.hover-title span {
+    display: inline-block; /* Permite que o span tenha largura dinâmica para o texto */
+    /*padding-left: 100%; /* Inicia o texto fora da tela, à direita */
+    white-space: nowrap; /* Garante que o texto do span não quebre */
+    /* Você pode ajustar isso se quiser que ele "apareça" do lado esquerdo */
+    /* Para isso, remova o padding-left e ajuste a animação */
+}
+
+@keyframes marquee {
+    0%   { transform: translateX(0); } /* Posição inicial (ou -100% para vir do lado esquerdo) */
+    100% { transform: translateX(-60%); } /* Move para a esquerda */
+}
+
 .submodule-summary {
   font-size: 1.1em;
   color: var(--highlight-blue);

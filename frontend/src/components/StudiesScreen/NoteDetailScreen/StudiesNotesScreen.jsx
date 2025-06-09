@@ -29,8 +29,6 @@ function StudiesNotesScreen({ noteData }) {
         fetchData: refetchData, // <--- Função de re-sincronização exposta
     } = useDataOperations(noteData.db_collection); // Assume que noteData.db_collection é o path completo
 
-    console.log('testando prop', noteData.db_collection); // Este log deve ser consistente
-
     const { navigateTo } = useScreenManager();
 
     const { searchTerm, setSearchTerm, filteredItems, handleSearchChange } = useSearchFilter(data, '', ['module', 'submodule', 'title']);
@@ -40,7 +38,7 @@ function StudiesNotesScreen({ noteData }) {
 
     // --- 2. PASSA AS FUNÇÕES E ESTADOS DE useDataOperations PARA useNoteActions ---
     // useNoteActions não cria sua própria instância de useDataOperations
-    const { handleAddOrEdit, handleDelete } = useNoteActions(
+    const { handleEditName, handleAddOrEdit, handleDelete } = useNoteActions(
         createRecord,
         updateRecord,
         deleteRecord,
@@ -72,6 +70,19 @@ function StudiesNotesScreen({ noteData }) {
     const handleNoteEditScreen = useCallback(() => {
         navigateTo('noteEditScreen', { noteData: noteData });
     }, [navigateTo]);
+
+    const handleEditNameWrapper = useCallback(async (formData) => {
+        try {
+            // Chama a função real de deleção que veio do useNoteActions (que usa deleteRecord da instância principal)
+            const result = await handleEditName(formData);
+            // Após o sucesso, re-busque os dados para atualizar a tela
+            await refetchData(noteData.db_collection); // CHAMA O fetchData DA INSTÂNCIA PRINCIPAL
+            onClose();
+            return result;
+        } catch (err) {
+            console.error("Erro na operação de renomerar:", err);
+        }
+    }, [handleEditName, refetchData, noteData.db_collection, mutationError, onClose]);
 
     // --- Funções Wrapper para Delete ---
     const handleDeleteWrapper = useCallback(async (formData) => {
@@ -126,7 +137,7 @@ function StudiesNotesScreen({ noteData }) {
                 modalType={modalType}
                 item={modalItem}
                 onClose={onClose}
-                onEdit={handleNoteEditScreen}
+                onEditName={handleEditNameWrapper}
                 onDelete={handleDeleteWrapper}
                 isMutating={isMutating} // Passa o estado de mutação da instância principal
                 mutationError={mutationError} // Passa o erro de mutação da instância principal

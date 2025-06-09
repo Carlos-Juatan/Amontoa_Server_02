@@ -8,6 +8,7 @@ const useModelActions = () => {
     const onClose = useCallback(() => {
       setIsModalOpen(false);
       setModalType('')
+      setModalItem(null);
     }, []);
 
     const handleModelEdit = useCallback((item) => {

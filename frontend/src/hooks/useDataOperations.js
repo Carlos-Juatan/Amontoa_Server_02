@@ -101,7 +101,6 @@ const useDataOperations = (initialFetchPath = null) => {
     if (initialFetchPath) {
       fetchData(initialFetchPath);
     }
-    console.log(`tentou atualizar o valor é ${initialFetchPath}`);
   }, [initialFetchPath, fetchData]); // Adicione fetchData como dependência para useCallback
 
   return {

@@ -1,0 +1,55 @@
+
+/* Estilos específicos para o formulário de conteúdo dentro do modal de ação */
+.modal-content-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espaçamento entre label, input e outros elementos */
+    margin-top: 10px; /* Um pequeno espaçamento do cabeçalho, se necessário */
+    flex-grow: 1; /* Permite que o formulário ocupe o espaço disponível */
+}
+
+/* Estilos para o label do input dentro do formulário do modal */
+.modal-content-form label {
+    font-size: 1.1em;
+    color: var(--text-light); /* Cor do texto claro */
+    font-weight: 500;
+    margin-bottom: 5px; /* Pequena margem abaixo do label */
+}
+
+/* O input dentro do modal de ação já pode herdar de .modal-input-field do Modal.css.
+   Se precisar de ajustes finos apenas para este input, pode adicionar aqui.
+*/
+.modal-content-form input[type="text"] {
+    /* Já estilizado por .modal-input-field no Modal.css
+       Você pode sobrescrever ou adicionar algo aqui se quiser algo diferente
+       para este input específico, por exemplo:
+       padding: 14px 12px;
+       border-radius: 10px;
+    */
+    width: 100%; /* Garante que o input preencha a largura do container */
+    height: 30px;
+    box-sizing: border-box; /* Inclui padding e borda na largura total */
+}
+
+/* Estilos para mensagens de erro */
+.error-message {
+    color: var(--error-red); /* Cor vermelha para erros */
+    font-size: 0.95em;
+    margin-top: 10px; /* Espaçamento acima da mensagem de erro */
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Estilos para o parágrafo de confirmação no modal de delete */
+.modal-delete p {
+    color: var(--text-light); /* Cor do texto claro */
+    font-size: 1.1em;
+    line-height: 1.5;
+    text-align: center; /* Centraliza o texto de confirmação */
+    margin-bottom: 20px; /* Mais espaço antes dos botões */
+}
+
+/* Estilo para quando há múltiplos itens sendo deletados, para o título */
+.modal-delete .modal-header h2 {
+    font-size: 1.6em; /* Pode ser um pouco menor para títulos mais longos */
+}

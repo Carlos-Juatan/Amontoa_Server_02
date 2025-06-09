@@ -46,7 +46,8 @@ const ModuleSection = ({ module, moduleIndex, searchTerm, currentLesson, editMod
     <div className="module-container">
       <div className="module-summary" onClick={toggleModuleExpanded}>
         <i className={`fas ${isModuleExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} expand-icon`}></i>
-        <i className="fas fa-folder module-icon"></i> {module.title}
+        <i className="fas fa-folder module-icon"></i>
+        <div className='hover-title'><span>{module.title}</span></div>
         {editMode && (
           <span className="edit-actions">
             <i className="fas fa-edit action-icon edit" onClick={(e) => { e.stopPropagation(); onModelEdit(module); }}></i>
@@ -91,7 +92,8 @@ const SubmoduleSection = ({ submodule, submoduleIndex, searchTerm, currentLesson
     <div className="submodule-container">
       <div className="submodule-summary" onClick={toggleSubmoduleExpanded}>
         <i className={`fas ${isSubmoduleExpanded ? 'fa-chevron-up' : 'fa-chevron-down'} expand-icon`}></i>
-        <i className="fas fa-folder-open submodule-icon"></i> {submodule.title}
+        <i className="fas fa-folder-open submodule-icon"></i>
+        <div className='hover-title'><span>{submodule.title}</span></div>
         {editMode && (
           <span className="edit-actions">
             <i className="fas fa-edit action-icon edit" onClick={(e) => { e.stopPropagation(); onModelEdit(submodule); }}></i>
@@ -110,7 +112,12 @@ const SubmoduleSection = ({ submodule, submoduleIndex, searchTerm, currentLesson
                 className={`lesson-item ${isActive ? 'active' : ''}`}
                 onClick={() => onItemSelect(lesson._id)}
               >
-                <i className="fas fa-file-alt lesson-icon"></i> {lesson.title}
+                <i className="fas fa-file-alt lesson-icon"></i>
+                {/* Wrap the title in a div or span with the hover-title class */}
+                <div className="lesson-title-container hover-title"> {/* Added a new container */}
+                  <span>{lesson.title}</span> {/* The title itself is in a span */}
+                </div>
+
                 {editMode && (
                   <span className="edit-actions">
                     <i className="fas fa-edit action-icon edit" onClick={(e) => { e.stopPropagation(); onAddOrEdit(lesson); }}></i>
