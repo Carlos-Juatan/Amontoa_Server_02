@@ -8,9 +8,10 @@ import useSelectionIndex from '../../hooks/useSelectionIndex';
 import useNoteActions from '../../hooks/useNoteActions'; // Este hook agora RECEBE as dependências
 import useModelActions from '../../hooks/useModelActions';
 
-import Header from './Header/Header';
+import Button from "../../components/Common/Button/Button";
+import Header from '../../components/StudiesScreen/Header/Header';
 import Sidebar from './Sidebar/Sidebar';
-import MainContent from './MainContent/MainContent';
+import MainContent from '../../components/StudiesScreen/MainContent/MainContent';
 import ActionModal from '../../components/Common/Modal/ActionModal/ActionModal';
 
 import './StudiesNotesScreen.css';
@@ -103,11 +104,14 @@ function StudiesNotesScreen() {
         onBackToStudies={handleBackToStudies}
         icon={noteData.icon}
         title={noteData.title}
-        filteredItems={filteredItems}
-        currentIndex={currentIndex}
-        onPrev={handlePrev}
-        onNext={handleNext}
-      />
+      >
+        <Button onClick={handlePrev} disabled={currentIndex === 0 || filteredItems.length === 0}>
+          <i className="fas fa-chevron-left"></i> Anterior
+        </Button>
+        <Button onClick={handleNext} disabled={currentIndex === filteredItems.length - 1 || filteredItems.length === 0}>
+          Próxima <i className="fas fa-chevron-right"></i>
+        </Button>
+      </Header>
 
       <div className="note-detail-main-content">
         <Sidebar
@@ -123,14 +127,14 @@ function StudiesNotesScreen() {
           onModelDelete={handleModelDelete}
         />
 
-
-        <MainContent
-          currentLesson={selectedObject}
-          currentIndex={currentIndex}
-          filteredItems={filteredItems}
-          onPrev={handlePrev}
-          onNext={handleNext}
-        />
+        <MainContent currentLesson={selectedObject} >
+          <Button onClick={handlePrev} disabled={currentIndex === 0 || filteredItems.length === 0}>
+            <i className="fas fa-chevron-left"></i> Anterior
+          </Button>
+          <Button onClick={handleNext} disabled={currentIndex === filteredItems.length - 1 || filteredItems.length === 0}>
+            Próxima <i className="fas fa-chevron-right"></i>
+          </Button>
+        </MainContent>
       </div>
 
       <ActionModal

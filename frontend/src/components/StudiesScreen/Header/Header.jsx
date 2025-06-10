@@ -1,9 +1,9 @@
 // src/components/StudiesScreen/NoteDetailScreen/Header/Header.jsx
-import Button from "../../../components/Common/Button/Button";
+import Button from "../../Common/Button/Button";
 
 import './Header.css';
 
-function Header({ onBackToStudies, icon, title, filteredItems, currentIndex, onPrev, onNext, onAdd }) {
+function Header({ onBackToStudies, icon, title, children }) {
 
   return (
     <header className="note-detail-header">
@@ -19,14 +19,11 @@ function Header({ onBackToStudies, icon, title, filteredItems, currentIndex, onP
         </h1>
       </div>
 
+      {/* Renderiza os children passados pelo componente pai aqui */}
       <div className="header-nav-buttons">
-        <Button onClick={onPrev} disabled={currentIndex === 0 || filteredItems.length === 0}>
-          <i className="fas fa-chevron-left"></i> Anterior
-        </Button>
-        <Button onClick={onNext} disabled={currentIndex === filteredItems.length - 1 || filteredItems.length === 0}>
-          Próxima <i className="fas fa-chevron-right"></i>
-        </Button>
+        {children}
       </div>
+      
     </header>
   );
 }

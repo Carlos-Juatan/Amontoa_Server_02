@@ -189,7 +189,7 @@ const renderAlert = (content) => {
 };
 
 
-function NoteContentRenderer({ content }) {
+function NoteContentRenderer({ content, children }) {
   const codeRef = useRef(null);
 
   // useEffect para aplicar o destaque do Highlight.js
@@ -220,59 +220,65 @@ function NoteContentRenderer({ content }) {
 
   switch (content.type) {
     case 'paragraph':
-      return <p className="note-paragraph">{renderParagraphContent(content.content)}</p>;
+      return <div className='note-element'><p className="note-paragraph">{renderParagraphContent(content.content)}</p>{children}</div>;
     case 'image':
-      return renderImage(content);
+      return <div className='note-element'>{renderImage(content)}{children}</div>;
     case 'heading':
       const HeadingTag = `h${Math.min(Math.max(parseInt(content.level), 1), 6) || 2}`;
-      return <HeadingTag className={`note-heading level-${content.level}`}>{content.content}</HeadingTag>;
+      return <div className='note-element'><HeadingTag className={`note-heading level-${content.level}`}>{content.content}</HeadingTag>{children}</div>;
     case 'code_snippet':
       return (
-        <div className="note-code-snippet">
-          {content.title && <h4 className="code-snippet-title">{content.title}</h4>}
-          <pre className="code-block">
-            {/*
-              O elemento <code> é o alvo para o Highlight.js.
-              Seu conteúdo será manipulado diretamente no useEffect via innerHTML
-              após a aplicação do destaque.
-            */}
-            <code ref={codeRef} className={`language-${content.language}`}>
-              {/* O conteúdo inicial aqui pode ser vazio ou um placeholder,
-                  pois o useEffect irá preenchê-lo e o Highlight.js irá transformá-lo.
-                  Importante: as quebras de linha (\n) do content.code são respeitadas
-                  pela tag <pre> que é a pai do <code>.
+        <div className='note-element'>
+          <div className="note-code-snippet">
+            {content.title && <h4 className="code-snippet-title">{content.title}</h4>}
+            <pre className="code-block">
+              {/*
+                O elemento <code> é o alvo para o Highlight.js.
+                Seu conteúdo será manipulado diretamente no useEffect via innerHTML
+                após a aplicação do destaque.
               */}
-            </code>
-          </pre>
-          <button
-            className="copy-code-button"
-            onClick={() => {
-              navigator.clipboard.writeText(content.code)
-                .then(() => {
-                  const feedbackDiv = document.createElement('div');
-                  feedbackDiv.textContent = 'Copiado!';
-                  feedbackDiv.className = 'copy-feedback';
-                  document.body.appendChild(feedbackDiv);
-                  setTimeout(() => {
-                    feedbackDiv.remove();
-                  }, 1500);
-                })
-                .catch(err => console.error('Erro ao copiar: ', err));
-            }}
-          >
-            Copiar
-          </button>
+              <code ref={codeRef} className={`language-${content.language}`}>
+                {/* O conteúdo inicial aqui pode ser vazio ou um placeholder,
+                    pois o useEffect irá preenchê-lo e o Highlight.js irá transformá-lo.
+                    Importante: as quebras de linha (\n) do content.code são respeitadas
+                    pela tag <pre> que é a pai do <code>.
+                */}
+              </code>
+            </pre>
+            <button
+              className="copy-code-button"
+              onClick={() => {
+                navigator.clipboard.writeText(content.code)
+                  .then(() => {
+                    const feedbackDiv = document.createElement('div');
+                    feedbackDiv.textContent = 'Copiado!';
+                    feedbackDiv.className = 'copy-feedback';
+                    document.body.appendChild(feedbackDiv);
+                    setTimeout(() => {
+                      feedbackDiv.remove();
+                    }, 1500);
+                  })
+                  .catch(err => console.error('Erro ao copiar: ', err));
+              }}
+            >
+              Copiar
+            </button>
+          </div>
+          {children}
         </div>
       );
     case 'list':
       return (
-        <GenericList
-          items={content.items}
-          keyExtractor={(item, index) => item.id || item.content + index}
-          renderItem={(item) => <ListItemRenderer item={item} />}
-          listTitle={content.title}
-          listClassName="note-list"
-        />
+        <div className='note-element'>
+          <GenericList
+            items={content.items}
+            keyExtractor={(item, index) => item.id || item.content + index}
+            renderItem={(item) => <ListItemRenderer item={item} />}
+            listTitle={content.title}
+            listClassName="note-list"
+          />
+          {children}
+        </div>
       );
     case 'link':
       const linkText = content.display_text || content.content;
@@ -282,20 +288,23 @@ function NoteContentRenderer({ content }) {
       const cleanedDisplayText = typeof linkText === 'string' ? linkText.replace(/\*\*(.*?)\*\*/g, clickablePhrase) : linkText;
 
       return (
-        <p className="note-link-container">
-          {renderLinkContent(cleanedDisplayText, clickablePhrase, linkUrl)}
-        </p>
+        <div className='note-element'>
+          <p className="note-link-container">
+            {renderLinkContent(cleanedDisplayText, clickablePhrase, linkUrl)}
+          </p>
+          {children}
+        </div>
       );
     case 'blockquote':
-      return <blockquote className="note-blockquote">{content.content}</blockquote>;
+      return <div className='note-element'><blockquote className="note-blockquote">{content.content}</blockquote>{children}</div>;
     case 'table':
-      return renderTable(content);
+      return <div className='note-element'>{renderTable(content)}{children}</div>;
     case 'video':
-      return renderVideo(content);
+      return <div className='note-element'>{renderVideo(content)}{children}</div>;
     case 'alert':
-      return renderAlert(content);
+      return <div className='note-element'>{renderAlert(content)}{children}</div>;
     default:
-      return <p className="note-unknown-content">Tipo de conteúdo desconhecido: {content.type}</p>;
+      return <div className='note-element'><p className="note-unknown-content">Tipo de conteúdo desconhecido: {content.type}</p>{children}</div>;
   }
 }
 

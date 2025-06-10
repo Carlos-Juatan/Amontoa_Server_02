@@ -3,14 +3,13 @@ import Button from '../../../components/Common/Button/Button';
 
 import NoteContentRenderer from './NoteContentRenderer';
 
-
 import './MainContent.css';
 
 // src/components/StudiesScreen/NoteDetailScreen/MainContent/MainContent.jsx
-function MainContent({ currentLesson, currentIndex, filteredItems, onPrev, onNext }) {
+function MainContent({ currentLesson, children, buttonSection }) {
 
   return (
-    <main>
+    <main className='lesson-content'>
       <section className="lesson-content-area">
         {currentLesson ? (
           <>
@@ -21,11 +20,12 @@ function MainContent({ currentLesson, currentIndex, filteredItems, onPrev, onNex
                   <NoteContentRenderer
                     key={`content-${currentLesson._id}-${contentIndex}`}
                     content={contentItem}
-                    // As funções onEdit e onDelete para o NoteContentRenderer agora
-                    // chamam handleEdit e handleDelete com o 'type' 'note' ou 'lesson'
-                    onEdit={() => handleEdit('note', contentItem)} // Assume 'note' como tipo para conteúdo da aula
-                    onDelete={() => handleDelete('note', contentItem)}
-                  />
+                    buttonSection={buttonSection}
+                  >
+                    <div className='lesson-notes-display-buttons'>
+                      {buttonSection}
+                    </div>
+                  </NoteContentRenderer>
                 ))
               ) : (
                 <p className="no-content-message">Nenhum conteúdo para esta lição.</p>
@@ -33,12 +33,7 @@ function MainContent({ currentLesson, currentIndex, filteredItems, onPrev, onNex
             </div>
 
             <div className="lesson-nav-buttons">
-              <Button onClick={onPrev} disabled={currentIndex === 0 || filteredItems.length === 0}>
-                <i className="fas fa-chevron-left"></i> Anterior
-              </Button>
-              <Button onClick={onNext} disabled={currentIndex === filteredItems.length - 1 || filteredItems.length === 0}>
-                Próxima <i className="fas fa-chevron-right"></i>
-              </Button>
+              {children}
             </div>
           </>
         ) : (
