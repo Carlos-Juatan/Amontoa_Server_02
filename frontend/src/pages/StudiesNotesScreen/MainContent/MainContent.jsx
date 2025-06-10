@@ -1,5 +1,5 @@
 
-import Button from '../../../Common/Button/Button';
+import Button from '../../../components/Common/Button/Button';
 
 import NoteContentRenderer from './NoteContentRenderer';
 

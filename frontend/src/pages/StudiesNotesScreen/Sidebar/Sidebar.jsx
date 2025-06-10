@@ -1,8 +1,8 @@
 // src/components/StudiesScreen/NoteDetailScreen/Sidebar/Sidebar.jsx
 import React, { useState } from 'react';
 
-import Button from '../../../Common/Button/Button';
-import SearchBar from '../../../Common/SearchBar/SearchBar';
+import Button from '../../../components/Common/Button/Button';
+import SearchBar from '../../../components/Common/SearchBar/SearchBar';
 import SidebarHierarchy from './SidebarHierarchy';
 
 import './Sidebar.css';

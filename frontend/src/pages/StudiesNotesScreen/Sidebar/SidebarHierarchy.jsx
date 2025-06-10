@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import useHierarchyData from '../../../../hooks/useHierarchyData'; // Importa o hook que organiza a hierarquia
-import useToggle from '../../../../hooks/useToggle'; // Importa o novo hook useToggle
+import useHierarchyData from '../../../hooks/useHierarchyData'; // Importa o hook que organiza a hierarquia
+import useToggle from '../../../hooks/useToggle'; // Importa o novo hook useToggle
 
 import './SidebarHierarchy.css';
 

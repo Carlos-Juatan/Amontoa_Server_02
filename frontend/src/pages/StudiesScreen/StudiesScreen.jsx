@@ -1,29 +1,27 @@
 import React, { useState } from 'react'; // Remover useCallback e useEffect, pois useDataOperations os encapsula
-import { useScreenManager } from '../../ScreenManager/ScreenManagerContext';
-import useDataOperations from '../../../hooks/useDataOperations';
-import useSearchFilter from '../../../hooks/useSearchFilter';
+import { useNavigate } from 'react-router-dom';
+import useDataOperations from '../../hooks/useDataOperations';
+import useSearchFilter from '../../hooks/useSearchFilter';
 
-import Button from '../../Common/Button/Button';
-import SearchBar from '../../Common/SearchBar/SearchBar';
-import GenericList from '../../Common/GenericList/GenericList';
+import Button from '../../components/Common/Button/Button';
+import SearchBar from '../../components/Common/SearchBar/SearchBar';
+import GenericList from '../../components/Common/GenericList/GenericList';
 import NoteItem from './NoteItem';
 
 import './StudiesScreen.css';
 
-function NoteDetailScreen({ db_collection }) {
-  const { data, loading, error } = useDataOperations( db_collection ); // Pega o data_path do receivedData ou usa um padrão
-  const { navigateTo } = useScreenManager();
+function NoteDetailScreen() {
+  const { data, loading, error, fetchData } = useDataOperations( 'studies' ); // Pega o data_path do receivedData ou usa um padrão
+  const navigate = useNavigate(); // Hook para navegação
 
   // Use o useSearchFilter para gerenciar a busca
   // searchKeys são as chaves dos objetos 'note' que você quer pesquisar ('title', 'description')
   const { searchTerm, setSearchTerm, filteredItems: filteredNotes, handleSearchChange } = useSearchFilter(data, '', ['title', 'description']);
  
   const handleBack = () => {
-    navigateTo('dashboard');
+    navigate('/'); // Navega de volta para a rota raiz (Dashboard)
   };
-
-  if (data.length > 0) {
-  }
+  
   // Sobrescreve handleSearchChange para resetar selectedIndex ao pesquisar
   const handleSearchTerm = (event) => {
     // Executa a lógica de pesquisa do hook
@@ -31,16 +29,11 @@ function NoteDetailScreen({ db_collection }) {
   };
 
   const handleNoteClick = (note) => {
-    //const pathParts = note.data_path.split('/'); // Divide o data_path em partes
-    //const nodePath = pathParts[pathParts.length - 1]; // Pega a última parte:
-    //let basePath = nodePath.replace('Screen', '');
-    //let finalPath = basePath + 'Screen';
-    navigateTo('studiesNotesScreen', { noteData: note }); // Passa o objeto note completo e o id ou title como identificador
+    navigate(`/studies/${note.db_collection}/${note._id}`); // Navega de volta para a rota raiz (Dashboard)
   };
 
   if (loading) return <div className="studies-message">Carregando Anotações de Estudos...</div>;
   if (error) return <div className="studies-message error">{error}</div>;
-
   
   return (
     <div className="studies-screen-container">

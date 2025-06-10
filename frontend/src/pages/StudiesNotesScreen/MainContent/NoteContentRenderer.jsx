@@ -1,6 +1,6 @@
 // src/components/StudiesScreen/NoteContentRenderer.jsx
 import React, { useRef, useEffect } from 'react';
-import GenericList from '../../../Common/GenericList/GenericList'; // Certifique-se de que o caminho está correto
+import GenericList from '../../../components/Common/GenericList/GenericList'; // Certifique-se de que o caminho está correto
 import './NoteContentRenderer.css'; // Crie este CSS para estilizar o conteúdo
 
 // ==============================================================================

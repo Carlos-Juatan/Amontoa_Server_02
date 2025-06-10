@@ -1,22 +1,25 @@
 // src/components/StudiesScreen/NoteDetailScreen/StudiesNotesScreen.jsx
 import React, { useCallback } from 'react';
-import { useScreenManager } from '../../ScreenManager/ScreenManagerContext';
-import useDataOperations from '../../../hooks/useDataOperations'; // Sua única fonte de dados
-import useSearchFilter from '../../../hooks/useSearchFilter';
-import useSelectionIndex from '../../../hooks/useSelectionIndex';
+import { useNavigate, useParams } from 'react-router-dom';
+import useDataOperations from '../../hooks/useDataOperations'; // Sua única fonte de dados
+import useSearchFilter from '../../hooks/useSearchFilter';
+import useSelectionIndex from '../../hooks/useSelectionIndex';
 
-import useNoteActions from '../../../hooks/useNoteActions'; // Este hook agora RECEBE as dependências
-import useModelActions from '../../../hooks/useModelActions';
+import useNoteActions from '../../hooks/useNoteActions'; // Este hook agora RECEBE as dependências
+import useModelActions from '../../hooks/useModelActions';
 
 import Header from './Header/Header';
 import Sidebar from './Sidebar/Sidebar';
 import MainContent from './MainContent/MainContent';
-import ActionModal from '../../Common/Modal/ActionModal/ActionModal';
+import ActionModal from '../../components/Common/Modal/ActionModal/ActionModal';
 
 import './StudiesNotesScreen.css';
 
-function StudiesNotesScreen({ noteData }) {
-  // --- 1. ÚNICA INSTÂNCIA DE useDataOperations para a coleção ---
+function StudiesNotesScreen() {
+  const navigate = useNavigate(); // Hook para navegação
+  const { collectionName, studies_id } = useParams(); // Parametros passados pela url
+  const { data: noteData } = useDataOperations('studies/' + studies_id); // Item escolhido na tela studies
+
   const {
     data,
     loading,
@@ -27,16 +30,13 @@ function StudiesNotesScreen({ noteData }) {
     isMutating,        // <--- Estados de mutação expostos
     mutationError,
     fetchData: refetchData, // <--- Função de re-sincronização exposta
-  } = useDataOperations(noteData.db_collection); // Assume que noteData.db_collection é o path completo
-
-  const { navigateTo } = useScreenManager();
+  } = useDataOperations(collectionName); 
 
   const { searchTerm, setSearchTerm, filteredItems, handleSearchChange } = useSearchFilter(data, '', ['module', 'submodule', 'title']);
   const { currentIndex, setCurrentIndex, selectedObject, handleNext, handlePrev, handleItemSelect } = useSelectionIndex(filteredItems);
 
   const { isModalOpen, modalType, modalItem, onClose, handleModelEdit, handleModelDelete } = useModelActions();
 
-  // --- 2. PASSA AS FUNÇÕES E ESTADOS DE useDataOperations PARA useNoteActions ---
   // useNoteActions não cria sua própria instância de useDataOperations
   const { handleEditName, handleAddOrEdit, handleDelete } = useNoteActions(
     createRecord,
@@ -47,42 +47,37 @@ function StudiesNotesScreen({ noteData }) {
     mutationError // Passa o mutationError da instância principal
   );
 
-  const handleBackToStudies = useCallback(() => {
-    navigateTo('studiesScreen', { db_collection: 'studies' });
-  }, [navigateTo]);
+  //const handleBackToStudies = useCallback(() => {
+  ////  navigateTo('studiesScreen', { db_collection: 'studies' });
+  //}, [navigateTo]);
 
-  /*
-  // --- Funções Wrapper para Add/Edit ---
-  const handleAddOrEditWrapper = useCallback(async (formData) => {
-      try {
-          // Chama a função real de adição/edição que veio do useNoteActions (que usa createRecord/updateRecord da instância principal)
-          const result = await handleAddOrEdit(formData);
-          // Após o sucesso, re-busque os dados para atualizar a tela
-          await refetchData(noteData.db_collection); // CHAMA O fetchData DA INSTÂNCIA PRINCIPAL
-          onClose();
-          return result;
-      } catch (err) {
-          console.error("Erro na operação de adicionar/editar:", err);
-      }
-  }, [handleAddOrEdit, refetchData, noteData.db_collection, mutationError, onClose]);
-  */
-
-  const handleNoteEditScreen = useCallback((lessonData) => {
-    navigateTo('noteEditScreen', { noteData: noteData, lessonData: lessonData });
-  }, [navigateTo]);
+  //const handleNoteEditScreen = useCallback((lessonData) => {
+  //  //navigateTo('noteEditScreen', { noteData: noteData, lessonData: lessonData });
+  //}, [navigateTo]);
+  
+  const handleBackToStudies = () => {
+    navigate('/studies'); // Navega de volta para tela de lista de anotações (studiesScreen)
+  };
+  
+  const handleNoteEditScreen = (lessonData) => {
+    if (lessonData)
+      navigate(`/studies/edit/${collectionName}/${studies_id}/${lessonData._id}`); // Navega para tela de edição de anotações (noteEditScreen)
+    else
+      navigate(`/studies/edit/${collectionName}/${studies_id}/0`);
+  };
 
   const handleEditNameWrapper = useCallback(async (formData) => {
     try {
       // Chama a função real de deleção que veio do useNoteActions (que usa deleteRecord da instância principal)
       const result = await handleEditName(formData);
       // Após o sucesso, re-busque os dados para atualizar a tela
-      await refetchData(noteData.db_collection); // CHAMA O fetchData DA INSTÂNCIA PRINCIPAL
+      await refetchData(collectionName); // CHAMA O fetchData DA INSTÂNCIA PRINCIPAL
       onClose();
       return result;
     } catch (err) {
       console.error("Erro na operação de renomerar:", err);
     }
-  }, [handleEditName, refetchData, noteData.db_collection, mutationError, onClose]);
+  }, [handleEditName, refetchData, collectionName, mutationError, onClose]);
 
   // --- Funções Wrapper para Delete ---
   const handleDeleteWrapper = useCallback(async (formData) => {
@@ -90,13 +85,13 @@ function StudiesNotesScreen({ noteData }) {
       // Chama a função real de deleção que veio do useNoteActions (que usa deleteRecord da instância principal)
       const result = await handleDelete(formData);
       // Após o sucesso, re-busque os dados para atualizar a tela
-      await refetchData(noteData.db_collection); // CHAMA O fetchData DA INSTÂNCIA PRINCIPAL
+      await refetchData(collectionName); // CHAMA O fetchData DA INSTÂNCIA PRINCIPAL
       onClose();
       return result;
     } catch (err) {
       console.error("Erro na operação de deletar:", err);
     }
-  }, [handleDelete, refetchData, noteData.db_collection, mutationError, onClose]);
+  }, [handleDelete, refetchData, collectionName, mutationError, onClose]);
 
 
   if (loading) return <div className="studies-message">Carregando Anotações de Estudos...</div>;

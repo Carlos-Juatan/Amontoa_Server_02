@@ -2406,10 +2406,21 @@ root
 │   │   │   │   ├── ComingSoonScreen.css       
 │   │   │   │   └── ComingSoonScreen.jsx       
 │   │   │   ├── Common/      
-│   │   │   │   ├── SearchBar.css   
-│   │   │   │   ├── SearchBar.jsx   
-│   │   │   │   ├── Button.css   
-│   │   │   │   └── Button.jsx   
+│   │   │   │   ├── Button/ 
+│   │   │   │   │   ├── Button.jsx   
+│   │   │   │   │   └── Button.css     
+│   │   │   │   ├── GenericList/   
+│   │   │   │   │   ├── GenericList.jsx   
+│   │   │   │   │   └── GenericList.css     
+│   │   │   │   ├── Modal/    
+│   │   │   │   │   ├── ActionModal/   
+│   │   │   │   │   │   ├── ActionModal.jsx   
+│   │   │   │   │   │   └── ActionModal.css   
+│   │   │   │   │   ├── Modal.jsx   
+│   │   │   │   │   └── Modal.css     
+│   │   │   │   └── SearchBar/   
+│   │   │   │   │   ├── SearchBar.jsx   
+│   │   │   │   │   └── SearchBar.css     
 │   │   │   ├── Dashboard/    
 │   │   │   │   ├── Dashboard.css
 │   │   │   │   ├── Dashboard.jsx
@@ -2419,14 +2430,42 @@ root
 │   │   │   │   ├── ScreenManager.jsx
 │   │   │   │   └── ScreenManagerContext.jsx   
 │   │   │   └── StudiesScreen/    
-│   │   │   │   ├── NoteContentRenderer.css
-│   │   │   │   ├── NoteContentRenderer.jsx
-│   │   │   │   ├── NoteDetailScreen.css
-│   │   │   │   ├── NoteDetailScreen.jsx
-│   │   │   │   ├── NoteItem.css
-│   │   │   │   ├── NoteItem.jsx
-│   │   │   │   ├── StudiesScreen.css
-│   │   │   │   └── StudiesScreen.jsx         
+│   │   │   │   └── StudiesScreen/    
+│   │   │   │   │   ├── NoteEditScreen/
+│   │   │   │   │   │   ├── NoteEditScreen.jsx
+│   │   │   │   │   │   └── NoteEditScreen.css
+│   │   │   │   │   ├── StudiesNotesScreen/
+│   │   │   │   │   │   ├── Header/
+│   │   │   │   │   │   │   ├── Header.jsx
+│   │   │   │   │   │   │   └── Header.css
+│   │   │   │   │   │   ├── MainContent/
+│   │   │   │   │   │   │   ├── MainContent.jsx
+│   │   │   │   │   │   │   ├── MainContent.jsx
+│   │   │   │   │   │   │   ├── NoteContentRenderer.jsx
+│   │   │   │   │   │   │   └── NoteContentRenderer.css
+│   │   │   │   │   │   ├── Notes/
+│   │   │   │   │   │   │   ├── Notes.jsx
+│   │   │   │   │   │   │   └── Notes.css
+│   │   │   │   │   │   ├── Sidebar/
+│   │   │   │   │   │   │   ├── Sidebar.jsx
+│   │   │   │   │   │   │   ├── Sidebar.jsx
+│   │   │   │   │   │   │   ├── SidebarHierarchy.jsx
+│   │   │   │   │   │   │   └── SidebarHierarchy.css
+│   │   │   │   │   │   ├── StudiesNotesScreen.jsx
+│   │   │   │   │   │   └── StudiesNotesScreen.css
+│   │   │   │   │   └── StudiesScreen/
+│   │   │   │   │   │   ├── StudiesScreen.jsx
+│   │   │   │   │   │   ├── StudiesScreen.jsx
+│   │   │   │   │   │   ├── NoteItem.jsx
+│   │   │   │   │   │   └── NoteItem.css      
+│   │   ├── hooks/
+│   │   │   ├── useDataOperations.js      
+│   │   │   ├── useHierarchyData.js      
+│   │   │   ├── useModelActions.js      
+│   │   │   ├── useNoteActions.js      
+│   │   │   ├── useSearchFilter.js      
+│   │   │   ├── useSelectionIndex.js      
+│   │   │   └── useToggle.js      
 │   │   ├── services/
 │   │   │   └── dataService.js      
 │   │   ├──  utils/
@@ -2436,7 +2475,9 @@ root
 │   │   ├── index.css  
 │   │   └── main.jsx               
 │   ├── Dockerfile   
-│   └── index.html               
+│   ├── index.html               
+│   ├── package.json               
+│   └── vite.config.js             
 └── frontend.yml
 ```
 
