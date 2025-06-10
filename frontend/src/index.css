@@ -11,6 +11,22 @@
   --border-color: rgba(255, 255, 255, 0.1); /* Borda sutil */
   --shadow-color: rgba(0, 0, 0, 0.4);
   --header-height: 80px; /* Variável para altura do cabeçalho */
+
+  /* CONFIRM BUTTON */
+  --button-confirm: #5cb85c; 
+  --button-confirm-border: #5cb85c; 
+  --button-confirm-hover: #349f63;
+  --button-confirm-hover-border: #20896d;
+  --button-confirm-desable: #0c4225; 
+  --button-confirm-desable-border: #023937; 
+  
+  /* DELETE BUTTON */
+  --button-delete: #d9534f; 
+  --button-delete-hover: #c9302c; 
+  --button-delete-hover: #b33430;
+  --button-delete-hover-border: #874319;
+  --button-delete-desable: #701511; 
+  --button-delete-desable-border: rgb(87, 57, 5); 
 }
 
 /* Garante que HTML, Body e #root ocupem 100% da tela e sem margens/padding globais */

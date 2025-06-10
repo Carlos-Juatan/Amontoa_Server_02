@@ -19,7 +19,7 @@ function Sidebar({ searchTerm, onSearchChange, filteredItems, currentLesson, dbC
           <i className="fas fa-plus"></i> Adicionar
         </Button>
         <Button onClick={() => setEditMode(!editMode)} className={`edit-toggle-button ${editMode ? 'active' : ''}`}>
-          <i className="fas fa-edit"></i> {editMode ? 'Sair do Modo Edição' : 'Editar'}
+          <i className="fas fa-pencil-alt"></i> {editMode ? 'Sair do Modo Edição' : 'Editar'}
         </Button>
       </div>
       

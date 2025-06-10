@@ -1,28 +1,86 @@
-/* src/components/ComingSoonScreen/ComingSoonScreen.css */
-.coming-soon-screen {
+
+.note-edit-header-button-submit {
+  background-color: var(--button-confirm); /* Roxo principal */
+  border: 1px solid var(--button-confirm-border);
+}
+
+.note-edit-header-button-submit:hover {
+  background-color: var(--button-confirm-hover); /* Roxo secundário */
+  border-color: var(--button-confirm-hover-border);
+}
+
+.note-edit-header-button-submit:disabled {
+  background-color: var(--button-confirm-desable); /* Roxo secundário */
+  border-color: var(--button-confirm-desable-border);
+}
+
+.note-edit-header-button-cancel, .action-icon-delete {
+  background-color: var(--button-delete); /* Roxo principal */
+  border: 1px solid var(--button-delete-border);
+}
+
+.note-edit-header-button-cancel:hover, .action-icon-delete:hover {
+  background-color: var(--button-delete-hover); /* Roxo secundário */
+  border-color: var(--button-delete-hover-border);
+}
+
+.note-edit-header-button-cancel:disabled, .action-icon-delete:disabled {
+  background-color: var(--button-delete-desable); /* Roxo secundário */
+  border-color: var(--button-delete-desable-border);
+}
+
+.action-icon-edit, .action-icon-delete {
+  /* Propriedades existentes (se aplicáveis ao tamanho e espaçamento geral do botão) */
+  width: 50%; /* Mantido se essa largura for intencional para o botão em si */
+  
+  /* Propriedades para centralizar o ícone (o conteúdo interno) */
+  display: flex;         /* Transforma o botão em um contêiner flex */
+  justify-content: center; /* Centraliza o conteúdo horizontalmente no eixo principal */
+  align-items: center;   /* Centraliza o conteúdo verticalmente no eixo cruzado */
+}
+
+/* Main Content Area (Sidebar + Lesson Content) */
+.note-edit-main-content {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh; /* Ocupa a altura total da viewport para centralizar */
-  width: 100%; /* Ocupa a largura total do pai */
-  text-align: center;
-  background-color: var(--background-dark);
-  color: var(--text-light);
-  padding: 20px;
+  flex-grow: 1; /* Ocupa o espaço restante verticalmente */
+  gap: 25px;
+  max-width: 1600px; /* Mantém a largura máxima para o conteúdo interno */
+  margin: 0 auto; /* Centraliza o conteúdo principal */
+  width: 100%; /* Ocupa 100% da largura do pai (que é 100vw) */
+  padding: 25px; /* Padding geral para o conteúdo principal */
+  padding-top: calc(var(--header-height) + 13px); /* Espaço para o header fixo */
   box-sizing: border-box;
 }
 
-.coming-soon-screen h2 {
-  font-size: 3em;
-  margin-bottom: 25px;
-  color: var(--highlight-blue);
-  text-shadow: 0 0 10px rgba(97, 218, 251, 0.4);
+/*container-pai*/
+.note-element{
+  display: grid;
+  /*grid-template-columns: 1fr 1fr; /* Ou repeat(2, 1fr) */
+  grid-template-columns: auto 10%;
+
+  /* Define as linhas:
+     - Primeira linha ocupa o restante do espaço (auto ou 1fr)
+     - Segunda linha tem 10% da altura total do container
+  */
+  /*grid-template-rows: auto 10%; /* ou 1fr 10% */
+
+  margin: 30px 0;
+  border: 2px dashed var(--border-color);
+  border-radius: 5px;
+
+  /*display: flex;
+  width: 100%;
+  justify-content: space-between;*/
 }
 
-.coming-soon-screen p {
-  font-size: 1.3em;
-  margin-bottom: 40px;
-  max-width: 600px;
-  line-height: 1.6;
+.lesson-notes-display-buttons {
+  flex-shrink: 0; /* Impede que essa div encolha */
+  margin: auto 0;
+  padding: 10px;
+
+  /* Novas propriedades para organizar os botões em coluna */
+  display: flex;        /* Torna a div um container flex */
+  flex-direction: column; /* Alinha os itens filhos (seus botões) em uma coluna */
+  gap: 8px;             /* Adiciona um pequeno espaço entre os botões (opcional, mas bom para legibilidade) */
+  align-items: flex-end; /* Alinha os botões à direita dentro desta div (se a div for mais larga que os botões) */
 }

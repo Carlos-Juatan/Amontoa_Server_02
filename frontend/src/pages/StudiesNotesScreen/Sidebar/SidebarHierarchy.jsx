@@ -50,7 +50,7 @@ const ModuleSection = ({ module, moduleIndex, searchTerm, currentLesson, editMod
         <div className='hover-title'><span>{module.title}</span></div>
         {editMode && (
           <span className="edit-actions">
-            <i className="fas fa-edit action-icon edit" onClick={(e) => { e.stopPropagation(); onModelEdit(module); }}></i>
+            <i className="fas fa-pencil-alt action-icon edit" onClick={(e) => { e.stopPropagation(); onModelEdit(module); }}></i>
             <i className="fas fa-trash-alt action-icon delete" onClick={(e) => { e.stopPropagation(); onModelDelete('list', module); }}></i>
           </span>
         )}
@@ -96,7 +96,7 @@ const SubmoduleSection = ({ submodule, submoduleIndex, searchTerm, currentLesson
         <div className='hover-title'><span>{submodule.title}</span></div>
         {editMode && (
           <span className="edit-actions">
-            <i className="fas fa-edit action-icon edit" onClick={(e) => { e.stopPropagation(); onModelEdit(submodule); }}></i>
+            <i className="fas fa-pencil-alt action-icon edit" onClick={(e) => { e.stopPropagation(); onModelEdit(submodule); }}></i>
             <i className="fas fa-trash-alt action-icon delete" onClick={(e) => { e.stopPropagation(); onModelDelete('list', submodule); }}></i>
           </span>
         )}
@@ -120,7 +120,7 @@ const SubmoduleSection = ({ submodule, submoduleIndex, searchTerm, currentLesson
 
                 {editMode && (
                   <span className="edit-actions">
-                    <i className="fas fa-edit action-icon edit" onClick={(e) => { e.stopPropagation(); onAddOrEdit(lesson); }}></i>
+                    <i className="fas fa-pencil-alt action-icon edit" onClick={(e) => { e.stopPropagation(); onAddOrEdit(lesson); }}></i>
                     <i className="fas fa-trash-alt action-icon delete" onClick={(e) => { e.stopPropagation(); onModelDelete('single', lesson); }}></i>
                   </span>
                 )}
