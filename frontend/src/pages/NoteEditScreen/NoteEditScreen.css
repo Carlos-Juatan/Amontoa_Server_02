@@ -51,36 +51,3 @@
   padding-top: calc(var(--header-height) + 13px); /* Espaço para o header fixo */
   box-sizing: border-box;
 }
-
-/*container-pai*/
-.note-element{
-  display: grid;
-  /*grid-template-columns: 1fr 1fr; /* Ou repeat(2, 1fr) */
-  grid-template-columns: auto 10%;
-
-  /* Define as linhas:
-     - Primeira linha ocupa o restante do espaço (auto ou 1fr)
-     - Segunda linha tem 10% da altura total do container
-  */
-  /*grid-template-rows: auto 10%; /* ou 1fr 10% */
-
-  margin: 30px 0;
-  border: 2px dashed var(--border-color);
-  border-radius: 5px;
-
-  /*display: flex;
-  width: 100%;
-  justify-content: space-between;*/
-}
-
-.lesson-notes-display-buttons {
-  flex-shrink: 0; /* Impede que essa div encolha */
-  margin: auto 0;
-  padding: 10px;
-
-  /* Novas propriedades para organizar os botões em coluna */
-  display: flex;        /* Torna a div um container flex */
-  flex-direction: column; /* Alinha os itens filhos (seus botões) em uma coluna */
-  gap: 8px;             /* Adiciona um pequeno espaço entre os botões (opcional, mas bom para legibilidade) */
-  align-items: flex-end; /* Alinha os botões à direita dentro desta div (se a div for mais larga que os botões) */
-}

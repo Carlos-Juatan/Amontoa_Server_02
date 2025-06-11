@@ -6,7 +6,7 @@ import NoteContentRenderer from './NoteContentRenderer';
 import './MainContent.css';
 
 // src/components/StudiesScreen/NoteDetailScreen/MainContent/MainContent.jsx
-function MainContent({ currentLesson, children, buttonSection }) {
+function MainContent({ currentLesson, children, buttonSection, stylesNoteElementClassName, stylesDisplayButtonsClassName }) {
 
   return (
     <main className='lesson-content'>
@@ -20,10 +20,10 @@ function MainContent({ currentLesson, children, buttonSection }) {
                   <NoteContentRenderer
                     key={`content-${currentLesson._id}-${contentIndex}`}
                     content={contentItem}
-                    buttonSection={buttonSection}
+                    stylesNoteElementClassName={stylesNoteElementClassName}
                   >
-                    <div className='lesson-notes-display-buttons'>
-                      {buttonSection}
+                    <div className={stylesDisplayButtonsClassName}>
+                      {buttonSection ? buttonSection(contentItem, contentIndex) : ''}
                     </div>
                   </NoteContentRenderer>
                 ))

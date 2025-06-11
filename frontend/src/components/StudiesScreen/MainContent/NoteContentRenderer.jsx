@@ -189,7 +189,7 @@ const renderAlert = (content) => {
 };
 
 
-function NoteContentRenderer({ content, children }) {
+function NoteContentRenderer({ content, children, stylesNoteElementClassName }) {
   const codeRef = useRef(null);
 
   // useEffect para aplicar o destaque do Highlight.js
@@ -220,15 +220,15 @@ function NoteContentRenderer({ content, children }) {
 
   switch (content.type) {
     case 'paragraph':
-      return <div className='note-element'><p className="note-paragraph">{renderParagraphContent(content.content)}</p>{children}</div>;
+      return <div className={stylesNoteElementClassName}><p className="note-paragraph">{renderParagraphContent(content.content)}</p>{children}</div>;
     case 'image':
-      return <div className='note-element'>{renderImage(content)}{children}</div>;
+      return <div className={stylesNoteElementClassName}>{renderImage(content)}{children}</div>;
     case 'heading':
       const HeadingTag = `h${Math.min(Math.max(parseInt(content.level), 1), 6) || 2}`;
-      return <div className='note-element'><HeadingTag className={`note-heading level-${content.level}`}>{content.content}</HeadingTag>{children}</div>;
+      return <div className={stylesNoteElementClassName}><HeadingTag className={`note-heading level-${content.level}`}>{content.content}</HeadingTag>{children}</div>;
     case 'code_snippet':
       return (
-        <div className='note-element'>
+        <div className={stylesNoteElementClassName}>
           <div className="note-code-snippet">
             {content.title && <h4 className="code-snippet-title">{content.title}</h4>}
             <pre className="code-block">
@@ -269,7 +269,7 @@ function NoteContentRenderer({ content, children }) {
       );
     case 'list':
       return (
-        <div className='note-element'>
+        <div className={stylesNoteElementClassName}>
           <GenericList
             items={content.items}
             keyExtractor={(item, index) => item.id || item.content + index}
@@ -288,7 +288,7 @@ function NoteContentRenderer({ content, children }) {
       const cleanedDisplayText = typeof linkText === 'string' ? linkText.replace(/\*\*(.*?)\*\*/g, clickablePhrase) : linkText;
 
       return (
-        <div className='note-element'>
+        <div className={stylesNoteElementClassName}>
           <p className="note-link-container">
             {renderLinkContent(cleanedDisplayText, clickablePhrase, linkUrl)}
           </p>
@@ -296,15 +296,15 @@ function NoteContentRenderer({ content, children }) {
         </div>
       );
     case 'blockquote':
-      return <div className='note-element'><blockquote className="note-blockquote">{content.content}</blockquote>{children}</div>;
+      return <div className={stylesNoteElementClassName}><blockquote className="note-blockquote">{content.content}</blockquote>{children}</div>;
     case 'table':
-      return <div className='note-element'>{renderTable(content)}{children}</div>;
+      return <div className={stylesNoteElementClassName}>{renderTable(content)}{children}</div>;
     case 'video':
-      return <div className='note-element'>{renderVideo(content)}{children}</div>;
+      return <div className={stylesNoteElementClassName}>{renderVideo(content)}{children}</div>;
     case 'alert':
-      return <div className='note-element'>{renderAlert(content)}{children}</div>;
+      return <div className={stylesNoteElementClassName}>{renderAlert(content)}{children}</div>;
     default:
-      return <div className='note-element'><p className="note-unknown-content">Tipo de conteúdo desconhecido: {content.type}</p>{children}</div>;
+      return <div className={stylesNoteElementClassName}><p className="note-unknown-content">Tipo de conteúdo desconhecido: {content.type}</p>{children}</div>;
   }
 }
 

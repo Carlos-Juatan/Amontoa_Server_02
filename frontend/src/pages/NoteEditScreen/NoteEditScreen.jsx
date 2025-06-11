@@ -10,6 +10,7 @@ import Header from '../../components/StudiesScreen/Header/Header';
 import MainContent from '../../components/StudiesScreen/MainContent/MainContent';
 
 import './NoteEditScreen.css';
+import styles from './NoteEditScreenElements.module.css';
 
 function NoteEditScreen() {
   const navigate = useNavigate(); // Hook para navegação
@@ -27,7 +28,7 @@ function NoteEditScreen() {
     isMutating,        // <--- Estados de mutação expostos
     mutationError,
     fetchData: refetchData, // <--- Função de re-sincronização exposta
-  } = useDataOperations(`${collectionName}/${lesson_id}`); 
+  } = lesson_id != 0 ? useDataOperations(`${collectionName}/${lesson_id}`) : [] ; 
 
   const [currentData, setCurrentData] = useState([]);
 
@@ -35,12 +36,12 @@ function NoteEditScreen() {
     navigate(`/studies/${collectionName}/${studies_id}`); // Navega de volta para tela de lista de anotações (studiesScreen)
   };
   
-  const handleEdit = () => {
-    
+  const handleEdit = (item, index) => {
+    console.log("Editando item recebido :", item._id, "index: ", index);
   };
   
-  const handleDelet = () => {
-    
+  const handleDelet = (item, index) => {
+    console.log("Deletando item recebido :", item._id, "index: ", index);
   };
 
   const handleSubimit = () => {
@@ -65,12 +66,15 @@ function NoteEditScreen() {
       <div className="note-edit-main-content">
         <MainContent 
         currentLesson={data} 
-        buttonSection={
-          <>
-          <Button onClick={handleEdit} className='action-icon-edit'><i className="fas fa-pencil-alt"></i></Button>
-          <Button onClick={handleDelet} className='action-icon-delete'><i className="fas fa-trash-alt"></i></Button>
-          </>
-        }
+        buttonSection={(item, index) => { //'item' é o dado que MainContent nos passou para CADA item da lista
+          return (
+            <>
+            <Button onClick={() => handleEdit(item, index)} className='action-icon-edit'><i className="fas fa-pencil-alt"></i></Button>
+            <Button onClick={() => handleDelet(item, index)} className='action-icon-delete'><i className="fas fa-trash-alt"></i></Button>
+            </>
+        )}}
+        stylesNoteElementClassName={styles['note-element']} // Passa o NOME da classe gerada para o .note-element ( pode ser passado direto )
+        stylesDisplayButtonsClassName={`${styles['lesson-notes-display-buttons']}`} // Passa a classe dos botões ( pode ser passada 'concaternada' com várias classes)
         >
           <Button onClick={handleSubimit} className='note-edit-header-button-submit' disabled={currentData.length === 0}>Confirmar</Button>
           <Button onClick={handleCancel} className='note-edit-header-button-cancel'>Cancelar</Button>
