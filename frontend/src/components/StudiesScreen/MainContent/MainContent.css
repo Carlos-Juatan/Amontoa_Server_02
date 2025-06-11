@@ -1,3 +1,7 @@
+.lesson-content {
+  width: 100%;
+}
+
 .lesson-content-area {
   flex-grow: 1;
   background-color: var(--card-background);

@@ -44,12 +44,16 @@ function NoteEditScreen() {
     console.log("Deletando item recebido :", item._id, "index: ", index);
   };
 
+  const handleAdd = () => {
+    console.log("Adicionar Novo");
+  };
+  
   const handleSubimit = () => {
-    
+    console.log("Confirmando e salvando");
   };
   
   const handleCancel = () => {
-    
+    console.log("Cancelar edição");
   };
 
   return (
@@ -60,6 +64,7 @@ function NoteEditScreen() {
         title={studiesNoteData.title}
       >
         <Button onClick={handleSubimit} className='note-edit-header-button-submit' disabled={currentData.length === 0 }>Confirmar</Button>
+        <Button onClick={handleAdd} className='note-edit-header-button-add'>Adicionar</Button>
         <Button onClick={handleCancel} className='note-edit-header-button-cancel'>Cancelar</Button>
       </Header>
       
@@ -77,6 +82,7 @@ function NoteEditScreen() {
         stylesDisplayButtonsClassName={`${styles['lesson-notes-display-buttons']}`} // Passa a classe dos botões ( pode ser passada 'concaternada' com várias classes)
         >
           <Button onClick={handleSubimit} className='note-edit-header-button-submit' disabled={currentData.length === 0}>Confirmar</Button>
+          <Button onClick={handleAdd} className='note-edit-header-button-add'>Adicionar</Button>
           <Button onClick={handleCancel} className='note-edit-header-button-cancel'>Cancelar</Button>
         </MainContent>
       </div>

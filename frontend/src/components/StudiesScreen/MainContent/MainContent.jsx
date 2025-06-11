@@ -32,12 +32,14 @@ function MainContent({ currentLesson, children, buttonSection, stylesNoteElement
               )}
             </div>
 
-            <div className="lesson-nav-buttons">
-              {children}
-            </div>
+            <div className="lesson-nav-buttons"> {children} </div>
           </>
         ) : (
-          <div className="note-detail-message">Selecione uma aula no menu lateral ou use a pesquisa.</div>
+          <>
+          <div className="note-detail-message">Nenhuma anotação...</div>
+
+          <div className="lesson-nav-buttons"> {children} </div>
+          </>
         )}
       </section>
     </main>
