@@ -123,7 +123,15 @@ function NoteEditScreen() {
         setCurrentData([...currentData, formData]);
         setHasEditedData(true);
       } else {
-        console.log('Tem index: ', modalIndex);
+        // Modo de edição: substitui o item existente no modalIndex
+        // 1. Cria uma nova cópia do array currentData
+        const updatedData = [...currentData];
+        // 2. Substitui o item na posição `modalIndex`
+        updatedData[modalIndex] = formData;
+        // 3. Atualiza o estado com o novo array
+        setCurrentData(updatedData);
+        setHasEditedData(true); // Indica que os dados foram modificados
+        console.log('Item atualizado no índice:', modalIndex, formData);
       }
     }, [currentData, modalIndex]);
 

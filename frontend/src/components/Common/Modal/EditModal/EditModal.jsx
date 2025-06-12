@@ -61,7 +61,8 @@ function EditModal({ isOpen, onClose, modalType: initialModalType, handleSubimit
   const handleSubmitWithData = useCallback(() => {
     // Aqui você pode adicionar validações extras antes de submeter
     handleSubimit(selectedType, formData);
-    setFormData({ type: selectedType });
+    if(item) handleClosed();
+    else setFormData({ type: selectedType });
   }, [handleSubimit, selectedType, formData]);
 
   const handleClosed = useCallback(() => {
