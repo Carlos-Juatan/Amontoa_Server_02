@@ -20,6 +20,10 @@ function NoteEditScreen() {
   const { collectionName, studies_id, lesson_id } = useParams(); // Parametros passados pela url
   const { data: studiesNoteData } = useDataOperations('studies/' + studies_id); // Item escolhido na tela studies
 
+  // Determine o caminho inicial para o useDataOperations
+  // Se lesson_id for '0', passamos null para evitar uma busca inicial desnecessária
+  const initialDataPath = lesson_id !== '0' ? `${collectionName}/${lesson_id}` : null;
+
   const {
     data,
     loading,
@@ -30,7 +34,7 @@ function NoteEditScreen() {
     isMutating,        // <--- Estados de mutação expostos
     mutationError,
     fetchData: refetchData, // <--- Função de re-sincronização exposta
-  } = lesson_id != 0 ? useDataOperations(`${collectionName}/${lesson_id}`) : {};
+  } = useDataOperations(initialDataPath);
 
   const [currentData, setCurrentData] = useState([]); // Estado para as anotações editáveis
   const [initialDataLoaded, setInitialDataLoaded] = useState(false); // Novo estado para controlar o carregamento inicial
@@ -38,11 +42,13 @@ function NoteEditScreen() {
 
   // Use useEffect para inicializar currentData com os dados de 'notes' quando 'data' for carregado.
   useEffect(() => {
-    if (data && data.notes && !initialDataLoaded) {
+    if (data && Array.isArray(data.notes) && !initialDataLoaded) {
       setCurrentData(data.notes);
       setInitialDataLoaded(true); // Marca que os dados iniciais foram carregados
+    } else if (lesson_id === '0') { // Se for um novo registro, inicia notes vazio
+      setCurrentData([]);
     }
-  }, [data, initialDataLoaded]); // Dependências: 'data' e 'initialDataLoaded'
+  }, [data, lesson_id, initialDataLoaded]); // Dependências: 'data' e 'initialDataLoaded'
 
   const handleBackToStudies = () => {
     navigate(`/studies/${collectionName}/${studies_id}`); // Navega de volta para tela de lista de anotações (studiesScreen)
@@ -90,9 +96,47 @@ function NoteEditScreen() {
     handleModelAddOrEdit(item, index);
   }, []); // Dependência: currentData
 
+
   const handleSubimit = useCallback(async () => {
-    console.log("Confirmando e salvando: ", currentData);
-  }, [currentData]); // Adicione as dependências
+    // Certifique-se de que lesson_id é uma string para a comparação '0'
+    const isNewRecord = lesson_id === '0';
+
+    const newItem = {
+      "module": "MÓDULO testando xy", // Estes valores provavelmente virão de outros inputs
+      "submodule": "submódulo testando xy", // Estes valores provavelmente virão de outros inputs
+      "title": "Aula testando xy", // Estes valores provavelmente virão de outros inputs
+      "notes": currentData // Seus dados de anotação
+    };
+
+    try {
+      let result;
+      if (isNewRecord) {
+        // Para a criação, você só precisa do nome da coleção, não do ID
+        result = await createRecord(collectionName, newItem);
+      } else {
+        result = await updateRecord(collectionName, lesson_id, newItem);
+      }
+
+      // Após criar ou atualizar, você pode querer re-buscar os dados para refletir as mudanças
+      // ou atualizar o estado local se sua API retornar o item completo e você quiser evitar refetch
+      if (isNewRecord && initialDataPath) { // Só refetch se for edição e houver um path para refetch
+        await refetchData(initialDataPath);
+      } else if (!isNewRecord) {
+        // Se for um novo registro e você quiser redirecionar ou limpar o formulário principal
+        // Isso depende da sua UX. Talvez redirecionar para a nova URL da aula criada.
+        // Exemplo: Redirecionar para a URL da nova aula (se a API retornar o ID)
+        navigate(`/studies/${collectionName}/${studies_id}`); // Volta para a tela de estudos
+      }
+      // onClose(); // Comentei, pois a questão anterior indicava manter o modal aberto.
+                    // Se você quer fechar o modal principal após salvar a aula inteira, descomente.
+      return result;
+
+    } catch (err) {
+      console.error("Erro na operação de submissão:", err);
+      // Você pode querer exibir uma mensagem de erro na UI aqui
+    }
+    console.log("Confirmando e salvando: ", newItem);
+  }, [currentData, lesson_id, collectionName, createRecord, updateRecord, refetchData, initialDataPath, navigate /*, onClose*/]);
 
 
 
