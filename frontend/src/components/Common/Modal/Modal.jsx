@@ -2,14 +2,17 @@ import React from 'react';
 
 import './Modal.css';
 
-function Modal({ isOpen, onClose, title, children, onSubmit, submitButtonText = "Salvar" }) {
+function Modal({ isOpen, onClose, title, editTypeSelection, children, onSubmit, submitButtonText = "Salvar", modalCustonStyle = '' }) {
   if (!isOpen) return null;
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content">
+      <div className={modalCustonStyle}>
         <div className="modal-header">
-          <h2>{title}</h2>
+          <div className='modal-header-content'>
+            <h2>{title}</h2>
+            {editTypeSelection}
+          </div>
           <button className="modal-close-button" onClick={onClose}>
             &times;
           </button>

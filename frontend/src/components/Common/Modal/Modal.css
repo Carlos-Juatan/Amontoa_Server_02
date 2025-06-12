@@ -14,6 +14,21 @@
   backdrop-filter: blur(5px); /* Efeito de desfoque no fundo */
 }
 
+.EdidModal-modal-content {
+  background-color: var(--card-background); /* Fundo do modal com a cor do card */
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px var(--shadow-color-dark); /* Sombra mais pronunciada */
+  border: 1px solid var(--border-color);
+  width: 90%;
+  max-width: 80%; /* Largura máxima um pouco maior para conteúdo */
+  max-height: 80%;
+  display: flex;
+  flex-direction: column;
+  gap: 25px; /* Espaçamento interno entre seções */
+  animation: fadeIn 0.3s ease-out; /* Animação simples de entrada */
+}
+
 .modal-content {
   background-color: var(--card-background); /* Fundo do modal com a cor do card */
   padding: 30px;
@@ -55,6 +70,13 @@
   text-shadow: 0 0 5px rgba(140, 115, 204, 0.2); /* Sombra de texto sutil */
 }
 
+.modal-header-content {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  width: 90%;
+}
+
 .modal-close-button {
   background: none;
   border: none;
@@ -75,6 +97,7 @@
   color: var(--text-light); /* Texto do corpo com cor clara */
   line-height: 1.6;
   font-size: 1.1em;
+  overflow-y: auto;
 }
 
 .modal-body p {

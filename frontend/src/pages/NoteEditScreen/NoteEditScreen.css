@@ -1,4 +1,4 @@
-
+/* src/pages/NoteEditScreen/NoteEditScreen.css */
 .note-edit-header-button-submit {
   background-color: var(--button-confirm); /* Roxo principal */
   border: 1px solid var(--button-confirm-border);

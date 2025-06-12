@@ -45,13 +45,15 @@ function ActionModal ({ isOpen, modalType, item, onClose, onEditName, onDelete, 
   return (
     <span className='modals'>
       {modalType === 'edit' && (
-        <Modal className='modal-edit'
+        <Modal 
+          className='modal-edit'
           isOpen={isOpen}
           onClose={onClose}
           title={`Editar: ${item?.title || 'item selecionado'}`} // Use optional chaining para evitar erro se item for undefined
           onSubmit={handleEditSubmit} // Passe a nova função de submissão
           submitButtonText={'Confirmar'}
           isMutating={isMutating} // Passe o estado de mutação para desabilitar o botão
+          modalCustonStyle="modal-content"
         >
           <div className="modal-content-form"> {/* Adicione um container para o input */}
             <label htmlFor="itemName">Novo nome:</label>
@@ -68,7 +70,8 @@ function ActionModal ({ isOpen, modalType, item, onClose, onEditName, onDelete, 
       )}
       
       {modalType === 'delete' && (
-        <Modal className='modal-delete'
+        <Modal 
+          className='modal-delete'
           isOpen={isOpen}
           onClose={onClose}
           title={`Confirmar exclusão: ${(item?._idList?.length > 1) ? `${item?._idList?.length} items` : '1 item'}?`}
@@ -76,6 +79,7 @@ function ActionModal ({ isOpen, modalType, item, onClose, onEditName, onDelete, 
           onSubmit={handleDeleteSubmit} // Use a função para deletar
           submitButtonText={'Deletar'}
           isMutating={isMutating}
+          modalCustonStyle="modal-content"
         >
           <p>Você tem certeza? Irá excluir {item?.submodules? 'todos os submódulos e aulas' : 'todas as aulas'} dentro do {item?.title}</p>
           {mutationError && <p className="error-message">{mutationError}</p>}

@@ -1,0 +1,156 @@
+/* src/components/Common/Modal/EditModal/EditModal.css */
+
+/* --- Estilos Gerais para o EditModal --- */
+.modals {
+  /* Pode ser usado para ajustar o contexto de empilhamento se necessário */
+  /* ou para envolver o modal com algum estilo específico */
+}
+
+/* Estilos para o componente Modal base (se ele não for visível no DOM, alguns desses podem não se aplicar) */
+/* Assumindo que o componente 'Modal' que você importou já tem sua própria estrutura de estilo para o overlay e o container principal.
+   Esses estilos seriam para o *conteúdo* que o EditModal injeta no seu Modal base. */
+
+/* --- Estilos para o Conteúdo Interno do Modal (Dropdown e Formulários) --- */
+.modals h2 {
+  color: var(--primary-purple); /* Títulos dentro do modal */
+  margin-bottom: 20px;
+  font-size: 1.8em;
+  text-align: center;
+}
+
+/* Estilos para labels */
+.modals label {
+  display: block; /* Cada label em sua própria linha */
+  margin-bottom: 8px;
+  color: var(--text-light);
+  font-weight: bold;
+}
+
+/* Estilos gerais para inputs de texto, textareas e selects */
+.modals input[type="text"],
+.modals input[type="number"],
+.modals input[type="url"],
+.modals textarea,
+.modals select {
+  width: calc(100% - 20px); /* Ocupa quase 100% da largura com padding */
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background-color: var(--card-background); /* Fundo dos inputs */
+  color: var(--text-light); /* Cor do texto digitado */
+  font-size: 1em;
+  box-sizing: border-box; /* Inclui padding e border na largura */
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.modals input:focus,
+.modals textarea:focus,
+.modals select:focus {
+  border-color: var(--highlight-blue); /* Borda ao focar */
+  outline: none; /* Remove o outline padrão do navegador */
+  box-shadow: 0 0 0 2px rgba(97, 218, 251, 0.3); /* Sombra suave */
+}
+
+/* Estilo para placeholder */
+.modals input::placeholder,
+.modals textarea::placeholder {
+  color: rgba(224, 224, 224, 0.5); /* Cor mais clara para o placeholder */
+}
+
+.note-type-select-container {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  width: 60%;
+}
+
+.note-type-select-container .note-type-select-label{
+  width: 10%;
+}
+
+.note-type-select-container #note-type-select {
+  width: 170px;
+}
+
+/* --- Estilos para Botões Internos dos Formulários (ex: Adicionar/Remover Item na Lista, Tabela) --- */
+.modals button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: bold;
+  transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+  margin-right: 10px; /* Espaçamento entre botões */
+}
+
+.modals button[type="button"] { /* Botões secundários como "Adicionar Item" */
+  background-color: var(--secondary-purple);
+  color: var(--text-light);
+}
+
+.modals button[type="button"]:hover {
+  background-color: var(--primary-purple);
+  opacity: 0.9;
+}
+
+.modals button[type="button"]:disabled {
+  background-color: var(--card-background);
+  color: rgba(224, 224, 224, 0.5);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Botão de remoção (ex: remover item da lista, remover cabeçalho da tabela) */
+.modals button.remove-button { /* Você pode adicionar esta classe no HTML dos botões de remover */
+  background-color: var(--button-delete);
+  color: var(--text-light);
+}
+
+.modals button.remove-button:hover {
+  background-color: var(--button-delete-hover);
+}
+
+/* --- Estilos Específicos para a Tabela no TableForm --- */
+.modals table {
+  width: 100%;
+  border-collapse: collapse; /* Colapsa as bordas das células */
+  margin-bottom: 15px;
+  background-color: var(--card-background);
+}
+
+.modals th,
+.modals td {
+  border: 1px solid var(--border-color);
+  padding: 10px;
+  text-align: left;
+  color: var(--text-light);
+}
+
+.modals th {
+  background-color: var(--secondary-purple);
+  font-weight: bold;
+}
+
+.modals table input[type="text"] {
+  width: 100%;
+  padding: 5px;
+  margin: 0; /* Remove margem extra dentro da célula */
+  border: none;
+  background: transparent; /* Fundo transparente para campos de tabela */
+  color: var(--text-light);
+  box-sizing: border-box;
+}
+
+.modals table input[type="text"]:focus {
+  border: 1px solid var(--highlight-blue); /* Borda ao focar */
+  box-shadow: none;
+}
+
+/* Estilo para div que envolve inputs em linha (como itens da lista, cabeçalhos de tabela) */
+.modals .input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espaçamento entre o input e o botão */
+  margin-bottom: 10px;
+}
