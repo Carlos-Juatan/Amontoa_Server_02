@@ -33,3 +33,141 @@
   gap: 8px;             /* Adiciona um pequeno espaço entre os botões (opcional, mas bom para legibilidade) */
   align-items: flex-end; /* Alinha os botões à direita dentro desta div (se a div for mais larga que os botões) */
 }
+
+
+
+
+
+
+
+
+
+
+
+
+/* src/components/ComingSoonScreen/NoteEditScreenElements.module.css */
+
+/* ... (seus estilos existentes) ... */
+
+.lesson-details-form-container {
+  width: 90%;
+  margin: 100px auto 0 auto;  
+  border: 1px solid var(--border-color);
+  
+  background-color: var(--card-background); /* Exemplo: um fundo mais claro */
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px var(--shadow-color);
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Espaçamento entre os grupos de formulário */
+}
+.lesson-details-form-container h2 {
+  color: var(--text-light); /* Cor do texto principal */
+  margin-bottom: 5px;
+  font-size: 1.5rem;
+  border-bottom: 1px solid var(--border-color); /* Usando sua cor de borda sutil */
+  padding-bottom: 10px;
+}
+
+.form-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-group label {
+  flex-basis: 100px;
+  font-weight: bold;
+  color: var(--text-light); /* Labels em texto claro */
+  text-align: right;
+  padding-right: 10px;
+  box-sizing: border-box;
+}
+
+.form-input {
+  flex-grow: 1;
+  min-width: 150px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color); /* Borda dos inputs */
+  border-radius: 6px;
+  background-color: var(--background-dark); /* Fundo dos inputs mais escuro */
+  color: var(--text-light); /* Texto dos inputs claro */
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  height: 38px;
+}
+
+.form-input::placeholder {
+  color: rgba(var(--text-light-rgb), 0.7); /* Placeholder mais sutil, adicione --text-light-rgb se tiver */
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--highlight-blue); /* Borda de foco com o azul de realce */
+  box-shadow: 0 0 0 3px rgba(97, 218, 251, 0.3); /* Sombra de foco com o azul de realce (usando RGB direto, pois você não tem variável RGB para highlight-blue) */
+}
+
+.form-input[disabled] {
+  background-color: var(--background-dark); /* Fundo mais escuro quando desabilitado */
+  color: rgba(var(--text-light-rgb), 0.5); /* Texto mais sutil quando desabilitado */
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.toggle-input-button {
+  background-color: var(--primary-purple); /* Botões de alternância com o roxo principal */
+  color: var(--text-light); /* Texto claro no botão */
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  white-space: nowrap;
+  height: 38px;
+}
+
+.toggle-input-button:hover:not(:disabled) {
+  background-color: var(--secondary-purple); /* Roxo secundário no hover */
+  transform: translateY(-1px);
+}
+
+.toggle-input-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.toggle-input-button:disabled {
+  background-color: var(--secondary-purple); /* Roxo secundário quando desabilitado */
+  color: rgba(var(--text-light-rgb), 0.5); /* Texto mais sutil no botão desabilitado */
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Media Queries para responsividade */
+@media (max-width: 768px) {
+  .form-group label {
+    flex-basis: 100%;
+    text-align: left;
+    padding-right: 0;
+  }
+
+  .form-input {
+    width: 100%;
+    flex-grow: unset;
+  }
+
+  .toggle-input-button {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 10px;
+  }
+
+  .form-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

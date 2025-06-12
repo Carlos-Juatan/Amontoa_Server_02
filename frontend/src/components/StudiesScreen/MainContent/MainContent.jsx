@@ -6,14 +6,14 @@ import NoteContentRenderer from './NoteContentRenderer';
 import './MainContent.css';
 
 // src/components/StudiesScreen/NoteDetailScreen/MainContent/MainContent.jsx
-function MainContent({ currentLesson, children, buttonSection, stylesNoteElementClassName, stylesDisplayButtonsClassName }) {
+function MainContent({ title, currentLesson, children, buttonSection, stylesNoteElementClassName, stylesDisplayButtonsClassName }) {
 
   return (
     <main className='lesson-content'>
       <section className="lesson-content-area">
         {currentLesson ? (
           <>
-            <h2 className="current-lesson-title">{currentLesson.title}</h2>
+            <h2 className="current-lesson-title">{title}</h2>
             <div className="lesson-notes-display">
               {currentLesson.notes && currentLesson.notes.length > 0 ? (
                 currentLesson.notes.map((contentItem, contentIndex) => (
