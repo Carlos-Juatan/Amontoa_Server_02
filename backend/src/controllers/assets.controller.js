@@ -1,96 +1,109 @@
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs').promises; // Usar promises para operações de sistema de arquivos
+const fs = require('fs').promises; // Importe o fs.promises para usar async/await
 
-// Define o diretório base para salvar os assets.
-// Ele pega o valor da variável de ambiente ASSETS_PATH definida no docker-compose.yml.
-// Se não estiver definida (ex: em ambiente de desenvolvimento local sem Docker),
-// ele usa uma pasta 'assets_data' relativa ao diretório do projeto.
 const ASSETS_BASE_DIR = process.env.ASSETS_PATH || path.join(__dirname, '..', '..', 'assets_data');
 
-// Configuração do Multer para armazenamento em disco
 const storage = multer.diskStorage({
-  // Define o destino do arquivo
   destination: async (req, file, cb) => {
-    const { folderName } = req.params; // Pega o nome da pasta da URL (ex: 'images', 'videos')
-    const targetDir = path.join(ASSETS_BASE_DIR, folderName); // Caminho completo da pasta de destino
+    const { folderName } = req.params;
+    const targetDir = path.join(ASSETS_BASE_DIR, folderName);
 
     try {
-      // Cria o diretório recursivamente se ele não existir
       await fs.mkdir(targetDir, { recursive: true });
-      cb(null, targetDir); // Chama a callback com o diretório de destino
+      cb(null, targetDir);
     } catch (error) {
       console.error(`Erro ao criar diretório ${targetDir}:`, error);
-      cb(error); // Retorna um erro se a criação da pasta falhar
+      cb(error);
     }
   },
-  // Define o nome do arquivo no disco
   filename: (req, file, cb) => {
-    // O nome do arquivo pode vir no corpo da requisição via campo 'fileName'
-    const { fileName } = req.body;
-    const fileExtension = path.extname(file.originalname); // Obtém a extensão original do arquivo
-
-    if (fileName) {
-      // Se um fileName foi fornecido no corpo, usa-o com a extensão original
-      cb(null, fileName + fileExtension);
-    } else {
-      // Caso contrário, usa o nome original do arquivo
-      cb(null, file.originalname);
-    }
+    // --- SIMPLIFIQUE AQUI: Sempre use o nome original por enquanto ---
+    // Ou gere um UUID para evitar colisões temporárias antes do renomeio
+    const fileExtension = path.extname(file.originalname);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    // Usar um nome temporário para garantir unicidade antes de renomear
+    cb(null, file.fieldname + '-' + uniqueSuffix + fileExtension);
+    // Ou, para simplificar o teste, use o nome original.
+    // cb(null, file.originalname); // Se usar isso, pode haver colisões de nomes se não renomear.
   }
 });
 
-// Filtro de arquivos: aceita apenas tipos MIME de imagem e vídeo
 const fileFilter = (req, file, cb) => {
   const allowedMimeTypes = /jpeg|jpg|png|gif|mp4|mov|avi|wmv|webm/;
   const isMimeTypeAllowed = allowedMimeTypes.test(file.mimetype);
   const isExtensionAllowed = allowedMimeTypes.test(path.extname(file.originalname).toLowerCase());
 
   if (isMimeTypeAllowed && isExtensionAllowed) {
-    return cb(null, true); // Aceita o arquivo
+    return cb(null, true);
   }
-  // Rejeita o arquivo com uma mensagem de erro
   cb(new Error("Tipo de arquivo não suportado. Apenas imagens (jpeg, jpg, png, gif) e vídeos (mp4, mov, avi, wmv, webm) são permitidos."));
 };
 
-// Configuração principal do Multer
-const upload = multer({
-  storage: storage,         // Usa a configuração de armazenamento definida acima
-  fileFilter: fileFilter,   // Aplica o filtro de tipos de arquivo
-  limits: { fileSize: 25 * 1024 * 1024 } // Limite de tamanho do arquivo: 25MB (ajuste conforme necessário)
-});
+const uploadMiddleware = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 25 * 1024 * 1024 }
+}).fields([
+  { name: 'file', maxCount: 1 },
+  { name: 'fileName', maxCount: 1 }
+]);
 
-// Função controladora para lidar com o upload de um único arquivo
+
 exports.uploadFile = (req, res, next) => {
-  // `upload.single('file')` espera um campo de formulário chamado 'file'
-  upload.single('file')(req, res, async (err) => {
+  uploadMiddleware(req, res, async (err) => { // Async para usar await no fs.promises.rename
     if (err instanceof multer.MulterError) {
-      // Erro específico do Multer (ex: tamanho excedido, tipo de arquivo inválido)
       console.error("MulterError:", err.message);
       return res.status(400).json({ message: 'Erro no upload do arquivo', error: err.message });
     } else if (err) {
-      // Outros erros (ex: erro ao criar pasta)
       console.error("Erro desconhecido no upload:", err.message);
       return res.status(500).json({ message: 'Erro interno do servidor', error: err.message });
     }
 
-    // Se nenhum arquivo foi enviado (apesar de tudo)
-    if (!req.file) {
+    const uploadedFile = req.files && req.files['file'] ? req.files['file'][0] : null;
+
+    if (!uploadedFile) {
       return res.status(400).json({ message: 'Nenhum arquivo enviado.' });
     }
 
     const { folderName } = req.params;
-    const uploadedFileName = req.file.filename; // Nome final do arquivo salvo
+    const { fileName: customFileName } = req.body; // <--- AGORA req.body ESTÁ DISPONÍVEL AQUI
 
-    // Constrói a URL pública para acessar o arquivo
-    // '/assets' é o prefixo que o Express usa para servir arquivos estáticos
-    const fileUrl = `/assets/${folderName}/${uploadedFileName}`;
+    let finalFileName = uploadedFile.filename; // Nome inicial dado pelo Multer
+
+    console.log('--- Post-upload processing started ---');
+    console.log('req.body (after multer processing):', req.body);
+    console.log('customFileName from req.body:', customFileName);
+    console.log('uploadedFile.path (original path):', uploadedFile.path);
+
+    // Se um nome customizado foi fornecido, renomeie o arquivo
+    if (customFileName) {
+      const fileExtension = path.extname(uploadedFile.originalname);
+      const sanitizedCustomFileName = customFileName.replace(/[^a-zA-Z0-9-_.]/g, '_'); // Sanitizar
+      const newFileName = sanitizedCustomFileName + fileExtension;
+      const newFilePath = path.join(uploadedFile.destination, newFileName);
+
+      try {
+        await fs.rename(uploadedFile.path, newFilePath);
+        finalFileName = newFileName; // Atualiza o nome final para a resposta
+        console.log(`Arquivo renomeado de ${uploadedFile.filename} para ${finalFileName}`);
+      } catch (renameErr) {
+        console.error(`Erro ao renomear o arquivo de ${uploadedFile.path} para ${newFilePath}:`, renameErr);
+        // Pode decidir se quer falhar o upload aqui ou retornar com o nome original
+        // Por simplicidade, vamos apenas logar e prosseguir com o nome original se falhar
+      }
+    } else {
+      console.log('Nenhum nome customizado fornecido. Mantendo nome original/gerado.');
+    }
+    console.log('--- Post-upload processing finished ---');
+
+    const fileUrl = `/assets/${folderName}/${finalFileName}`;
 
     res.status(200).json({
       message: 'Arquivo enviado e salvo com sucesso!',
-      fileName: uploadedFileName,
-      filePath: req.file.path, // Caminho completo do arquivo no servidor (dentro do contêiner)
-      fileUrl: fileUrl         // URL acessível publicamente via navegador
+      fileName: finalFileName,
+      filePath: path.join(uploadedFile.destination, finalFileName), // Caminho final após renomeio
+      fileUrl: fileUrl
     });
   });
 };

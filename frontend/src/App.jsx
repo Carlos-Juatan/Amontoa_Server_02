@@ -6,6 +6,7 @@ import ComingSoonScreen from './pages/ComingSoonScreen/ComingSoonScreen';
 import StudiesScreen from './pages/StudiesScreen/StudiesScreen';
 import StudiesNotesScreen from './pages/StudiesNotesScreen/StudiesNotesScreen';
 import NoteEditScreen from './pages/NoteEditScreen/NoteEditScreen';
+import AssetUploader from './pages/test/AssetUploader';
 
 import './App.css'; // Estilos globais
 import '@fortawesome/fontawesome-free/css/all.min.css'; // Importa Font Awesome
@@ -29,6 +30,7 @@ function App() {
         <Route path="/studies/edit/:collectionName/:studies_id/:lesson_id" element={<NoteEditScreen />} />
         {/* Você pode adicionar mais rotas conforme necessário, por exemplo: */}
         {/* <Route path="/movies" element={<MoviesScreen />} /> */}
+        <Route path="/upload-test" element={<AssetUploader />} />
       </Routes>
     </div>
   );
