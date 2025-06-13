@@ -12,7 +12,9 @@ function HeadingForm({ item, onChange }) {
   }, [item]);
 
   const handleLevelChange = (e) => {
-    const newValue = Number(e.target.value); // Garante que é um número
+    // Quando o valor vem de um <select>, ele já é uma string.
+    // Converte para número antes de atualizar o estado e chamar onChange.
+    const newValue = Number(e.target.value);
     setLevel(newValue);
     onChange({ level: newValue, content });
   };
@@ -23,20 +25,33 @@ function HeadingForm({ item, onChange }) {
     onChange({ level, content: newValue });
   };
 
-  return (
-    <div>
-      <label htmlFor="heading-level">Nível do Título (H1-H6):</label>
-      <input
-        id="heading-level"
-        type="number"
-        min="1"
-        max="6"
-        value={level}
-        onChange={handleLevelChange}
-        style={{ width: '100%', marginBottom: '10px' }}
-      />
+  // As opções para o dropdown do nível do título (H1 a H6)
+  const headingLevels = [1, 2, 3, 4, 5, 6, 7]; // H1 a H6 são os mais comuns e semanticamente relevantes
 
-      <label htmlFor="heading-content">Conteúdo do Título:</label>
+  return (
+    <div className='heading-level'>
+      <div className='heading-level-header'>
+        <label htmlFor="heading-content">Conteúdo do Título:</label>
+
+        <div className='heading-level-select-group'>
+          <label htmlFor="heading-level" className='heading-level-text'>Nível do Título:</label>
+          {/* Input Type Number substituído por um Dropdown (Select) */}
+          <select
+            id="heading-level"
+            value={level}
+            onChange={handleLevelChange}
+            // Adicione uma classe CSS aqui para estilizar o dropdown
+            // Você pode reutilizar estilos de .form-input de NoteEditScreenElements.module.css
+            className='heading-level-select' // Nova classe para estilização específica
+          >
+            {headingLevels.map((lvl) => (
+              <option key={lvl} value={lvl}>
+                H{lvl}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
       <input
         id="heading-content"
         type="text"

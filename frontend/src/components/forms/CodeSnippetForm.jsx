@@ -31,17 +31,50 @@ function CodeSnippetForm({ item, onChange }) {
     onChange({ language, title, code: newValue });
   };
 
+  // --- Lista de linguagens para o dropdown ---
+  const availableLanguages = [
+    '', // Opção vazia/default
+    'javascript',
+    'python',
+    'html',
+    'css',
+    'java',
+    'csharp',
+    'c++',
+    'php',
+    'ruby',
+    'typescript',
+    'go',
+    'rust',
+    'bash',
+    'json',
+    'markdown',
+    'sql',
+    'xml',
+    'yaml',
+    // Adicione mais linguagens conforme necessário
+  ];
+  // ----------------------------------------
+
   return (
     <div>
       <label htmlFor="code-language">Linguagem:</label>
-      <input
+      {/* Input Type Text substituído por um Dropdown (Select) */}
+      <select
         id="code-language"
-        type="text"
         value={language}
         onChange={handleLanguageChange}
-        placeholder="Ex: javascript, python, bash"
-        style={{ width: '100%', marginBottom: '10px' }}
-      />
+        // Adicione uma classe CSS para estilização (pode ser a mesma de outros selects)
+        className='code-language-select' // Nova classe para estilização específica
+        style={{ width: '100%', marginBottom: '10px' }} // Estilos inline temporários ou migrar para CSS Module
+      >
+        <option value="" disabled>Selecione uma linguagem</option> {/* Placeholder */}
+        {availableLanguages.map((lang) => (
+          <option key={lang} value={lang}>
+            {lang === '' ? 'Nenhum' : lang.charAt(0).toUpperCase() + lang.slice(1)} {/* Capitaliza a primeira letra */}
+          </option>
+        ))}
+      </select>
 
       <label htmlFor="code-title">Título do Trecho (Opcional):</label>
       <input

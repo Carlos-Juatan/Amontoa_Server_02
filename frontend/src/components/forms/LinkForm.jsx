@@ -14,14 +14,29 @@ function LinkForm({ item, onChange }) {
   const handleContentChange = (e) => {
     const newValue = e.target.value;
     setContent(newValue);
+    // Atualiza o pai imediatamente com o conteúdo atual
     onChange({ content: newValue, href });
   };
 
   const handleHrefChange = (e) => {
-    const newValue = e.target.value;
-    setHref(newValue);
-    onChange({ content, href: newValue });
+    // Apenas atualiza o estado local durante a digitação
+    setHref(e.target.value);
   };
+
+  // --- NOVA FUNÇÃO PARA MANIPULAR O FOCO (onBlur) ---
+  const handleHrefBlur = () => {
+    let currentValue = href; // Pega o valor atual do estado
+
+    // Verifica se o valor não está vazio e se não começa com 'http://' ou 'https://'
+    // Esta verificação acontece apenas quando o campo perde o foco
+    if (currentValue && !currentValue.startsWith('http://') && !currentValue.startsWith('https://')) {
+      currentValue = `https://${currentValue}`; // Adiciona o prefixo HTTPS
+      setHref(currentValue); // Atualiza o estado com o valor modificado
+    }
+    // Sempre chama onChange para garantir que o componente pai receba o valor final
+    onChange({ content, href: currentValue });
+  };
+  // ----------------------------------------------------
 
   return (
     <div>
@@ -40,7 +55,8 @@ function LinkForm({ item, onChange }) {
         id="link-href"
         type="url"
         value={href}
-        onChange={handleHrefChange}
+        onChange={handleHrefChange} // onChange apenas atualiza o estado local
+        onBlur={handleHrefBlur}     // onBlur aplica a lógica de prefixo e notifica o pai
         placeholder="https://exemplo.com.br"
         style={{ width: '100%' }}
       />

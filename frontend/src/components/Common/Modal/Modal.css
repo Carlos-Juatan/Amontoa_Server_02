@@ -104,6 +104,10 @@
   margin-bottom: 15px;
 }
 
+.modal-body textarea {
+  resize: none; /* Desativa o redimensionamento */
+}
+
 .modal-input-field {
   width: calc(100% - 20px); /* Largura total com padding */
   padding: 12px 10px;

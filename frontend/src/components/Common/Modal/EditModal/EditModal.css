@@ -33,7 +33,6 @@
 .modals textarea,
 .modals select {
   width: calc(100% - 20px); /* Ocupa quase 100% da largura com padding */
-  padding: 10px;
   border: 1px solid var(--border-color);
   border-radius: 5px;
   background-color: var(--card-background); /* Fundo dos inputs */
@@ -41,6 +40,14 @@
   font-size: 1em;
   box-sizing: border-box; /* Inclui padding e border na largura */
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* Estilos gerais para inputs de texto, textareas e selects */
+.modals input[type="text"],
+.modals input[type="number"],
+.modals input[type="url"],
+.modals textarea {
+  padding: 10px;
 }
 
 .modals input:focus,
@@ -153,4 +160,70 @@
   align-items: center;
   gap: 10px; /* Espaçamento entre o input e o botão */
   margin-bottom: 10px;
+}
+
+.modal-body .heading-level {
+
+}
+
+.modal-body .heading-level .heading-level-header {
+  display: flex;
+  gap: 50px;
+  align-items: center;
+}
+
+.modal-body .heading-level .heading-level-header label{
+  margin: 0;
+}
+
+.modal-body .heading-level .heading-level-header .heading-level-select-group {
+  display: flex;
+  width: 300x;
+  align-items: center;
+  gap: 30px;
+  padding: 0 0 0 40px;
+}
+
+.modal-body .heading-level .heading-level-header .heading-level-select-group .heading-level-select{
+  width: 60px;
+  padding: 4px;
+  text-align: center;
+}
+
+.modal-body .heading-level #heading-content {
+  margin-top: 20px;
+}
+
+.modal-body .alert-level-container .alert-level-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-body .alert-level-container .alert-level-header label {
+  width: 180px;
+}
+
+.modal-body .alert-level-container .alert-level-header .alert-level-select {
+  width: 120px;
+  padding: 4;
+  text-align: center;
+}
+
+.modal-body .alert-level-container .alert-level-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#code-content {
+  background-color: var(--background-dark);
+}
+
+#code-language {
+  padding: 10px;
+}
+
+.modal-header-content .note-type-select-container #note-type-select {
+  padding: 10px;
 }
