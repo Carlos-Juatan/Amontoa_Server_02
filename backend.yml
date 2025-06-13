@@ -13,6 +13,12 @@ services:
     environment:
       MONGODB_URI: ${MONGODB_URI}
       PORT: ${PORT}
+      # Define a variável de ambiente para o caminho dos assets dentro do contêiner
+      ASSETS_PATH: /usr/src/app/assets_data # Caminho dentro do contêiner
+    volumes:
+      # Monta o diretório de assets do host no contêiner
+      # ATENÇÃO: Substitua 'D:/_Shared_files/_Amontoa-Server/assets_data' pelo caminho real no seu host
+      - D:/_Shared_files/_Amontoa-Server/assets_data:/usr/src/app/assets_data
     networks:
       - app-network
 
