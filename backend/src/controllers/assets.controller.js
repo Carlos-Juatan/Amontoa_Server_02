@@ -1,15 +1,50 @@
+// assets.controller.js
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs').promises; // Importe o fs.promises para usar async/await
+const fs = require('fs').promises;
 
 const ASSETS_BASE_DIR = process.env.ASSETS_PATH || path.join(__dirname, '..', '..', 'assets_data');
 
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
-    const { folderName } = req.params;
-    const targetDir = path.join(ASSETS_BASE_DIR, folderName);
+    let category = '';
+    if (req.originalUrl.includes('/upload/images')) {
+        category = 'images';
+    } else if (req.originalUrl.includes('/upload/videos')) {
+        category = 'videos';
+    } else {
+        // Fallback ou erro se a categoria não for clara.
+        // Para as rotas propostas, isso não deve acontecer.
+        category = 'misc'; 
+    }
+
+    // Constrói o caminho da pasta dinamicamente
+    let folderPathParts = [category]; // Começa com a categoria (images/videos)
+
+    if (req.params.folderName) {
+      folderPathParts.push(req.params.folderName);
+    }
+    if (req.params.subfolder) {
+      folderPathParts.push(req.params.subfolder);
+    }
+
+    // Se nenhuma subpasta for fornecida (apenas /upload/images), use um padrão
+    if (folderPathParts.length === 1 && category !== 'misc') {
+        folderPathParts.push('default'); // Ex: /assets_data/images/default
+    } else if (folderPathParts.length === 1 && category === 'misc') {
+        folderPathParts.push('uploads'); // Fallback para outras categorias não explicitas
+    }
+
+    const targetSubDir = path.join(...folderPathParts);
+
+    // É crucial que `targetSubDir` seja tratado como um caminho seguro.
+    // path.normalize() já ajuda, mas a substituição regex previne '..'
+    const sanitizedTargetSubDir = path.normalize(targetSubDir).replace(/^(\.\.[/\\])+/, '');
+
+    const targetDir = path.join(ASSETS_BASE_DIR, sanitizedTargetSubDir);
 
     try {
+      // O { recursive: true } é a chave! Ele cria todas as subpastas necessárias.
       await fs.mkdir(targetDir, { recursive: true });
       cb(null, targetDir);
     } catch (error) {
@@ -18,14 +53,9 @@ const storage = multer.diskStorage({
     }
   },
   filename: (req, file, cb) => {
-    // --- SIMPLIFIQUE AQUI: Sempre use o nome original por enquanto ---
-    // Ou gere um UUID para evitar colisões temporárias antes do renomeio
     const fileExtension = path.extname(file.originalname);
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    // Usar um nome temporário para garantir unicidade antes de renomear
     cb(null, file.fieldname + '-' + uniqueSuffix + fileExtension);
-    // Ou, para simplificar o teste, use o nome original.
-    // cb(null, file.originalname); // Se usar isso, pode haver colisões de nomes se não renomear.
   }
 });
 
@@ -51,7 +81,7 @@ const uploadMiddleware = multer({
 
 
 exports.uploadFile = (req, res, next) => {
-  uploadMiddleware(req, res, async (err) => { // Async para usar await no fs.promises.rename
+  uploadMiddleware(req, res, async (err) => {
     if (err instanceof multer.MulterError) {
       console.error("MulterError:", err.message);
       return res.status(400).json({ message: 'Erro no upload do arquivo', error: err.message });
@@ -66,10 +96,35 @@ exports.uploadFile = (req, res, next) => {
       return res.status(400).json({ message: 'Nenhum arquivo enviado.' });
     }
 
-    const { folderName } = req.params;
-    const { fileName: customFileName } = req.body; // <--- AGORA req.body ESTÁ DISPONÍVEL AQUI
+    // Reconstroi o caminho da URL para a resposta
+    let category = '';
+    if (req.originalUrl.includes('/upload/images')) {
+        category = 'images';
+    } else if (req.originalUrl.includes('/upload/videos')) {
+        category = 'videos';
+    } else {
+        category = 'misc'; 
+    }
 
-    let finalFileName = uploadedFile.filename; // Nome inicial dado pelo Multer
+    let urlPathParts = [category];
+    if (req.params.folderName) {
+      urlPathParts.push(req.params.folderName);
+    }
+    if (req.params.subfolder) {
+      urlPathParts.push(req.params.subfolder);
+    }
+
+    // Se nenhuma subpasta for fornecida na URL, use o nome da pasta padrão que foi usada
+    if (urlPathParts.length === 1 && category !== 'misc') {
+        urlPathParts.push('default'); 
+    } else if (urlPathParts.length === 1 && category === 'misc') {
+        urlPathParts.push('uploads'); 
+    }
+
+    const fullUrlPath = urlPathParts.join('/'); // Monta o caminho para a URL
+
+    const { fileName: customFileName } = req.body;
+    let finalFileName = uploadedFile.filename;
 
     console.log('--- Post-upload processing started ---');
     console.log('req.body (after multer processing):', req.body);
@@ -79,30 +134,28 @@ exports.uploadFile = (req, res, next) => {
     // Se um nome customizado foi fornecido, renomeie o arquivo
     if (customFileName) {
       const fileExtension = path.extname(uploadedFile.originalname);
-      const sanitizedCustomFileName = customFileName.replace(/[^a-zA-Z0-9-_.]/g, '_'); // Sanitizar
+      const sanitizedCustomFileName = customFileName.replace(/[^a-zA-Z0-9-_.]/g, '_');
       const newFileName = sanitizedCustomFileName + fileExtension;
       const newFilePath = path.join(uploadedFile.destination, newFileName);
 
       try {
         await fs.rename(uploadedFile.path, newFilePath);
-        finalFileName = newFileName; // Atualiza o nome final para a resposta
+        finalFileName = newFileName;
         console.log(`Arquivo renomeado de ${uploadedFile.filename} para ${finalFileName}`);
       } catch (renameErr) {
         console.error(`Erro ao renomear o arquivo de ${uploadedFile.path} para ${newFilePath}:`, renameErr);
-        // Pode decidir se quer falhar o upload aqui ou retornar com o nome original
-        // Por simplicidade, vamos apenas logar e prosseguir com o nome original se falhar
       }
     } else {
       console.log('Nenhum nome customizado fornecido. Mantendo nome original/gerado.');
     }
     console.log('--- Post-upload processing finished ---');
 
-    const fileUrl = `/assets/${folderName}/${finalFileName}`;
+    const fileUrl = `/assets/${fullUrlPath}/${finalFileName}`; // A URL final
 
     res.status(200).json({
       message: 'Arquivo enviado e salvo com sucesso!',
       fileName: finalFileName,
-      filePath: path.join(uploadedFile.destination, finalFileName), // Caminho final após renomeio
+      filePath: path.join(uploadedFile.destination, finalFileName),
       fileUrl: fileUrl
     });
   });

@@ -363,9 +363,13 @@ function NoteEditScreen() {
         modalType={modalType}
         handleSubimit={handleModalSubimit}
         item={modalItem}
-        index={modalIndex}
         isMutating={isMutating}
         mutationError={mutationError}
+        moduleTile={moduleName}
+        submoduleTitle={submoduleName}
+        lessonTitle={lessonTitle}
+        listLenth={currentData?.length || 0}
+        modalIndex={modalIndex}
       />
     </div>
   );

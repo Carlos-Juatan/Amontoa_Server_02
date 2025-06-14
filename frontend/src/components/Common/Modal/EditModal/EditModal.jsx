@@ -2,6 +2,8 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 
 import Modal from '../Modal'; // Assumindo que '../Modal' é o seu componente Modal base
 
+import useAssetOperations from '../../../../hooks/useAssetOperations';
+
 // Importe todos os componentes de formulário específicos para cada tipo
 import ParagraphForm from '../../../forms/ParagraphForm'; // Ajuste o caminho conforme sua estrutura
 import ImageForm from '../../../forms/ImageForm';
@@ -19,11 +21,26 @@ import { NOTE_TYPES } from '../../../../constants/noteTypes'; // Ajuste o caminh
 
 import './EditModal.css';
 
-function EditModal({ isOpen, onClose, modalType: initialModalType, handleSubimit, item, isMutating, mutationError }) {
+function EditModal({ isOpen, onClose, modalType: initialModalType, handleSubimit, item, isMutating, mutationError, moduleTile, submoduleTitle, lessonTitle, listLenth, modalIndex }) {
   // Estado local para o tipo de modal selecionado quando está no modo "adicionar novo"
   const [selectedType, setSelectedType] = useState(initialModalType || '');
   // Estado local para os dados do formulário que estão sendo editados/adicionados
   const [formData, setFormData] = useState(item || {});
+  
+    // file select
+  const [selectedFile, setSelectedFile] = useState(null);
+  const { isUploading, uploadError, uploadedAssetInfo, handleUpload, getAssetUrl } = useAssetOperations();
+  
+  const fileIndex = modalIndex != null ? modalIndex : listLenth;
+
+  console.log('index: ', fileIndex, 'model index: ', modalIndex);
+
+  const folderName = `images/${moduleTile}/${submoduleTitle}`.trim().replace(/[^a-zA-Z0-9-_/]/g, '_');
+  const fileName = `${lessonTitle}_${fileIndex}`.trim().replace(/[^a-zA-Z0-9-_/]/g, '_');
+
+  
+
+  const imageUrl = `http://localhost:3000/assets/${folderName}/${fileName}.avif`;
 
   // Atualiza o tipo selecionado e os dados do formulário quando as props mudam
   useEffect(() => {
@@ -58,9 +75,12 @@ function EditModal({ isOpen, onClose, modalType: initialModalType, handleSubimit
   }, []);
 
   // Adapta o handleSubimit para passar os dados do formulário
-  const handleSubmitWithData = useCallback(() => {
+  const handleSubmitWithData = useCallback((event) => {
     // Aqui você pode adicionar validações extras antes de submeter
+    uploadFile(event);
     handleSubimit(selectedType, formData);
+    setSelectedFile(null);
+
     if(item) handleClosed();
     else setFormData({ type: selectedType });
   }, [handleSubimit, selectedType, formData]);
@@ -70,6 +90,42 @@ function EditModal({ isOpen, onClose, modalType: initialModalType, handleSubimit
     setSelectedType('');
     setFormData({});
   }, [onClose]);
+
+
+
+
+
+
+
+  
+  
+
+  const onFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const uploadFile = async (event) => {
+    event.preventDefault();
+    if (!selectedFile) {
+      alert('Por favor, selecione um arquivo para upload.');
+      return;
+    }
+
+    try {
+      console.log(folderName, fileName);
+      const result = await handleUpload(selectedFile, folderName, fileName);
+      console.log('Upload concluído com sucesso:', result);
+    } catch (error) {
+      console.error('Falha ao enviar arquivo:', error);
+      console.error('--Backend: ', uploadError)
+    }
+  };
+
+
+
+
+
+
 
   // Conteúdo do modal que será renderizado dentro do componente <Modal>
   const ModalContent = () => {
@@ -86,6 +142,13 @@ function EditModal({ isOpen, onClose, modalType: initialModalType, handleSubimit
           <SpecificFormComponent
             item={formData} // Passa os dados atuais do formulário
             onChange={handleFormChange} // Passa a função para atualizar os dados
+            moduleTile={moduleTile}
+            submoduleTitle={submoduleTitle}
+            lessonTitle={lessonTitle}
+            listLenth={listLenth}
+            onFileChange={onFileChange}
+            imageUrl={imageUrl}
+            selectedFile={selectedFile}
           />
         );
       } else {
