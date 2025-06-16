@@ -10,37 +10,37 @@ const useLessonForm = (lessonData, lesson_id, availableModules, availableSubmodu
   const [isNewSubmodule, setIsNewSubmodule] = useState(false);
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
 
-  
-    // Use useEffect para inicializar currentData E os novos estados (moduleName, submoduleName, lessonTitle)
-    useEffect(() => {
-      if (lessonData) {
-        if (Array.isArray(lessonData.notes) && !initialDataLoaded) {
-          setCurrentData(lessonData.notes);
-          setModuleName(lessonData.module || '');
-          setSubmoduleName(lessonData.submodule || '');
-          setLessonTitle(lessonData.title || '');
-  
-          // Define se é um novo módulo/submódulo com base nos dados carregados
-          // Se o módulo/submódulo da aula não existir nas listas de disponíveis, assume que é novo
-          if (lessonData.module && !availableModules.includes(lessonData.module)) {
-            setIsNewModule(true);
-          }
-          if (lessonData.submodule && !availableSubmodules.includes(lessonData.submodule)) {
-            setIsNewSubmodule(true);
-          }
-  
-          setInitialDataLoaded(true);
+
+  // Use useEffect para inicializar currentData E os novos estados (moduleName, submoduleName, lessonTitle)
+  useEffect(() => {
+    if (lessonData) {
+      if (Array.isArray(lessonData.notes) && !initialDataLoaded) {
+        setCurrentData(lessonData.notes);
+        setModuleName(lessonData.module || '');
+        setSubmoduleName(lessonData.submodule || '');
+        setLessonTitle(lessonData.title || '');
+
+        // Define se é um novo módulo/submódulo com base nos dados carregados
+        // Se o módulo/submódulo da aula não existir nas listas de disponíveis, assume que é novo
+        if (lessonData.module && !availableModules.includes(lessonData.module)) {
+          setIsNewModule(true);
         }
-      } else if (lesson_id === '0') {
-        setCurrentData([]);
-        setModuleName('');
-        setSubmoduleName('');
-        setLessonTitle('');
-        setIsNewModule(false); // Por padrão, começa selecionando um existente
-        setIsNewSubmodule(false); // Por padrão, começa selecionando um existente
+        if (lessonData.submodule && !availableSubmodules.includes(lessonData.submodule)) {
+          setIsNewSubmodule(true);
+        }
+
         setInitialDataLoaded(true);
       }
-    }, [lessonData, lesson_id, initialDataLoaded, availableModules, availableSubmodules]);
+    } else if (lesson_id === '0') {
+      setCurrentData([]);
+      setModuleName('');
+      setSubmoduleName('');
+      setLessonTitle('');
+      setIsNewModule(false); // Por padrão, começa selecionando um existente
+      setIsNewSubmodule(false); // Por padrão, começa selecionando um existente
+      setInitialDataLoaded(true);
+    }
+  }, [lessonData, lesson_id, initialDataLoaded, availableModules, availableSubmodules]);
 
 
   const handleSetModuleName = useCallback((value) => {
