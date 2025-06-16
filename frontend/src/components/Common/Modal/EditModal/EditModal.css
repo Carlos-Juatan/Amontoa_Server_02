@@ -227,3 +227,14 @@
 .modal-header-content .note-type-select-container #note-type-select {
   padding: 10px;
 }
+
+.modal-image-src {
+  display: flex;
+  gap: 10%;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.modal-image-src .modal-image-url {
+  width: 60%;
+}

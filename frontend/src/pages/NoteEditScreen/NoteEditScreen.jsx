@@ -152,6 +152,8 @@ function NoteEditScreen() {
 
   const handleModalSubmit = useCallback(async (selectedTypeFromModal, formDataFromModal, uploadFileFunc) => {
     try {
+      const lastModalFormType = selectedTypeFromModal;
+
       // Se o tipo for imagem e houver um arquivo selecionado, tenta fazer o upload
       if (selectedTypeFromModal === 'image' && uploadFileFunc) {
         await uploadFileFunc(); // Executa o upload através da função passada
@@ -162,7 +164,9 @@ function NoteEditScreen() {
       } else {
         handleUpdateNote(modalIndex, formDataFromModal);
       }
-      handleCloseModel();
+      // Se estiver modificando um item fecha o modal e se estiver adicionando novos continua aberto
+      if(modalIndex) handleCloseModel();
+      
     } catch (error) {
       console.error("Erro ao submeter modal (incluindo upload):", error);
       // Aqui você pode adicionar lógica para mostrar uma mensagem de erro ao usuário

@@ -44,10 +44,8 @@ function ImageForm({ item, onChange, moduleTile, submoduleTitle, lessonTitle, on
           <p className='image-url'>{selectedFile ? imageUrl : (src || 'N/A')}</p>
         </div>
         <div className='modal-image-upload'>
-          <label>
-            Arquivo:
-            <input type="file" onChange={onFileChange} />
-          </label>
+          <label> Arquivo selecionado:</label>
+          <input type="file" onChange={onFileChange} />
         </div>
       </div>
       <label htmlFor="image-alt">Texto Alternativo:</label>

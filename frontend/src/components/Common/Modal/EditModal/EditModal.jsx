@@ -78,9 +78,11 @@ function EditModal({ isOpen, onClose, modalType: initialModalType, handleSubimit
     await handleSubimit(selectedType, formData, uploadFile);
 
     // Limpa estados específicos após a submissão
-    if (!item) { // Se for um novo item, resetar o formulário
+    if (item) { // Se for um item para editar, resetar o formulário
       setSelectedType('');
       setFormData({});
+    } else {
+      setFormData({}); // Se for um item novo somente limpa o modal
     }
     resetFileUpload();
   }, [handleSubimit, selectedType, formData, uploadFile, item, resetFileUpload]);
