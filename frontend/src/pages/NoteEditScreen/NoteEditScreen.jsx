@@ -1,8 +1,10 @@
 // src/pages/NoteEditScreen/NoteEditScreen.jsx
 import React, { useCallback, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
 import useDataOperations from '../../hooks/useDataOperations';
 import useLessonForm from '../../hooks/useLessonForm'; // NOVO HOOK
+import useEditNoteModal from '../../hooks/useEditNoteModal';
 
 import Button from '../../components/Common/Button/Button';
 import Header from '../../components/StudiesScreen/Header/Header';
@@ -13,37 +15,31 @@ import './NoteEditScreen.css';
 import styles from './NoteEditScreenElements.module.css';
 
 function NoteEditScreen() {
-  const navigate = useNavigate();
-  const { collectionName, studies_id, lesson_id } = useParams();
-  const { data: studiesNoteData } = useDataOperations('studies/' + studies_id);
+  const navigate = useNavigate(); // Sistema de navegação de telas
+  const { collectionName, studies_id, lesson_id } = useParams(); // Informações pegas na url da página
 
-  const initialDataPath = lesson_id !== '0' ? `${collectionName}/${lesson_id}` : null;
 
-  const {
-    data: lessonData,
-    loading: lessonLoading,
-    error: lessonError,
-    createRecord,
-    updateRecord,
-    isMutating,
-    fetchData: refetchLessonData,
-  } = useDataOperations(initialDataPath);
+  // ------------------- COLETANDO DADOS DO BANCO DE DADOS -------------------------------------
 
-  const [hasEditedData, setHasEditedData] = useState(false);
-  // ----------------------------------------
+  const initialDataPath = lesson_id !== '0' ? `${collectionName}/${lesson_id}` : null; // Caminho para pegar as anotações da aula selecionada
+  const { data: lessonData, loading: lessonLoading, error: lessonError, createRecord, updateRecord,  isMutating, mutationError, fetchData: refetchLessonData, } = useDataOperations(initialDataPath);
+  
+  const { data: studiesNoteData } = useDataOperations('studies/' + studies_id); // Dados do curso selecionado ( Anotações da PromovaWeb - DevOps )
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState('');
-  const [modalItem, setModalItem] = useState();
-  const [modalIndex, setModalIndex] = useState();
+
+  // ------------------- DADOS USADOS PARA VALIDAÇÕES E VERIFICAÇÕES -------------------------------------
+
+  const [hasEditedData, setHasEditedData] = useState(false); // Verifica se os dados do foram modificados para habilitar o botão de 'submit'
 
   const [availableModules, setAvailableModules] = useState([]);
   const [availableSubmodules, setAvailableSubmodules] = useState([]);
 
-  // --- Usando o novo hook useLessonForm ---
+  const [noteIndex, setNoteIndex] = useState(); // id para a anotação sendo modificada atualmente.
+
+
+  // -------------------  usando o novo hook uselessonform -------------------------------------
   const {
     currentData,
-    setCurrentData, // Apenas se precisar manipular currentData diretamente
     moduleName,
     handleSetModuleName,
     submoduleName,
@@ -62,6 +58,7 @@ function NoteEditScreen() {
   } = useLessonForm(lessonData, lesson_id, availableModules, availableSubmodules, setHasEditedData);
 
 
+  // -------------------  FUNÇÕES DE NAVEGAÇÃO DE TELA -------------------------------------
 
   const handleBackToStudies = useCallback(() => {
     navigate(`/studies/${collectionName}/${studies_id}`);
@@ -71,6 +68,9 @@ function NoteEditScreen() {
     resetForm(); // Usa a função de reset do hook
     navigate(`/studies/${collectionName}/${studies_id}`);
   }, [navigate, collectionName, studies_id, resetForm]);
+
+
+  // -------------------  FUNÇÃO DE CONFIRMAR E SALVAR DADOS NO BANCO DE DADOS  -------------------------------------
 
   const handleSubimit = useCallback(async () => {
     const isNewRecord = lesson_id === '0';
@@ -103,42 +103,9 @@ function NoteEditScreen() {
     }
   }, [currentData, lesson_id, collectionName, createRecord, updateRecord, refetchLessonData, initialDataPath, navigate, moduleName, submoduleName, lessonTitle, studies_id]);
 
-  const handleOpenModel = useCallback((item = null, index = null) => { // Ajustado para default null
-    setIsModalOpen(true);
-    setModalItem(item);
-    setModalIndex(index);
-    setModalType(item?.type || ''); // Define o tipo para 'add' se não houver item
-  }, []);
 
-  const handleCloseModel = useCallback(() => {
-    setIsModalOpen(false);
-    setModalType('');
-    setModalItem(null);
-    setModalIndex(null);
-  }, []);
-
-  const handleModalSubmit = useCallback(async (selectedTypeFromModal, formDataFromModal, uploadFileFunc) => {
-    try {
-      const lastModalFormType = selectedTypeFromModal;
-
-      // Se o tipo for imagem e houver um arquivo selecionado, tenta fazer o upload
-      if (selectedTypeFromModal === 'image' && uploadFileFunc) {
-        await uploadFileFunc(); // Executa o upload através da função passada
-      }
-
-      if (modalIndex === null) {
-        handleAddNote(formDataFromModal);
-      } else {
-        handleUpdateNote(modalIndex, formDataFromModal);
-      }
-      // Se estiver modificando um item fecha o modal e se estiver adicionando novos continua aberto
-      if(modalIndex) handleCloseModel();
-      
-    } catch (error) {
-      console.error("Erro ao submeter modal (incluindo upload):", error);
-      // Aqui você pode adicionar lógica para mostrar uma mensagem de erro ao usuário
-    }
-  }, [modalIndex, handleAddNote, handleUpdateNote, handleCloseModel]);
+  // -------------------  FUNÇÕES DE MANIPULAÇÃO DOS MODAIS  -------------------------------------
+  const { isModalOpen, modalType, modalItem, handleOpenModel, handleCloseModel, handleModalSubmit } = useEditNoteModal( noteIndex, setNoteIndex, handleAddNote, handleUpdateNote);
 
   return (
     <div className="note-edit-screen-container">
@@ -186,7 +153,10 @@ function NoteEditScreen() {
         hasEditedData={hasEditedData}
 
         handleDeleteNote={handleDeleteNote}
-      />
+      >
+      </NoteEditMain>
+
+      
     </div>
   );
 }

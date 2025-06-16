@@ -13,10 +13,12 @@ function NoteEditMain({
 
   currentData,
 
+  // Todos os dados das anotações do curso selecionado ( Anotações da PromovaWeb - DevOps )
   lessonData,
   lessonLoading,
   lessonError,
 
+  // Dados disponiveis de todos os módulos e submodulos que existem no curso selecionado
   availableSubmodules,
   setAvailableSubmodules,
   availableModules,
