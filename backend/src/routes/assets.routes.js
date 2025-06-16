@@ -1,3 +1,4 @@
+// src/routes/assets.routes
 const express = require('express');
 const { uploadFile } = require('../controllers/assets.controller'); // Importa a função de upload
 const router = express.Router();
