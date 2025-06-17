@@ -24,6 +24,7 @@ function NoteEditMain({
   availableModules,
   setAvailableModules,
 
+  // Dados do topo - Configuração de nomes Módulo, Submódulo e aula
   lessonTitle,
   handleSetLessonTitle,
   submoduleName,
@@ -31,18 +32,27 @@ function NoteEditMain({
   moduleName,
   handleSetModuleName,
 
+  // Verificação se são módulos e submódulos novos ou não
   isNewModule,
   handleSetIsNewModule,
   isNewSubmodule,
   handleSetIsNewSubmodule,
 
+  // Verificação de slavamento de dados no banco de dados
   isMutating,
 
+  // ------------------- PROPS PARA MODAIS ------------------------------------------------
+  handleOpenModel,
+  // --------------------------------------------------------------------------------------
+
+  // Verificação se os dados das anotações foram mudados
+  hasEditedData,
+
+  // Métodos para cancelar e salvar os dados no banco de dados
   handleSubimit,
   handleCancel,
 
-  hasEditedData,
-
+  // Método para remover os dados das anotações
   handleDeleteNote,
 }) {
 

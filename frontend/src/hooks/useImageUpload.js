@@ -4,7 +4,7 @@ import useAssetOperations from './useAssetOperations'; // Assumindo que este é 
 
 const useImageUpload = (moduleName, submoduleName, lessonTitle, fileIndex) => {
   const [selectedFile, setSelectedFile] = useState(null);
-  const { isUploading, uploadError, handleUpload, uploadedAssetInfo } = useAssetOperations();
+  const { isUploading, uploadError, handleUpload } = useAssetOperations();
 
   // Define o caminho da pasta e o nome do arquivo para o upload
   const folderName = useMemo(() => {
@@ -16,13 +16,9 @@ const useImageUpload = (moduleName, submoduleName, lessonTitle, fileIndex) => {
   }, [lessonTitle, fileIndex]);
 
   const imageUrl = useMemo(() => {
-    // Use uploadedAssetInfo.url se disponível, caso contrário, construa a URL localmente
-    if (uploadedAssetInfo?.url) {
-      return uploadedAssetInfo.url;
-    }
     // Fallback para URL local se ainda não foi feito upload
     return selectedFile ? `http://localhost:3000/assets/${folderName}/${fileName}.avif` : '';
-  }, [selectedFile, folderName, fileName, uploadedAssetInfo]);
+  }, [selectedFile, folderName, fileName]);
 
 
   const onFileChange = useCallback((event) => {

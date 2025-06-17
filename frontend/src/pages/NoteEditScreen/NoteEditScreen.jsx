@@ -105,7 +105,7 @@ function NoteEditScreen() {
 
 
   // -------------------  FUNÇÕES DE MANIPULAÇÃO DOS MODAIS  -------------------------------------
-  const { isModalOpen, modalType, modalItem, handleOpenModel, handleCloseModel, handleModalSubmit } = useEditNoteModal( noteIndex, setNoteIndex, handleAddNote, handleUpdateNote);
+  const { isModalOpen, modalType, modalItem, handleOpenModel, handleCloseModel, handleModalSubmit } = useEditNoteModal( noteIndex, setNoteIndex, handleAddNote, handleUpdateNote );
 
   return (
     <div className="note-edit-screen-container">
@@ -122,17 +122,21 @@ function NoteEditScreen() {
 
       <NoteEditMain
         collectionName={collectionName}
+
         currentData={currentData}
 
+        // Todos os dados das anotações do curso selecionado ( Anotações da PromovaWeb - DevOps )
         lessonData={lessonData}
         lessonLoading={lessonLoading}
         lessonError={lessonError}
 
+        // Dados disponiveis de todos os módulos e submodulos que existem no curso selecionado
         availableSubmodules={availableSubmodules}
         setAvailableSubmodules={setAvailableSubmodules}
         availableModules={availableModules}
         setAvailableModules={setAvailableModules}
 
+        // Dados do topo - Configuração de nomes Módulo, Submódulo e aula
         lessonTitle={lessonTitle}
         handleSetLessonTitle={handleSetLessonTitle}
         submoduleName={submoduleName}
@@ -140,23 +144,47 @@ function NoteEditScreen() {
         moduleName={moduleName}
         handleSetModuleName={handleSetModuleName}
 
+        // Verificação se são módulos e submódulos novos ou não
         isNewModule={isNewModule}
         handleSetIsNewModule={handleSetIsNewModule}
         isNewSubmodule={isNewSubmodule}
         handleSetIsNewSubmodule={handleSetIsNewSubmodule}
 
+        // Verificação de slavamento de dados no banco de dados
         isMutating={isMutating}
 
+        // ------------------- PROPS PARA MODAIS ------------------------------------------------
+        handleOpenModel={handleOpenModel}
+        // --------------------------------------------------------------------------------------
+
+        // Verificação se os dados das anotações foram mudados
+        hasEditedData={hasEditedData}
+
+        // Métodos para cancelar e salvar os dados no banco de dados
         handleSubimit={handleSubimit}
         handleCancel={handleCancel}
 
-        hasEditedData={hasEditedData}
-
+        // Método para remover os dados das anotações
         handleDeleteNote={handleDeleteNote}
       >
       </NoteEditMain>
 
-      
+      <EditModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModel}
+        modalType={modalType}
+        handleSubimit={handleModalSubmit}
+        item={modalItem}
+        isMutating={isMutating}
+        mutationError={mutationError}
+        moduleTile={moduleName}
+        submoduleTitle={submoduleName}
+        lessonTitle={lessonTitle}
+        listLenth={currentData?.length || 0}
+        noteIndex={noteIndex}
+      >
+      </EditModal>
+
     </div>
   );
 }
