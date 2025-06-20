@@ -25,6 +25,9 @@ const storage = multer.diskStorage({
     if (req.params.subfolder) {
       folderPathParts.push(req.params.subfolder);
     }
+    if(req.params.folder) {
+      folderPathParts.push(req.params.folder);
+    }
 
     if (folderPathParts.length === 1 && category !== 'misc') {
       folderPathParts.push('default');
@@ -104,6 +107,9 @@ exports.uploadFile = (req, res, next) => {
     }
     if (req.params.subfolder) {
       urlPathParts.push(req.params.subfolder);
+    }
+    if(req.params.folder) {
+      urlPathParts.push(req.params.folder);
     }
 
     if (urlPathParts.length === 1 && category !== 'misc') {

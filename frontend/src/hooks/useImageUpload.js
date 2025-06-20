@@ -8,7 +8,7 @@ const useImageUpload = (moduleName, submoduleName, lessonTitle, fileIndex) => {
 
   // Define o caminho da pasta e o nome do arquivo para o upload
   const folderName = useMemo(() => {
-    return `images/${moduleName}/${submoduleName}`.trim().replace(/[^a-zA-Z0-9-_/]/g, '_');
+    return `images/${moduleName}/${submoduleName}/${lessonTitle}`.trim().replace(/[^a-zA-Z0-9-_/]/g, '_');
   }, [moduleName, submoduleName]);
 
   const fileName = useMemo(() => {

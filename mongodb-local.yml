@@ -16,6 +16,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
     networks:
       - app-network
+      - network_compose_public
 
 # Você NÃO precisa mais da seção 'volumes' se estiver usando apenas o bind mount
 # volumes:
@@ -23,4 +24,7 @@ services:
 
 networks:
   app-network:
+    driver: bridge
+  network_compose_public:
+    name: network_compose_public
     driver: bridge
