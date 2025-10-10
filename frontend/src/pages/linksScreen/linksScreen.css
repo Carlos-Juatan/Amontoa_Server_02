@@ -1,0 +1,326 @@
+/* src/components/StudiesScreen/StudiesScreen.css */
+.links-screen-container {
+  padding: 40px 20px;
+  background-color: var(--background-dark);
+  min-height: 100vh; /* Permite que o conteúdo se estenda e o body role */
+  color: var(--text-light);
+  width: 100%; /* Ocupa a largura total do pai */
+  box-sizing: border-box;
+}
+
+.links-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.links-header .back-button {
+  background: none;
+  border: none;
+  color: var(--highlight-blue);
+  font-size: 1.1em;
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.links-header .back-button:hover {
+  color: var(--primary-purple);
+}
+
+.links-header .back-button i {
+  font-size: 1.2em;
+}
+
+
+.links-title {
+  flex-grow: 1;
+  text-align: center;
+  font-size: 3em;
+  color: var(--primary-purple);
+  text-shadow: 0 0 10px rgba(140, 115, 204, 0.4);
+  margin: 0 auto;
+  padding-left: 100px;
+  padding-right: 100px;
+}
+
+.links-research {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.links-research .search-bar-container {
+  margin: 0;
+}
+
+.links-screen-container .links-container {
+  width: 70%;
+  margin: 20px auto;
+  background-color: var(--card-background); /* Ou outra cor de fundo */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  padding: 20px;
+}
+
+.links-screen-container .links-container .links-container-header {
+  width: 100%;
+  height: 45px;
+  display: flex;
+  border-bottom: 1px solid var(--border-color); /* --------------------- Talvez eu remova a linha abaixo do header ---------------*/
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+}
+
+.links-screen-container .links-container .links-container-header .links-container-header-tabs {
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  font-weight: 700;
+}
+
+.links-screen-container .links-container .links-container-header .links-container-header-tabs .selected {
+  font-size: 1.3em;
+  color: var(--highlight-blue);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.links-screen-container .links-container .links-container-header .links-container-header-tabs .selected:hover {
+  color: var(--text-light);
+  font-size: 1.4em;
+}
+
+.links-screen-container .links-container .links-container-header .links-container-header-tabs .unselected {
+  font-size: 1.1em;
+  color: var(--primary-purple);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.links-screen-container .links-container .links-container-header .links-container-header-tabs .unselected:hover {
+  color: var(--highlight-blue);
+  font-size: 1.2em;
+}
+
+.links-screen-container .links-container .links-container-header .links-container-header-buttons {
+  width: 20%;
+  display: flex;
+  justify-content: right;
+}
+
+.links-screen-container .links-container .links-container-header .links-container-header-buttons Button {
+  background: none;
+  border: none;
+  box-shadow: none;
+  color: var(--primary-purple);
+  font-size: 1.1em;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
+.links-screen-container .links-container .links-container-header .links-container-header-buttons Button:hover {
+  color: var(--highlight-blue);
+  font-size: 1.2em;
+}
+
+.links-screen-container .links-container .links-container-header .links-container-header-buttons .cancel-edit-button {
+  color: var(--button-delete);
+}
+
+.links-screen-container .links-container .links-container-header .links-container-header-buttons .cancel-edit-button:hover {
+  color: var(--button-delete-hover);
+}
+
+.links-screen-container .links-container .links-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+/* --------------------- Talvez eu remova as linhas entre os itens ------------------------------------------------------
+.links-screen-container .links-container .links-list .links-list-item {
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.links-screen-container .links-container .links-list .links-list-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+*/
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card {
+  background-color: var(--card-background);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px var(--shadow-color);
+  padding: 20px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  border: 1px solid var(--border-color);
+}
+
+.links-screen-container .links-container .links-list .links-list-item .isntEditMode:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px var(--shadow-color);
+  background-color: var(--secondary-purple);
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-icon-container {
+  flex-shrink: 0; /* Não permite que o ícone encolha */
+  margin-right: 20px;
+  width: 50px; /* Tamanho fixo para o container do ícone */
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-purple);
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-icon-container .links-card-icon {
+  font-size: 1.8em;
+  color: var(--text-light);
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-info {
+  flex-grow: 1; /* Permite que o conteúdo ocupe o espaço restante */
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-info .links-card-info-title {
+  font-size: 1.4em;
+  color: var(--highlight-blue); /* Título em azul para destaque */
+  margin-bottom: 0px;
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-info .links-card-info-link {
+  font-size: 0.8em;
+  color: var(--text-light);
+  opacity: 0.7; 
+  margin-top: 2px;
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-info .links-card-info-description {
+  font-size: 0.95em;
+  color: var(--text-light);
+  opacity: 0.7;
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-arrow {
+  margin-left: 20px;
+  color: var(--primary-purple);
+  font-size: 1.2em;
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-info input {
+  width: 100%;
+  /*background: none;*/
+  background-color: var(--border-color);
+  border: none;
+  color: var(--text-light);
+  opacity: 0.7;
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-info .links-card-info-title-input {
+  color: var(--highlight-blue); /* Título em azul para destaque */
+  margin-bottom: 0px;
+  opacity: 1;
+  font-size: 1.3em;
+  font-weight: 600;
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-info .links-card-info-link-input {
+  font-size: 0.8em;
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-info .links-card-info-description-input {
+  margin-top: 20px;
+  font-size: 0.95em;
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-buttons {
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-buttons .links-card-buttons-ordening {
+  display: flex;
+  flex-direction: column;
+  justify-content: right;
+  gap: 10px;
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-buttons .links-card-buttons-ordening .up-button,
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-buttons .links-card-buttons-ordening .down-button {
+  background: none;
+  border: none;
+  box-shadow: none;
+  color: var(--primary-purple);
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-buttons .links-card-buttons-ordening .up-button:hover,
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-buttons .links-card-buttons-ordening .down-button:hover {
+  color: var(--highlight-blue);
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-buttons .links-card-buttons-managers {
+  display: flex;
+  flex-direction: column;
+  justify-content: right;
+  gap: 10px;
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-buttons .links-card-buttons-managers .delete-button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  align-self: flex-end;
+  background: none;
+  border: none;
+  box-shadow: none;
+  color: var(--button-delete);
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-buttons .links-card-buttons-managers .delete-button:hover {
+  color: var(--button-delete-hover);
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-buttons .links-card-buttons-managers .links-card-buttons-managers-data {
+  display: flex;
+  gap: 10px;
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-buttons .links-card-buttons-managers .links-card-buttons-managers-data .update-button {
+  background-color: var(--button-confirm);
+  border-color: var(--button-confirm-border);
+  width: 100px;
+  padding: 10px 5px;
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-buttons .links-card-buttons-managers .links-card-buttons-managers-data .update-button:hover {
+  background-color: var(--button-confirm-hover);
+  border-color: var(--button-confirm-border-hover);
+}
+
+.links-screen-container .links-container .links-list .links-list-item .links-list-item-card .links-card-buttons .links-card-buttons-managers .links-card-buttons-managers-data .cancel-button {
+  width: 100px;
+  padding: 10px 5px;
+}

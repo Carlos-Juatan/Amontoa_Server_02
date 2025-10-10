@@ -51,6 +51,32 @@
   padding-right: 100px;
 }
 
+.studies-research {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.studies-research .add-button {
+  /*background: none;*/
+  background-color: var(--card-background);
+  border: none;
+  color: var(--highlight-blue);
+  font-size: 1.1em;
+  align-items: center;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.studies-research .add-button:hover {
+  color: var(--primary-purple);
+}
+
+.studies-research .add-button i {
+  font-size: 1.2em;
+}
+
 .notes-list { /* Este é o estilo para GenericList em StudiesScreen */
   max-width: 900px; /* A lista de notas é centralizada */
   margin: 30px auto;

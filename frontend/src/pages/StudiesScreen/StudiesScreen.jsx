@@ -28,6 +28,10 @@ function NoteDetailScreen() {
     handleSearchChange(event); // pode por diretamente sem precisar do handleSearchTerm se não tiver lógica adicional
   };
 
+  const addGroup = (event) => {
+    // função de adicionar um novo grupo
+  }
+
   const handleNoteClick = (note) => {
     navigate(`/studies/${note.db_collection}/${note._id}`); // Navega de volta para a rota raiz (Dashboard)
   };
@@ -41,14 +45,19 @@ function NoteDetailScreen() {
         <Button onClick={handleBack} className="back-button">
           <i className="fas fa-arrow-left"></i> Voltar
         </Button>
-        <h1 className="studies-title">{data ? data.title : 'Estudos'}</h1>
+        <h1 className="studies-title">{'Estudos'}</h1>
       </div>
 
-      <SearchBar
-        searchTerm={searchTerm} // Controlado pelo estado local
-        onSearchChange={handleSearchTerm} // Usa a função que atualiza o hook de filtro
-        placeholder={`Pesquisar em ${data ? data.title : 'Estudos'}...`}
-      />
+      <div className='studies-research'>
+        <SearchBar
+          searchTerm={searchTerm} // Controlado pelo estado local
+          onSearchChange={handleSearchTerm} // Usa a função que atualiza o hook de filtro
+          placeholder={`Pesquisar em ${'Estudos'}...`}
+        />
+        <Button onClick={addGroup} className='add-button'>
+          <i className="fas fa-plus"></i>
+        </Button>
+      </div>
       <GenericList
         items={filteredNotes} // Agora GenericList recebe os itens filtrados
         //keyExtractor={(note) => note._id || note.title} // Usa o _id ou title como chave única

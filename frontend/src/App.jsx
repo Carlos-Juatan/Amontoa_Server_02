@@ -11,6 +11,7 @@ import AssetUploader from './pages/test/AssetUploader';
 import './App.css'; // Estilos globais
 import '@fortawesome/fontawesome-free/css/all.min.css'; // Importa Font Awesome
 import 'highlight.js/styles/atom-one-dark.css';
+import LinksScreen from './pages/linksScreen/linksScreen';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/comingSoon" element={<ComingSoonScreen />} />
         <Route path="/studies" element={<StudiesScreen />} />
+        <Route path='/links' element={<LinksScreen />} />
         {/*
           Para NoteEditScreen e StudiesNotesScreen, você pode precisar de parâmetros na URL.
           Por exemplo, para editar uma nota específica, você passaria o ID da nota.

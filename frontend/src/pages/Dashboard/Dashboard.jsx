@@ -24,6 +24,9 @@ function Dashboard() {
       if (screenBaseName === 'studies') {
         targetPath = '/studies';
       }
+      else if (screenBaseName === 'links') {
+        targetPath = '/links';
+      }
       // Adicione outros mapeamentos para telas ativas
       // else if (screenBaseName === 'movies') {
       //   targetPath = '/movies';
