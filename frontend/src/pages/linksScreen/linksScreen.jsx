@@ -27,8 +27,7 @@ function LinksScreen() {
   const handleOpenLink = (url) => { window.open(url, '_blank'); }; // Open a link on another window on the browser
   const handleOdening = (id, value) => { console.log(`Mudando a posição do item de ID:${id} com o valor: ${value}`); };
   const deleteItem = (id) => { console.log(`Deletando o item de id: ${id}`); };
-  const cancelUpdate = (id) => { console.log(`Cancelando atualizando do item de id: ${id}`); };
-  const updateItem = (id, data) => { console.log(`Atualizando o item de id: ${id} data: ${data}`); };
+  const updateItem = (id, data) => { console.log(`Atualizando o item de id: ${id} data: ${data.title}`); };
 
   // ... Debug ...
   console.log(`testando a data recebida: tamanho - ${data.length} : conteúdo - ${data}`)
@@ -87,6 +86,8 @@ function LinksScreen() {
         
         {/* Links */}
         <ul className='links-list'>
+          { console.log(typeof(data)) }
+          {/*
           <li className='links-list-item'>
             <LinksItem
               isEditing={isEditing}
@@ -94,7 +95,6 @@ function LinksScreen() {
               handleOdening={handleOdening}
               deleteItem={deleteItem}
               updateItem={updateItem}
-              cancelUpdate={cancelUpdate}
               id={0}
               icon={"fa-solid fa-wrench"}
               title={"Esse título é um título"}
@@ -102,6 +102,7 @@ function LinksScreen() {
               description={"Essa descrição serve para mostrar a descrição"}
             />
           </li>
+          */}
         </ul>
       </div>
     </div>
