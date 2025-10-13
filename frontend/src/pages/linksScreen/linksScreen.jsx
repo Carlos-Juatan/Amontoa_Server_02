@@ -11,28 +11,123 @@ import LinksItem from './linksItem';
 import './linksScreen.css';
 
 function LinksScreen() {
-  // ... Variables ...
+  //#region ... Variables ...
+  const collectionName = 'links-work';
   const navigate = useNavigate(); // to navegate between pages
-  const { data, loading, error, fetchData } = useDataOperations( 'links-work' ); // to get data from mongoDB
-  const { searchTerm, setSearchTerm, filteredItems, handleSearchChange } = useSearchFilter(data, '', ['title', 'tags']); // to filter the 'data'
+  const { data, loading, error, fetchData, updateRecord } = useDataOperations(collectionName); // to get data from mongoDB
+  const { searchTerm, setSearchTerm, filteredItems, handleSearchChange } = useSearchFilter(data, '', ['title', 'description', 'group']); // to filter the 'data'
+  //#endregion
 
-  // ... Hooks ...
+  //#region ... Hooks ...
   const handleBackToDashboard = () => { navigate('/'); }; // Navegate back to root (Dashboard)
   const handleSearchTerm = (event) => { handleSearchChange(event); }; // change the research term on the search hook
   const [isEditing, setIsEditing] = useState(false); // used to change the edition mode
+  const [selectedGroup, setSelectedGroup] = useState('Todos'); // Used to check how group is selected and select the default group
+  //#endregion
 
-  // ... Functions ...
-  const toggleEditing = (event) => { setIsEditing(prev => !prev); console.log(`edit mode: ${!isEditing}`);}; // Change between True and False
-  const addGroup = (event) => { console.log("adicionando novo grupo"); }; // Add a new group on the list
+  //#region ... Functions ...
+  const toggleEditing = (event) => { setIsEditing(prev => !prev); }; // Change between True and False
   const handleOpenLink = (url) => { window.open(url, '_blank'); }; // Open a link on another window on the browser
-  const handleOdening = (id, value) => { console.log(`Mudando a posição do item de ID:${id} com o valor: ${value}`); };
+  const addGroup = (event) => { console.log("adicionando novo grupo"); }; // Add a new group on the list
   const deleteItem = (id) => { console.log(`Deletando o item de id: ${id}`); };
-  const updateItem = (id, data) => { console.log(`Atualizando o item de id: ${id} data: ${data.title}`); };
 
-  // ... Debug ...
-  console.log(`testando a data recebida: tamanho - ${data.length} : conteúdo - ${data}`)
+  //#region ---> Data Functions <---
+  const updateItem = async (id, updatedFields) => {
+    try {
+      await updateRecord(collectionName, id, updatedFields);
+      await fetchData();
+      console.log(`Sucesso na atualização do item ${id}:`, updatedFields);
 
-  // ... Display ...
+    } catch (e) {
+      console.error("Falha ao atualizar o item:", e);
+    }
+  };
+  //#endregion
+
+  //#region ---> Groups Functions <---
+  const getGroupsList = () => { // Creating groups
+    let groups = ['Todos', 'Acesso Rápido'];
+
+    if (data && data.length > 0) {
+      const dynamicGroups = [...new Set(data.map(item => item.group))];
+      groups = [...groups, ...dynamicGroups];
+    }
+
+    return [...new Set(groups)];
+  };
+
+  const groupsList = getGroupsList(); // The list of all groups
+  const handleGroupSelection = (groupName) => { setSelectedGroup(groupName); }; // Select the group
+
+  const getFinalFilteredLinks = () => {
+    if (!filteredItems || filteredItems.length === 0) { return []; } // If have no itens return empty
+
+    let linksToRender = filteredItems;
+    if (selectedGroup !== 'Todos') { linksToRender = filteredItems.filter(link => link.group === selectedGroup); } // Filters items by groups if different from 'Todos'
+
+    // Sorting groups
+    linksToRender.sort((a, b) => {
+      if (selectedGroup === 'Todos') {
+        // If 'Todos': Sort by group first
+        if (a.group < b.group) return -1;
+        if (a.group > b.group) return 1;
+
+        return a.order - b.order; // In case of the same group: order by 'order'
+      } else {
+        return a.order - b.order; // If Specific Group: Order only by 'order'
+      }
+    });
+
+    return linksToRender;
+  };
+
+  const finalFilteredLinks = getFinalFilteredLinks();
+  //#endregion
+
+  //#region ---> Ordening Functions <---
+  const handleOrdening = async (id, value) => {
+    // 1. USE THE FINAL SORTED AND FILTERED LIST THAT IS DISPLAYED ON THE SCREEN
+    const listToSearch = finalFilteredLinks;
+
+    // Find the current item and its index in the VISIBLE list
+    const currentIndex = listToSearch.findIndex(item => item._id === id);
+    const currentItem = listToSearch[currentIndex];
+
+    if (!currentItem) return;
+
+    // 2. Determine the index of the neighboring item
+    const swapIndex = currentIndex + value;
+    const neighborItem = listToSearch[swapIndex];
+
+    // 3. Check if the neighbor is valid (if it exists and if it is in the same group)
+    // NOTE: If the specific group is selected, all items are already in the same group.
+    // If "All" is selected, checking the group is crucial.
+    if (!neighborItem || neighborItem.group !== currentItem.group) {
+      console.log(`Movimentação não possível para ID: ${id}. Fora dos limites do grupo ou do array.`);
+      return;
+    }
+
+    // 4. CHANGING 'order' VALUES (Pure Logic)
+    // These are the new values ​​that will be saved in the DB
+    const newCurrentOrder = neighborItem.order;
+    const newNeighborOrder = currentItem.order;
+
+    // 5. BACK-END PERSISTENCE (PUT for both items)
+    try {
+      await updateRecord(collectionName, currentItem._id, { order: newCurrentOrder });
+      await updateRecord(collectionName, neighborItem._id, { order: newNeighborOrder });
+      await fetchData();
+      console.log(`Reordenação concluída: ${currentItem.title} e ${neighborItem.title} trocaram a ordem.`);
+
+    } catch (e) {
+      console.error("Falha ao reordenar e persistir no DB:", e);
+    }
+  };
+  //#endregion
+
+  //#endregion
+
+  //#region ... Dom - Display ...
   return (
     <div className="links-screen-container">
 
@@ -60,9 +155,15 @@ function LinksScreen() {
         {/* Header */}
         <div className='links-container-header'>
           <div className='links-container-header-tabs'>
-            <span className='unselected'>Todos</span>
-            <span className='selected'>Acesso Rápido</span>
-            <span className='unselected'>Vídeos</span>
+            {groupsList.map((groupName) => (
+              <span
+                key={groupName}
+                className={groupName === selectedGroup ? 'selected' : 'unselected'}
+                onClick={() => handleGroupSelection(groupName)}
+              >
+                {groupName /*groupName.replace(/_/g, ' ').toUpperCase() --> Can modify the group name if you want*/}
+              </span>
+            ))}
           </div>
 
           <div className='links-container-header-buttons'>
@@ -83,30 +184,31 @@ function LinksScreen() {
             )}
           </div>
         </div>
-        
+
         {/* Links */}
         <ul className='links-list'>
-          { console.log(typeof(data)) }
-          {/*
-          <li className='links-list-item'>
-            <LinksItem
-              isEditing={isEditing}
-              handleOpenLink={handleOpenLink}
-              handleOdening={handleOdening}
-              deleteItem={deleteItem}
-              updateItem={updateItem}
-              id={0}
-              icon={"fa-solid fa-wrench"}
-              title={"Esse título é um título"}
-              link={"https://www.google.com"}
-              description={"Essa descrição serve para mostrar a descrição"}
-            />
-          </li>
-          */}
+          {finalFilteredLinks.map((item) => (
+            <li key={item._id} className='links-list-item'>
+              <LinksItem
+                isEditing={isEditing}
+                handleOpenLink={handleOpenLink}
+                handleOrdening={handleOrdening}
+                deleteItem={deleteItem}
+                updateItem={updateItem}
+                // cancelUpdate não é mais necessário no pai
+                id={item._id}
+                icon={item.icon || "fas fa-link"} // Use um fallback para o ícone
+                title={item.title}
+                url={item.url} // Usando 'url' do seu objeto de dados
+                description={item.description}
+              />
+            </li>
+          ))}
         </ul>
       </div>
     </div>
   );
+  //#endregion
 }
 
 export default LinksScreen;
