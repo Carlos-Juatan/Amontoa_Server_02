@@ -7,6 +7,7 @@ import useSearchFilter from '../../hooks/useSearchFilter';
 import Button from '../../components/Common/Button/Button';
 import SearchBar from '../../components/Common/SearchBar/SearchBar';
 import LinksItem from './linksItem';
+import ActionModal from '../../components/Common/Modal/ActionModal/ActionModal';
 
 import './linksScreen.css';
 
@@ -14,7 +15,7 @@ function LinksScreen() {
   //#region ... Variables ...
   const collectionName = 'links-work';
   const navigate = useNavigate(); // to navegate between pages
-  const { data, loading, error, fetchData, updateRecord } = useDataOperations(collectionName); // to get data from mongoDB
+  const { data, loading, error, fetchData, updateRecord, deleteRecord, isMutating, mutationError } = useDataOperations(collectionName); // to get data from mongoDB
   const { searchTerm, setSearchTerm, filteredItems, handleSearchChange } = useSearchFilter(data, '', ['title', 'description', 'group']); // to filter the 'data'
   //#endregion
 
@@ -23,13 +24,14 @@ function LinksScreen() {
   const handleSearchTerm = (event) => { handleSearchChange(event); }; // change the research term on the search hook
   const [isEditing, setIsEditing] = useState(false); // used to change the edition mode
   const [selectedGroup, setSelectedGroup] = useState('Todos'); // Used to check how group is selected and select the default group
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
   //#endregion
 
   //#region ... Functions ...
   const toggleEditing = (event) => { setIsEditing(prev => !prev); }; // Change between True and False
   const handleOpenLink = (url) => { window.open(url, '_blank'); }; // Open a link on another window on the browser
   const addGroup = (event) => { console.log("adicionando novo grupo"); }; // Add a new group on the list
-  const deleteItem = (id) => { console.log(`Deletando o item de id: ${id}`); };
 
   //#region ---> Data Functions <---
   const updateItem = async (id, updatedFields) => {
@@ -125,6 +127,43 @@ function LinksScreen() {
   };
   //#endregion
 
+  //#region ---> Modals <---
+  const openDeleteModal = (item) => {
+    setItemToDelete(item);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setItemToDelete(null);
+  };
+
+  // FUNÇÃO QUE É PASSADA PARA LinksItem, que abre o modal
+  const deleteItem = (id) => {
+    // Encontra o item completo para passar ao modal
+    const item = data.find(i => i._id === id);
+    if (item) {
+      openDeleteModal(item);
+    }
+  };
+
+  // FUNÇÃO QUE EXECUTA A AÇÃO APÓS A CONFIRMAÇÃO DO MODAL
+  const handleDeleteConfirmation = async (item) => {
+    if (!item || !item._id) return;
+
+    try {
+      await deleteRecord(collectionName, item._id);
+      // Re-sincroniza a lista após a exclusão bem-sucedida
+      await fetchData();
+      closeDeleteModal(); // Fecha o modal após o sucesso
+      console.log(`Item ${item.title} (ID: ${item._id}) deletado com sucesso.`);
+    } catch (e) {
+      console.error("Erro ao deletar item:", e);
+      // O erro de mutação será tratado no ActionModal
+    }
+  };
+  //#endregion
+
   //#endregion
 
   //#region ... Dom - Display ...
@@ -206,6 +245,18 @@ function LinksScreen() {
           ))}
         </ul>
       </div>
+
+      {/* ActionModal para a confirmação de exclusão */}
+      <ActionModal
+        isOpen={isDeleteModalOpen}
+        modalType={'delete'} // Força o tipo de modal para delete
+        item={itemToDelete} // O item que será excluído
+        onClose={closeDeleteModal} // Função para fechar o modal
+        onDelete={handleDeleteConfirmation} // Função que será chamada ao confirmar
+        isMutating={isMutating} 
+        mutationError={mutationError}
+        deleteMessage={`Você tem certeza que deseja excluir o link: ${itemToDelete?.title}?`}
+      />
     </div>
   );
   //#endregion

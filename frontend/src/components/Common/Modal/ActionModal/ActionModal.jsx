@@ -3,7 +3,7 @@ import Modal from '../Modal';
 
 import './ActionModal.css';
 
-function ActionModal ({ isOpen, modalType, item, onClose, onEditName, onDelete, isMutating, mutationError }) {
+function ActionModal ({ isOpen, modalType, item, onClose, onEditName, onDelete, isMutating, mutationError, deleteMessage }) {
 
   // Estado para o nome que será editado.
   // Inicializa com o título existente do item ou uma string vazia.
@@ -81,7 +81,9 @@ function ActionModal ({ isOpen, modalType, item, onClose, onEditName, onDelete, 
           isMutating={isMutating}
           modalCustonStyle="modal-content"
         >
-          <p>Você tem certeza? Irá excluir {item?.submodules? 'todos os submódulos e aulas' : 'todas as aulas'} dentro do {item?.title}</p>
+          {deleteMessage ? ( <p>{deleteMessage}</p> ) : (
+            <p>Você tem certeza? Irá excluir {item?.submodules? 'todos os submódulos e aulas' : 'todas as aulas'} dentro do {item?.title}</p>
+          )}
           {mutationError && <p className="error-message">{mutationError}</p>}
         </Modal>
       )}
