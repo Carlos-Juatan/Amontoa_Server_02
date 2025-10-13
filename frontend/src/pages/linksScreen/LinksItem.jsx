@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 
 import Button from '../../components/Common/Button/Button';
 
-function LinksItem({ isEditing, handleOpenLink, handleOrdening, deleteItem, updateItem, id, icon, title, url, description }) {
+function LinksItem({ isEditing, handleOpenLink, handleOrdening, updateItem, deleteItem, id, icon, title, url, description }) {
   // ... Hooks ...
   const [canEdit, setCanEdit] = useState(false); // ---------------------- Novo para o modo de edição 
   const [editTitle, setEditTitle] = useState(title);

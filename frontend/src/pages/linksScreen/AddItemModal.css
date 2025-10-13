@@ -1,0 +1,34 @@
+/* src/pages/linksScreen/AddItemModal.css */
+
+.item-add-form {
+  width: 800px;
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+}
+
+.item-add-form .item-add-form-icon {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-add-form .item-add-form-icon i {
+  font-size: 3em;
+  margin: auto;
+}
+
+.item-add-form .item-add-form-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-add-form .item-add-form-info .item-add-form-info-header {
+  display: flex;
+  gap: 20px;
+}
+
+.item-add-form .item-add-form-info .item-add-form-description {
+  display: flex;
+  flex-direction: column;
+
+}

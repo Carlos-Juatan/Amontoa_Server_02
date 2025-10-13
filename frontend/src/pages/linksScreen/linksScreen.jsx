@@ -8,6 +8,7 @@ import Button from '../../components/Common/Button/Button';
 import SearchBar from '../../components/Common/SearchBar/SearchBar';
 import LinksItem from './linksItem';
 import ActionModal from '../../components/Common/Modal/ActionModal/ActionModal';
+import AddItemModal from './AddItemModal';
 
 import './linksScreen.css';
 
@@ -15,7 +16,7 @@ function LinksScreen() {
   //#region ... Variables ...
   const collectionName = 'links-work';
   const navigate = useNavigate(); // to navegate between pages
-  const { data, loading, error, fetchData, updateRecord, deleteRecord, isMutating, mutationError } = useDataOperations(collectionName); // to get data from mongoDB
+  const { data, loading, error, fetchData, createRecord, updateRecord, deleteRecord, isMutating, mutationError } = useDataOperations(collectionName); // to get data from mongoDB
   const { searchTerm, setSearchTerm, filteredItems, handleSearchChange } = useSearchFilter(data, '', ['title', 'description', 'group']); // to filter the 'data'
   //#endregion
 
@@ -26,15 +27,39 @@ function LinksScreen() {
   const [selectedGroup, setSelectedGroup] = useState('Todos'); // Used to check how group is selected and select the default group
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
+  const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
   //#endregion
 
   //#region ... Functions ...
   const toggleEditing = (event) => { setIsEditing(prev => !prev); }; // Change between True and False
   const handleOpenLink = (url) => { window.open(url, '_blank'); }; // Open a link on another window on the browser
-  const addGroup = (event) => { console.log("adicionando novo grupo"); }; // Add a new group on the list
 
   //#region ---> Data Functions <---
-  const updateItem = async (id, updatedFields) => {
+  const handleCreateItem = async (formData) => {
+    console.log("Adicionando novo link com dados do modal:", formData);
+    
+    // 1. Prepara os dados (incluindo o 'order' mais alto)
+    // Busca o valor máximo de 'order' na lista atual e adiciona 1.
+    const maxOrder = data.length > 0 ? Math.max(...data.map(item => item.order)) : 0;
+
+    const newItem = {
+      ...formData, // Dados fornecidos pelo modal (title, url, description, group, icon)
+      order: maxOrder + 1, // Novo item vai para o final
+    };
+
+    try {
+      await createRecord(collectionName, newItem);
+      await fetchData();
+      console.log("Novo item adicionado com sucesso!");
+      closeAddModal(); // Fecha o modal após a criação
+      setIsEditing(true); // Opcional: Entra no modo de edição
+
+    } catch (e) {
+      console.error("Falha ao adicionar o novo item:", e);
+    }
+  };
+
+  const handleUpdateItem = async (id, updatedFields) => {
     try {
       await updateRecord(collectionName, id, updatedFields);
       await fetchData();
@@ -42,6 +67,22 @@ function LinksScreen() {
 
     } catch (e) {
       console.error("Falha ao atualizar o item:", e);
+    }
+  };
+
+  // FUNÇÃO QUE EXECUTA A AÇÃO APÓS A CONFIRMAÇÃO DO MODAL
+  const handleDeleteItem = async (item) => {
+    if (!item || !item._id) return;
+
+    try {
+      await deleteRecord(collectionName, item._id);
+      await fetchData();
+      closeDeleteModal(); // Close modal after sucess
+      console.log(`Item ${item.title} (ID: ${item._id}) deletado com sucesso.`);
+
+    } catch (e) {
+      console.error("Erro ao deletar item:", e);
+      // O erro de mutação será tratado no ActionModal
     }
   };
   //#endregion
@@ -128,15 +169,11 @@ function LinksScreen() {
   //#endregion
 
   //#region ---> Modals <---
-  const openDeleteModal = (item) => {
-    setItemToDelete(item);
-    setIsDeleteModalOpen(true);
-  };
+  const openAddModal = () => setIsAddItemModalOpen(true);
+  const closeAddModal = () => setIsAddItemModalOpen(false);
 
-  const closeDeleteModal = () => {
-    setIsDeleteModalOpen(false);
-    setItemToDelete(null);
-  };
+  const openDeleteModal = (item) => { setItemToDelete(item); setIsDeleteModalOpen(true); };
+  const closeDeleteModal = () => { setIsDeleteModalOpen(false); setItemToDelete(null); };
 
   // FUNÇÃO QUE É PASSADA PARA LinksItem, que abre o modal
   const deleteItem = (id) => {
@@ -144,22 +181,6 @@ function LinksScreen() {
     const item = data.find(i => i._id === id);
     if (item) {
       openDeleteModal(item);
-    }
-  };
-
-  // FUNÇÃO QUE EXECUTA A AÇÃO APÓS A CONFIRMAÇÃO DO MODAL
-  const handleDeleteConfirmation = async (item) => {
-    if (!item || !item._id) return;
-
-    try {
-      await deleteRecord(collectionName, item._id);
-      // Re-sincroniza a lista após a exclusão bem-sucedida
-      await fetchData();
-      closeDeleteModal(); // Fecha o modal após o sucesso
-      console.log(`Item ${item.title} (ID: ${item._id}) deletado com sucesso.`);
-    } catch (e) {
-      console.error("Erro ao deletar item:", e);
-      // O erro de mutação será tratado no ActionModal
     }
   };
   //#endregion
@@ -213,7 +234,7 @@ function LinksScreen() {
             )}
             {isEditing && (
               <>
-                <Button onClick={addGroup} className='add-button'>
+                <Button onClick={openAddModal} className='add-button'>
                   <i className="fas fa-plus"></i>
                 </Button>
                 <Button onClick={toggleEditing} className='cancel-edit-button'>
@@ -232,8 +253,8 @@ function LinksScreen() {
                 isEditing={isEditing}
                 handleOpenLink={handleOpenLink}
                 handleOrdening={handleOrdening}
+                updateItem={handleUpdateItem}
                 deleteItem={deleteItem}
-                updateItem={updateItem}
                 // cancelUpdate não é mais necessário no pai
                 id={item._id}
                 icon={item.icon || "fas fa-link"} // Use um fallback para o ícone
@@ -246,14 +267,24 @@ function LinksScreen() {
         </ul>
       </div>
 
-      {/* ActionModal para a confirmação de exclusão */}
+      {/* Modals*/}
+      {/* Add New Item Modal*/}
+      <AddItemModal
+          isOpen={isAddItemModalOpen}
+          onClose={closeAddModal}
+          onSubmit={handleCreateItem} // Função que cria o item
+          groupsList={groupsList.filter(g => g !== 'Todos')} // Passa a lista de grupos, excluindo 'Todos'
+          isMutating={isMutating}
+          mutationError={mutationError}
+      />
+      {/* Delete Item Modal*/}
       <ActionModal
         isOpen={isDeleteModalOpen}
         modalType={'delete'} // Força o tipo de modal para delete
         item={itemToDelete} // O item que será excluído
         onClose={closeDeleteModal} // Função para fechar o modal
-        onDelete={handleDeleteConfirmation} // Função que será chamada ao confirmar
-        isMutating={isMutating} 
+        onDelete={handleDeleteItem} // Função que será chamada ao confirmar
+        isMutating={isMutating}
         mutationError={mutationError}
         deleteMessage={`Você tem certeza que deseja excluir o link: ${itemToDelete?.title}?`}
       />
