@@ -21,12 +21,18 @@ function Dashboard() {
     // Mapeamento de nomes de coleção para caminhos de URL
     // Mantenha os caminhos consistentes com as rotas definidas em App.jsx
     if (isActive) {
+      targetPath = `/${screenBaseName}`;
+      /*
       if (screenBaseName === 'studies') {
         targetPath = '/studies';
       }
       else if (screenBaseName === 'links') {
         targetPath = '/links';
       }
+      else if (screenBaseName === 'animes') {
+        targetPath = '/animes';
+      }
+        */
       // Adicione outros mapeamentos para telas ativas
       // else if (screenBaseName === 'movies') {
       //   targetPath = '/movies';

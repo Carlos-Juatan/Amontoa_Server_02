@@ -8,9 +8,9 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "80:80" # Mapeia a porta 80 do container para a porta 80 da sua máquina
-    depends_on:
-      - backend
+      - "8080:80" # Mapeia a porta 80 do container para a porta 80 da sua máquina
+    #depends_on:
+    #  - backend
     networks:
       - app-network
 

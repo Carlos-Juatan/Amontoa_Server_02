@@ -6,11 +6,11 @@ import useSearchFilter from '../../hooks/useSearchFilter';
 
 import Button from '../../components/Common/Button/Button';
 import SearchBar from '../../components/Common/SearchBar/SearchBar';
-import LinksItem from './linksItem';
+import LinksItem from './LinksItem';
 import ActionModal from '../../components/Common/Modal/ActionModal/ActionModal';
 import AddItemModal from './AddItemModal';
 
-import './linksScreen.css';
+import './LinksScreen.css';
 
 function LinksScreen() {
   //#region ... Variables ...
