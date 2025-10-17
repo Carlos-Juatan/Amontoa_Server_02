@@ -1,55 +1,75 @@
-// src/hooks/useSearchFilter.js
+// src/hooks/useSearchFilter.js (Corrigido)
 import { useMemo, useState } from 'react';
+
+// Função auxiliar para obter valores, suportando aninhamento (ex: 'name.english')
+// e transformando arrays (tags) em uma única string para pesquisa.
+const getSearchableValue = (item, key) => {
+  // 1. Lida com chaves aninhadas (ex: 'name.english')
+  if (key.includes('.')) {
+    const parts = key.split('.');
+    let value = item;
+    for (const part of parts) {
+      value = value ? value[part] : undefined;
+    }
+    return value;
+  }
+
+  // 2. Lida com chaves de nível superior
+  let value = item[key];
+
+  // 3. Lida com arrays de strings (como 'tags')
+  if (Array.isArray(value)) {
+    // Converte o array em uma única string, separada por espaços, para pesquisa
+    value = value.join(' ');
+  }
+
+  return value;
+};
+
 
 const useSearchFilter = (items, initialSearchTerm = '', searchKeys = []) => {
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
 
   const filteredItems = useMemo(() => {
-    // 1. Verificações de robustez
-    if (!items || !Array.isArray(items)) {
-      console.warn("useDynamicSearchFilter: 'items' provided is not a valid array.", items);
-      return []; // Retorna um array vazio para evitar erros
-    }
-
-    if (!searchTerm || searchTerm.trim() === '') {
-      return items; // Retorna os itens originais se não houver termo de pesquisa
+    if (!items || !Array.isArray(items) || !searchTerm || searchTerm.trim() === '') {
+      return items || [];
     }
 
     const lowercasedSearchTerm = searchTerm.toLowerCase().trim();
 
     return items.filter(item => {
       if (searchKeys.length === 0) {
-        return true; // Retorna todos os itens se não houver chaves para filtrar || False para não retornar nenhum item
+        return true; // Retorna todos os itens
       }
 
-      // Verifica cada chave de pesquisa para correspondência
+      // Verifica se ALGUMA das chaves (incluindo tags e aninhadas) corresponde
       return searchKeys.some(key => {
-        const value = item[key];
-        // Garante que o valor existe e é uma string antes de tentar toLowerCase() e includes()
+        const value = getSearchableValue(item, key); // <--- USANDO A NOVA FUNÇÃO
+
+        // Garante que o valor é uma string antes de comparar
         return typeof value === 'string' && value.toLowerCase().includes(lowercasedSearchTerm);
       });
     });
-  }, [items, searchTerm, searchKeys]); // Dependências: items originais, termo de pesquisa, chaves
+  }, [items, searchTerm, searchKeys]);
+
 
   const handleSearchChange = (eventOrValue) => {
-        let newValue;
-        // Verifica se é um objeto de evento (geralmente tem um 'target' e 'target.value')
-        if (eventOrValue && typeof eventOrValue === 'object' && 'target' in eventOrValue && 'value' in eventOrValue.target) {
-            newValue = eventOrValue.target.value;
-        } else if (typeof eventOrValue === 'string') {
-            // Se for uma string direta (como o '' do botão de limpar)
-            newValue = eventOrValue;
-        } else {
-            // Caso receba algo inesperado
-            console.warn('handleSearchChange recebeu um argumento inesperado:', eventOrValue);
-            newValue = ''; // Ou trate de outra forma
-        }
-        setSearchTerm(newValue);
-    };
+    // (Sua lógica de handler permanece a mesma)
+    let newValue;
+    if (eventOrValue && typeof eventOrValue === 'object' && 'target' in eventOrValue && 'value' in eventOrValue.target) {
+      newValue = eventOrValue.target.value;
+    } else if (typeof eventOrValue === 'string') {
+      newValue = eventOrValue;
+    } else {
+      console.warn('handleSearchChange recebeu um argumento inesperado:', eventOrValue);
+      newValue = '';
+    }
+    setSearchTerm(newValue);
+  };
 
   return {
     searchTerm,
-    setSearchTerm, // Permite que o componente externo resete ou defina o termo programaticamente
+    setSearchTerm,
     filteredItems,
     handleSearchChange,
   };

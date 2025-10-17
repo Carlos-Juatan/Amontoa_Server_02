@@ -4,7 +4,10 @@
 :root {
   --background-dark: #1a1a2e; /* Fundo escuro */
   --card-background: #1f2041; /* Fundo dos cards/itens */
+  --card-item: #262853; /* Fundo dos itens */
+  --card-item-selected: #373b6e; /* Fundo dos itens selecionados */
   --text-light: #e0e0e0; /* Texto claro */
+  --text-gray: #979797;
   --primary-purple: #8c73cc; /* Roxo principal */
   --secondary-purple: #5e548e; /* Roxo secundário */
   --highlight-blue: #61dafb; /* Azul claro para realces */

@@ -1,4 +1,19 @@
 /*src/pages/AnimesScreen/AnimesScreen.css*/
+.truncar-texto {
+  /* 1. Garante que o texto fique em uma única linha (impede quebras de linha) */
+  white-space: nowrap; 
+
+  /* 2. Oculta o texto que excede a largura do elemento */
+  overflow: hidden; 
+
+  /* 3. Adiciona as reticências (...) ao ponto onde o texto foi cortado */
+  text-overflow: ellipsis; 
+
+  /* E essencialmente, você precisa definir uma largura para o elemento */
+  /* Se a largura for 100%, ele cortará quando o pai for excedido. */
+  width: 100%; 
+  /* ou max-width: 200px; */ 
+}
 
 .animes-screen-container {
   padding: 40px 20px;
@@ -57,4 +72,181 @@
   margin: 0 auto;
   padding-left: 100px;
   padding-right: 100px;
+}
+
+.animes-container {
+  width: 90%;
+  margin: 20px auto;
+  background-color: var(--card-background); /* Ou outra cor de fundo */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  padding: 20px;
+}
+
+.animes-container .anime-collections {
+  display: flex;
+  gap: 30px;
+  padding: 10px 0;
+}
+
+.animes-container .animes-content {
+  display: flex;
+  gap: 2.5%;
+}
+
+.animes-container .animes-content .animes-display {
+  width: 77.5%;
+}
+
+.animes-container .animes-content .animes-display .animes-organization {
+  display: flex;
+  justify-content: space-between;
+  height: 42px;
+  margin: 20px 0;
+}
+
+.animes-container .animes-content .animes-display .animes-organization .animes-organization-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.animes-container .animes-content .animes-display .animes-organization .animes-organization-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.animes-container .animes-content .animes-display .animes-list {
+  width: 100%;
+  border-top: 1px solid var(--border-color);
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-grid {
+  list-style: none;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 30px;
+  justify-content: flex-start;
+  margin: 0;
+  padding: 10px 0;
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-grid .animes-item-grid {
+  width: calc((100% - 140px) / 5);
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-grid .animes-item-grid img {
+  width: 100%;
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-grid .animes-item-grid h3 {
+  margin: 0;
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-grid .animes-item-grid span {
+  margin: 0;
+  color: var(--text-gray);
+  font-size: 16px;
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-header {
+  display: grid;
+  grid-template-columns: 40% 15% 15% 10% 10% 10%;
+  width: 100%;
+  padding: 10px 0;
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-header .animes-list-header-option {
+  text-align: center;
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-header .animes-list-header-title {
+  text-align: left;
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-list .animes-item-list {
+  display: grid;
+  grid-template-columns: 40% 15% 15% 10% 10% 10%;
+  padding: 10px;
+  gap: 2.5px;
+  align-items: center;
+  background-color: var(--card-item);
+  border-radius: 10px;
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-list .animes-item-list .animes-item-list-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-list .animes-item-list .animes-item-list-title img {
+  width: 50px;
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-list .animes-item-list .animes-item-list-title .animes-item-list-title-text {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  width: 90%;
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-list .animes-item-list .animes-item-list-title .animes-item-list-title-text h3 {
+  margin: 0;
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-list .animes-item-list .animes-item-list-title .animes-item-list-title-text span {
+  color: var(--text-gray);
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-list .animes-item-list .animes-item-list-item {
+  text-align: center;
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-list .animes-item-list .animes-item-list-options {
+  display: flex;
+  justify-content: end;
+  padding: 0 20px 0 0;
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-list .animes-item-list .animes-item-list-launchedData {
+  display: flex;
+  flex-direction: column;
+}
+
+.animes-container .animes-content .animes-display .animes-list .animes-list-list .animes-item-list .animes-item-list-launchedData .animes-item-list-launchedData-subtitle{
+  color: var(--text-gray);
+}
+
+.animes-container .animes-content .animes-sidebar {
+  width: 20%;
+}
+
+.animes-container .animes-content .animes-sidebar .animes-sidebar-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  height: 42px;
+  margin: 20px 0;
+}
+
+.animes-container .animes-content .animes-sidebar .animes-sidebar-research {
+  font-size: 0.8em;
+  width: 100%;
 }
