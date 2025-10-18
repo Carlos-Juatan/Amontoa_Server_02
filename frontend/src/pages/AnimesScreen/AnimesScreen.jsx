@@ -65,6 +65,11 @@ function AnimesScreen(){
   }
   //#endregion
 
+  //#region ... Later
+  const addNewCollection = () => { console.log('Adicionando nova coleção'); }
+  const addNewAnime = () => { console.log('Adicionando novo Anime'); }
+  //#endregion
+
   //#endregion
 
   //#region ... Dom Display ...
@@ -83,7 +88,7 @@ function AnimesScreen(){
           globalCollections={globalData?.collections}
           selectedCollection={selectedCollection}
           onCollectionFilter={handleCollectionFilter}
-          addNewCollection={() => undefined}
+          addNewCollection={addNewCollection}
         />
         
         <div className='animes-content'>
@@ -114,6 +119,7 @@ function AnimesScreen(){
             launchOptions={launchOptions}
             selectedLaunches={selectedLaunches}
             toggleLaunches={toggleLaunches}
+            addNewAnime={addNewAnime}
           />
         </div>
       </div>

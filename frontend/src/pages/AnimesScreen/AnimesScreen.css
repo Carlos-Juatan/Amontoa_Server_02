@@ -87,15 +87,53 @@
   display: flex;
   gap: 30px;
   padding: 10px 0;
+  color: var(--text-gray);
+}
+
+.animes-container .anime-collections span {
+  padding: 5px 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.animes-container .anime-collections span:hover {
+  color: var(--text-light);
+}
+
+.animes-container .anime-collections .new-collection {
+  width: 25px;
+  height: 25px;
+  color: var(--text-light);
+  border: 2px solid var(--text-light);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: auto 0;
+}
+
+.animes-container .anime-collections .new-collection i {
+  transition: transform 0.3s ease-in-out;
+}
+
+.animes-container .anime-collections .new-collection:hover i {
+  transform: rotate(-180deg);
+}
+
+.animes-container .anime-collections .selected-collection {
+  color: var(--text-light);
+  border-bottom: 3px solid var(--highlight-blue);
+  text-align: center;
 }
 
 .animes-container .animes-content {
   display: flex;
-  gap: 2.5%;
+  gap: 2%;
 }
 
 .animes-container .animes-content .animes-display {
-  width: 77.5%;
+  width: 78%;
 }
 
 .animes-container .animes-content .animes-display .animes-organization {
@@ -112,12 +150,30 @@
   padding: 10px 0;
 }
 
+.animes-container .animes-content .animes-display .animes-organization .animes-organization-left span {
+  color: var(--text-gray);
+}
+
+/* ---------------------------------> Voltar depois <-------------------------------------------------------------------*/
+
+
+
+.animes-container .animes-content .animes-display .animes-organization .animes-organization-left select {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-size: 1em;
+}
+
 .animes-container .animes-content .animes-display .animes-organization .animes-organization-right {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 10px 0;
 }
+
+
+/* ----------------------------------------------------------------------------------------------------*/
 
 .animes-container .animes-content .animes-display .animes-list {
   width: 100%;
@@ -244,9 +300,67 @@
   text-align: center;
   height: 42px;
   margin: 20px 0;
+  padding: 0 0 0 10px;
 }
 
 .animes-container .animes-content .animes-sidebar .animes-sidebar-research {
   font-size: 0.8em;
-  width: 100%;
+  width: 90%;
+  border-bottom: 10px;
+  padding: 0 0 0 10px;
+}
+
+.animes-container .animes-content .animes-sidebar .animes-sidebar-content {
+  padding: 0;
+}
+
+.animes-container .animes-content .animes-sidebar hr {
+  margin-left: 10px;
+  margin-right: 6px;
+}
+
+.animes-container .animes-content .animes-sidebar .animes-sidebar-content .animes-sidebar-option {
+  padding: 10px 0 10px 10px;
+  color: var(--text-gray);
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.animes-container .animes-content .animes-sidebar .animes-sidebar-content .animes-sidebar-option:hover {
+  color: var(--text-light);
+}
+
+.animes-container .animes-content .animes-sidebar .animes-sidebar-content .animes-sidebar-newAnime:hover {
+  background-color: var(--card-item);
+}
+
+.animes-container .animes-content .animes-sidebar .animes-sidebar-content .animes-sidebar-option .animes-sidebar-option-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.animes-container .animes-content .animes-sidebar .animes-sidebar-content .animes-sidebar-option .animes-sidebar-option-open {
+  color: var(--text-light);
+}
+
+.animes-container .animes-content .animes-sidebar .animes-sidebar-content .animes-sidebar-option .animes-sidebar-options {
+  color: var(--text-gray);
+}
+
+.animes-container .animes-content .animes-sidebar .animes-sidebar-content .animes-sidebar-option .animes-sidebar-options .animes-sidebar-options-item {
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.animes-container .animes-content .animes-sidebar .animes-sidebar-content .animes-sidebar-option .animes-sidebar-options .animes-sidebar-options-item:hover {
+  color: var(--text-light);
+  background-color: var(--card-item-selected);
+}
+
+.animes-container .animes-content .animes-sidebar .animes-sidebar-content .animes-sidebar-option .animes-sidebar-options .animes-sidebar-options-item-selected {
+  color: var(--text-light);
+  background-color: var(--card-item);
 }

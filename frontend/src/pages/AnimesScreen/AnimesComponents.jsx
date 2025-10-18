@@ -32,7 +32,9 @@ function AnimeCollectionsFilter({ globalCollections, selectedCollection, onColle
           {item}
         </span>
       ))}
-      <i className="fa-solid fa-plus" onClick={addNewCollection}></i>
+      <span className='new-collection' onClick={addNewCollection}>
+        <i className="fa-solid fa-plus"></i>
+      </span>
     </div>
   );
 }
@@ -153,7 +155,7 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo 
   );
 }
 
-function AnimeSidebar({ searchTerm, handleSearchChange, globalData, selectedTags, toggleTags, launchOptions, selectedLaunches, toggleLaunches }) {
+function AnimeSidebar({ searchTerm, handleSearchChange, globalData, selectedTags, toggleTags, launchOptions, selectedLaunches, toggleLaunches, addNewAnime }) {
   return (
     <div className='animes-sidebar'>
       <div className='animes-sidebar-title'>
@@ -166,28 +168,36 @@ function AnimeSidebar({ searchTerm, handleSearchChange, globalData, selectedTags
           onSearchChange={handleSearchChange}
           placeholder={`Pesquisar em ${'Animes'}...`}
         />
-      </div>
-
-      <div className='animes-sidebar-content'>
-        <div className='animes-sidebar-option'>
-          <div onClick={ () => undefined }>
-            <span>Adicionar Anime</span>
-          </div>
         </div>
 
-        <CollapsibleMenu
-          title={"Gênero"}
-          options={globalData?.tags}
-          selectedList={selectedTags} // O estado que armazena as chaves
-          onToggle={toggleTags}
-        />
+        <hr/>
 
-        <CollapsibleMenu
-          title={"Lançamento"}
-          options={launchOptions.map(o => o.displayLabel)} // Passamos o array de filterKey's para o CollapsibleMenu
-          selectedList={selectedLaunches} // O estado que armazena as chaves
-          onToggle={toggleLaunches}
-        />
+        <div className='animes-sidebar-content'>
+          <div className='animes-sidebar-option animes-sidebar-newAnime'>
+            <div onClick={ addNewAnime }>
+              <span>Adicionar Anime</span>
+            </div>
+          </div>
+
+          <hr/>
+
+          <CollapsibleMenu
+            title={"Gênero"}
+            options={globalData?.tags}
+            selectedList={selectedTags} // O estado que armazena as chaves
+            onToggle={toggleTags}
+          />
+
+          <hr/>
+
+          <CollapsibleMenu
+            title={"Lançamento"}
+            options={launchOptions.map(o => o.displayLabel)} // Passamos o array de filterKey's para o CollapsibleMenu
+            selectedList={selectedLaunches} // O estado que armazena as chaves
+            onToggle={toggleLaunches}
+          />
+
+          <hr/>
           
       </div>
     </div>
@@ -200,19 +210,19 @@ function CollapsibleMenu({ title, options, selectedList, onToggle }){
 
   return (
     <div className='animes-sidebar-option'>
-      <div onClick={toggleHasOpen}>
+      <div className={hasOpen ? 'animes-sidebar-option-title animes-sidebar-option-open' : 'animes-sidebar-option-title'} onClick={toggleHasOpen}>
         <span>{title}</span>
-        <span>{hasOpen ? '▲' : '▼'}</span>
+        <div>{hasOpen ? <i className="fa-solid fa-angle-up"></i> : <i className="fa-solid fa-angle-down"></i>}</div>
       </div>
 
       {hasOpen && (
-        <div className="opcoes">
+        <div className="animes-sidebar-options">
           {options.map(option => {
             const isSelected = selectedList.includes(option);
             return (
-              <div key={option} onClick={() => onToggle(option)}>
-                {option}
-                {isSelected ? '✔ ' : ''}
+              <div className={isSelected ? "animes-sidebar-options-item animes-sidebar-options-item-selected" : "animes-sidebar-options-item"} key={option} onClick={() => onToggle(option)}>
+                <span>{option}</span>
+                <span>{isSelected ? '✔ ' : ''}</span>
               </div>
             );
           })}
