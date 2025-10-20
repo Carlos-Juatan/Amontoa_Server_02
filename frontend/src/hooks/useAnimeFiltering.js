@@ -12,7 +12,7 @@ const useAnimeFiltering = (filteredItemsFromSearch) => {
 
   // Funções de Manipulação
   const handleCollectionFilter = (filterName) => setSelectedCollection(filterName);
-  const handleSortSelect = (event) => setDisplaySort(event.target.value);
+  const handleSortSelect = (newValue) => setDisplaySort(newValue);
   // Lógica para adicionar/remover a tag do estado
   const toggleTags = (tag) => {
     setSelectedTags(prevTags => {  // Assumindo que 'tag' é o nome da tag (ex: 'Ação')

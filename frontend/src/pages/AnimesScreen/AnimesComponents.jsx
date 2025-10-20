@@ -1,19 +1,10 @@
 // src/pages/AnimesScreen/AnimesComponents.jsx
 import React, { useState } from 'react';
 
-import Button from '../../components/Common/Button/Button';
-import SearchBar from '../../components/Common/SearchBar/SearchBar';
+import { sortOptions } from '../../utils/sortFilterUtils';
 
-function AnimesHeader({ onBackClick, title }) {
-  return (
-    <div className="animes-header">
-      <Button onClick={onBackClick} className="back-button">
-        <i className="fas fa-arrow-left"></i> Voltar
-      </Button>
-      <h1 className="animes-title">{title}</h1>
-    </div>
-  );
-}
+import CustomDropdown from '../../components/Common/CustomDropdown/CustomDropdown';
+import SearchBar from '../../components/Common/SearchBar/SearchBar';
 
 function AnimeCollectionsFilter({ globalCollections, selectedCollection, onCollectionFilter, addNewCollection }) {
   return (
@@ -39,28 +30,30 @@ function AnimeCollectionsFilter({ globalCollections, selectedCollection, onColle
   );
 }
 
-function AnimeOrganizationControls({ displaySort, handleSortSelect, handleDisplayStyle }) {
+function AnimeOrganizationControls({ displaySort, handleSortSelect, displayStyle, handleDisplayStyle }) {
   return (
     <div className='animes-organization'>
       <div className='animes-organization-left'>
-        <span>Classificar por:</span>
-          <select name="sort" value={displaySort} onChange={handleSortSelect}
-          >
-            <option value="AZ">Alfabético A-Z</option>
-            <option value="ZA">Alfabético Z-A</option>
-            <option value="MN">Maior Nota</option>
-            <option value="MM">Menor Nota</option>
-            <option value="LMR">Lançamento Mais Recente</option>
-            <option value="LMA">Lançamento Mais Antigo</option>
-            <option value="MMR">Modificação Mais Recente</option>
-            <option value="MMA">Modificação Mais Antiga</option>
-            <option value="MQE">Maior Quantidades de Episódios</option>
-            <option value="MQM">Menor Quantidades de Episódios</option>
-          </select>
+        <span className='animes-organization-left-label'>Classificar por:</span>
+        <CustomDropdown
+          options={sortOptions}        // A lista de opções
+          value={displaySort}          // O valor atual (estado)
+          onChange={handleSortSelect}  // A função para atualizar o estado
+        />
       </div>
       <div className='animes-organization-right'>
-        <i className="fa-solid fa-table-cells-large" onClick={() => handleDisplayStyle('grid')}></i>
-        <i className="fa-solid fa-list-ul" onClick={() => handleDisplayStyle('list')}></i>
+        <span 
+          className={`${displayStyle === 'grid' ? 'animes-organization-right-selected' : ''}`}
+          onClick={() => handleDisplayStyle('grid')}
+        >
+          <i className="fa-solid fa-table-cells-large"></i>
+        </span>
+        <span 
+          className={`${displayStyle === 'list' ? 'animes-organization-right-selected' : ''}`}
+          onClick={() => handleDisplayStyle('list')}
+        >
+          <i className="fa-solid fa-list-ul"></i>
+        </span >
       </div>
     </div>
   );
@@ -210,7 +203,7 @@ function CollapsibleMenu({ title, options, selectedList, onToggle }){
 
   return (
     <div className='animes-sidebar-option'>
-      <div className={hasOpen ? 'animes-sidebar-option-title animes-sidebar-option-open' : 'animes-sidebar-option-title'} onClick={toggleHasOpen}>
+      <div className={`animes-sidebar-option-title ${hasOpen ? 'animes-sidebar-option-open' : ''}`} onClick={toggleHasOpen}>
         <span>{title}</span>
         <div>{hasOpen ? <i className="fa-solid fa-angle-up"></i> : <i className="fa-solid fa-angle-down"></i>}</div>
       </div>
@@ -220,7 +213,7 @@ function CollapsibleMenu({ title, options, selectedList, onToggle }){
           {options.map(option => {
             const isSelected = selectedList.includes(option);
             return (
-              <div className={isSelected ? "animes-sidebar-options-item animes-sidebar-options-item-selected" : "animes-sidebar-options-item"} key={option} onClick={() => onToggle(option)}>
+              <div className={`animes-sidebar-options-item ${isSelected ? 'animes-sidebar-options-item-selected' : ''}`} key={option} onClick={() => onToggle(option)}>
                 <span>{option}</span>
                 <span>{isSelected ? '✔ ' : ''}</span>
               </div>
@@ -234,7 +227,6 @@ function CollapsibleMenu({ title, options, selectedList, onToggle }){
 
 export {
   CollapsibleMenu,
-  AnimesHeader,
   AnimeCollectionsFilter,
   AnimeOrganizationControls,
   AnimeDisplayList,

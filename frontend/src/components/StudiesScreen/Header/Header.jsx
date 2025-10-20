@@ -1,6 +1,5 @@
 // src/components/StudiesScreen/NoteDetailScreen/Header/Header.jsx
 import Button from "../../Common/Button/Button";
-
 import './Header.css';
 
 function Header({ onBackToStudies, icon, title, children }) {

@@ -7,7 +7,8 @@ import useAnimeFiltering from '../../hooks/useAnimeFiltering';
 
 import { mapSeasonToOrder } from '../../utils/sortFilterUtils';
 
-import { AnimesHeader, AnimeCollectionsFilter, AnimeOrganizationControls, AnimeDisplayList, AnimeSidebar } from './AnimesComponents';
+import Header from '../../components/Common/Header/Header';
+import { AnimeCollectionsFilter, AnimeOrganizationControls, AnimeDisplayList, AnimeSidebar } from './AnimesComponents';
 
 import './AnimesScreen.css';
 
@@ -77,10 +78,7 @@ function AnimesScreen(){
     <div className="animes-screen-container">
 
       {/* Header */}
-      <AnimesHeader
-        onBackClick={handleBackToDashboard}
-        title={'Animes'}
-      />
+      <Header onBackClick={handleBackToDashboard} title={'Animes'}/>
 
       {/* Animes Container */}
       <div className='animes-container'>
@@ -96,6 +94,7 @@ function AnimesScreen(){
             <AnimeOrganizationControls
               displaySort={displaySort}
               handleSortSelect={handleSortSelect}
+              displayStyle={displayStyle}
               handleDisplayStyle={handleDisplayStyle}
             />
 

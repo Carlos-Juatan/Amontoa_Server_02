@@ -1,7 +1,5 @@
 // src/utils/sortFilterUtils.js
 
-//#region ... Utils Functions to Sort Animes ...
-
 // Função auxiliar para determinar a temporada atual do ano.
 const getCurrentAnimeSeason = () => {
   // 1. Obtém a data atual do sistema
@@ -56,6 +54,19 @@ const countTotalEpisodes = (item) => {
   }, 0) || 0; // Retorna 0 se não houver temporadas
 };
 
+const sortOptions = [
+    { value: 'AZ', label: 'Alfabético A-Z' },
+    { value: 'ZA', label: 'Alfabético Z-A' },
+    { value: 'MN', label: 'Maior Nota' },
+    { value: 'MM', label: 'Menor Nota' },
+    { value: 'LR', label: 'Lançamento Recente' },
+    { value: 'LA', label: 'Lançamento Antigo' },
+    { value: 'MR', label: 'Modificação Recente' },
+    { value: 'MA', label: 'Modificação Antiga' },
+    { value: 'MaE', label: 'Mais Episódios' },
+    { value: 'MeE', label: 'Menos Episódios' },
+];
+
 // Função principal de ordenação
 const sortItems = (items, sortKey) => {
   // 1. Cria uma cópia do array para não modificar o estado original
@@ -77,7 +88,7 @@ const sortItems = (items, sortKey) => {
       case 'MM': // Menor Nota (0 -> 10)
         return (a.score?.personal || 0) - (b.score?.personal || 0);
 
-      case 'LMR': { // Lançamento mais recente (novos) -> ORDEM DECRESCENTE
+      case 'LR': { // Lançamento mais recente (novos) -> ORDEM DECRESCENTE
         const yearA = a.date?.launched?.year || 0;
         const yearB = b.date?.launched?.year || 0;
         const monthA = mapSeasonToOrder(a.date?.launched?.season);
@@ -92,7 +103,7 @@ const sortItems = (items, sortKey) => {
         return monthB - monthA;
       }
 
-      case 'LMA': { // Lançamento mais antigos (velhos) -> ORDEM CRESCENTE
+      case 'LA': { // Lançamento mais antigos (velhos) -> ORDEM CRESCENTE
         const yearA = a.date?.launched?.year || 0;
         const yearB = b.date?.launched?.year || 0;
         const monthA = mapSeasonToOrder(a.date?.launched?.season);
@@ -108,13 +119,13 @@ const sortItems = (items, sortKey) => {
       }
 
       // ORDENAÇÃO POR DATA DE EDIÇÃO
-      case 'MMR': { // Últimas Modificadas (Mais Recentes)
+      case 'MR': { // Últimas Modificadas (Mais Recentes)
         const dateA = new Date(a.date?.lastEdit || 0);
         const dateB = new Date(b.date?.lastEdit || 0);
         return dateB.getTime() - dateA.getTime();
       }
 
-      case 'MMA': { // Primeiras Modificadas (Mais Antigas)
+      case 'MA': { // Primeiras Modificadas (Mais Antigas)
         // OBS: Se a data não for formato ISO (e.g., '14/10/2025'), 
         // a conversão pode falhar.
         const dateA = new Date(a.date?.lastEdit || 0);
@@ -123,10 +134,10 @@ const sortItems = (items, sortKey) => {
       }
 
       // ORDENAÇÃO POR EPISÓDIOS
-      case 'MQE': // Maior Quantidade de Episódios
+      case 'MaE': // Maior Quantidade de Episódios
         return countTotalEpisodes(b) - countTotalEpisodes(a);
 
-      case 'MQM': // Menor Quantidade de Episódios
+      case 'MeE': // Menor Quantidade de Episódios
         return countTotalEpisodes(a) - countTotalEpisodes(b);
 
       default:
@@ -137,6 +148,4 @@ const sortItems = (items, sortKey) => {
   return sorted;
 };
 
-export { getCurrentAnimeSeason, mapSeasonToOrder, countTotalEpisodes, sortItems };
-
-//#endregion
+export { getCurrentAnimeSeason, mapSeasonToOrder, countTotalEpisodes, sortOptions, sortItems };

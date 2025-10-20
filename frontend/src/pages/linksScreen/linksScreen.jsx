@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import useDataOperations from '../../hooks/useDataOperations';
 import useSearchFilter from '../../hooks/useSearchFilter';
 
+import Header from '../../components/Common/Header/Header';
 import Button from '../../components/Common/Button/Button';
 import SearchBar from '../../components/Common/SearchBar/SearchBar';
 import LinksItem from './LinksItem';
@@ -192,12 +193,7 @@ function LinksScreen() {
     <div className="links-screen-container">
 
       {/* Header */}
-      <div className="links-header">
-        <Button onClick={handleBackToDashboard} className="back-button">
-          <i className="fas fa-arrow-left"></i> Voltar
-        </Button>
-        <h1 className="links-title">{'Links'}</h1>
-      </div>
+      <Header onBackClick={handleBackToDashboard} title={'Links'} />
 
       {/* Body */}
 

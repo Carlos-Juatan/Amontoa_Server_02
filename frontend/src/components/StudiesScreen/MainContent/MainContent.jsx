@@ -1,6 +1,4 @@
 
-import Button from '../../../components/Common/Button/Button';
-
 import NoteContentRenderer from './NoteContentRenderer';
 
 import './MainContent.css';

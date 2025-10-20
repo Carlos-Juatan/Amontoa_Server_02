@@ -1,0 +1,44 @@
+/* src/components/Common/Header/Header.css */
+
+.common-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.common-header .back-button {
+  background: none;
+  border: none;
+  color: var(--highlight-blue);
+  font-size: 1.1em;
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.common-header .back-button:hover {
+  color: var(--primary-purple);
+}
+
+.common-header .back-button i {
+  font-size: 1.2em;
+}
+
+.common-title {
+  flex-grow: 1;
+  text-align: center;
+  font-size: 3em;
+  color: var(--primary-purple);
+  text-shadow: 0 0 10px rgba(140, 115, 204, 0.4);
+  margin: 0 auto;
+  padding-left: 100px;
+  padding-right: 100px;
+}

@@ -1,4 +1,4 @@
-/* src/components/Common/Button.css */
+/* src/components/Common/Button/Button.css */
 .common-button {
   background-color: var(--primary-purple); /* Roxo principal */
   color: var(--text-light);

@@ -1,0 +1,81 @@
+/* src/components/Common/CustomDropdown/CustomDropdown.css */
+
+/* Container Principal (posição relativa é CHAVE) */
+.custom-select-wrapper {
+  position: relative; 
+  display: inline-block;
+  font-size: 1em;
+  /* Garante que o dropdown tenha o mesmo tamanho do antigo select */
+  min-width: 100px; 
+}
+
+/* O Campo Exibido (onde a seleção atual é mostrada) */
+.custom-select-trigger {
+  /* Seus estilos de "select fechado" */
+  background: none;
+  border: none;
+  color: var(--text-light);
+  
+  /* Layout e Cursor */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 5px 0;
+}
+
+/* Estilo do ícone de seta */
+.custom-select-trigger .fa-chevron-down {
+  margin-left: 10px;
+  transition: transform 0.2s;
+}
+
+/* Rotação do ícone quando o menu está aberto */
+.custom-select-trigger .fa-chevron-down.open {
+  transform: rotate(180deg);
+}
+
+/* O Menu de Opções (<ul>) */
+.custom-options {
+  position: absolute;
+  top: calc(100% + 5px); /* Abaixo do trigger, com um pequeno espaço */
+  left: 0;
+  z-index: 1000; /* Garante que fique acima de tudo */
+  
+  /* Estilos do Menu */
+  list-style: none;
+  padding: 5px;
+  margin: 0;
+  /* CHAVE AQUI: Garante que o menu se expanda para o conteúdo mais largo */
+  width: max-content;
+  /* OU use min-width: 100% e adicione white-space: nowrap; abaixo. 
+     max-content é geralmente a melhor abordagem aqui. */
+  background-color: var(--card-background, #333); 
+  border: 1px solid var(--border-color, #555);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px var(--background-dark);
+}
+
+/* Item Individual (<li>) */
+.custom-option {
+  padding: 10px;
+  color: var(--text-dark, #ccc);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  border-radius: 10px;
+
+  /* CHAVE AQUI: Impede a quebra de linha do texto, forçando o pai a expandir */
+  white-space: nowrap;
+}
+
+/* ESTILO DO HOVER QUE AGORA FUNCIONA! */
+.custom-option:hover {
+  background-color: var(--card-item-selected); /* Sua cor de hover */
+  color: var(--text-light-on-dark, #fff); 
+}
+
+/* Estilo para o item que está selecionado */
+.custom-option.selected {
+  background-color: var(--card-item-selected); 
+  font-weight: bold;
+}
