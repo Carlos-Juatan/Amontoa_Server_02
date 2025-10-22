@@ -1,7 +1,7 @@
 // src/pages/linksScreen/linksScreen.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useDataOperations from '../../hooks/useDataOperations';
+import useDataCRUD from '../../hooks/useDataCRUD';
 import useSearchFilter from '../../hooks/useSearchFilter';
 
 import Header from '../../components/Common/Header/Header';
@@ -17,7 +17,7 @@ function LinksScreen() {
   //#region ... Variables ...
   const collectionName = 'links-work';
   const navigate = useNavigate(); // to navegate between pages
-  const { data, loading, error, fetchData, createRecord, updateRecord, deleteRecord, isMutating, mutationError } = useDataOperations(collectionName); // to get data from mongoDB
+  const { data, fetchData, updateRecord, isMutating, mutationError, handleCreateItem, handleUpdateItem, handleDeleteItem } = useDataCRUD(collectionName); // to get data from mongoDB
   const { searchTerm, setSearchTerm, filteredItems, handleSearchChange } = useSearchFilter(data, '', ['title', 'description', 'group']); // to filter the 'data'
   //#endregion
 
@@ -36,8 +36,7 @@ function LinksScreen() {
   const handleOpenLink = (url) => { window.open(url, '_blank'); }; // Open a link on another window on the browser
 
   //#region ---> Data Functions <---
-  const handleCreateItem = async (formData) => {
-    console.log("Adicionando novo link com dados do modal:", formData);
+  const handleCreateItemLocal = (formData) => { // Usar .then() e .catch() não precisa do async
     
     // 1. Prepara os dados (incluindo o 'order' mais alto)
     // Busca o valor máximo de 'order' na lista atual e adiciona 1.
@@ -48,54 +47,27 @@ function LinksScreen() {
       order: maxOrder + 1, // Novo item vai para o final
     };
 
+    // Simplificando o try/catch pelo .then() e .catch()
+    return handleCreateItem(newItem).then(() => {
+        closeAddModal(); // Fecha o modal após a criação
+        setIsEditing(true); // Opcional: Entra no modo de edição
+      }).catch((e) => {});
+    /*
     try {
-      await createRecord(collectionName, newItem);
-      await fetchData();
-      console.log("Novo item adicionado com sucesso!");
+      await handleCreateItem(newItem);
       closeAddModal(); // Fecha o modal após a criação
       setIsEditing(true); // Opcional: Entra no modo de edição
 
-    } catch (e) {
-      console.error("Falha ao adicionar o novo item:", e);
-    }
-  };
-
-  const handleUpdateItem = async (id, updatedFields) => {
-    try {
-      await updateRecord(collectionName, id, updatedFields);
-      await fetchData();
-      console.log(`Sucesso na atualização do item ${id}:`, updatedFields);
-
-    } catch (e) {
-      console.error("Falha ao atualizar o item:", e);
-    }
+    } catch (e) {}
+    */
   };
 
   // FUNÇÃO QUE EXECUTA A AÇÃO APÓS A CONFIRMAÇÃO DO MODAL
-  const handleDeleteItem = async (item) => {
-    if (!item || !item._id) return;
-
-    try {
-      await deleteRecord(collectionName, item._id);
-      await fetchData();
+  const handleDeleteItemLocal = (item) => {
+    // Não precisa ser async pois usar .then() e .catch()
+    return handleDeleteItem(item).then(() =>{
       closeDeleteModal(); // Close modal after sucess
-      console.log(`Item ${item.title} (ID: ${item._id}) deletado com sucesso.`);
-
-    } catch (e) {
-      console.error("Erro ao deletar item:", e);
-      // O erro de mutação será tratado no ActionModal
-    }
-  };
-
-  const createCollection = async (newCollectionName) => {
-    // ... (lógica de renomear/criar coleção no globalData) ...
-
-    // Se uma coleção foi criada, adicionamos o item a ela.
-    if (addItemToNewCollection) {
-      // Aguarda a atualização do globalInfo para ter o ID
-      // Chamamos a função de adicionar à coleção para a nova coleção criada
-      await handleAddToExistingCollection(addItemToNewCollection, newCollectionName);
-    }
+    }).catch((e) => {});
   };
   //#endregion
 
@@ -186,12 +158,7 @@ function LinksScreen() {
 
   const openDeleteModal = (item) => { setItemToDelete(item); setIsDeleteModalOpen(true); };
   const closeDeleteModal = () => { setIsDeleteModalOpen(false); setItemToDelete(null); };
-  
-  const closeAddColletion = () => {
-    setHasAddColletion(false);
-    setIsRenaming(null);
-    setAddItemToNewCollection(null); // Limpa o estado
-  };
+
 
   // FUNÇÃO QUE É PASSADA PARA LinksItem, que abre o modal
   const deleteItem = (id) => {
@@ -285,7 +252,7 @@ function LinksScreen() {
       <AddItemModal
           isOpen={isAddItemModalOpen}
           onClose={closeAddModal}
-          onSubmit={handleCreateItem} // Função que cria o item
+          onSubmit={handleCreateItemLocal} // Função que cria o item
           groupsList={groupsList.filter(g => g !== 'Todos')} // Passa a lista de grupos, excluindo 'Todos'
           isMutating={isMutating}
           mutationError={mutationError}
@@ -296,7 +263,7 @@ function LinksScreen() {
         modalType={'delete'} // Força o tipo de modal para delete
         item={itemToDelete} // O item que será excluído
         onClose={closeDeleteModal} // Função para fechar o modal
-        onDelete={handleDeleteItem} // Função que será chamada ao confirmar
+        onDelete={handleDeleteItemLocal} // Função que será chamada ao confirmar
         isMutating={isMutating}
         mutationError={mutationError}
         deleteMessage={`Você tem certeza que deseja excluir o link: ${itemToDelete?.title}?`}

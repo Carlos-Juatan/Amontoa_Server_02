@@ -1,7 +1,7 @@
 // src/pages/AnimesScreen/AnimesScreen.jsx
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useDataOperations from '../../hooks/useDataOperations';
+import useDataCRUD from '../../hooks/useDataCRUD';
 import useSearchFilter from '../../hooks/useSearchFilter';
 import useAnimeFiltering from '../../hooks/useAnimeFiltering';
 
@@ -27,7 +27,7 @@ function AnimesScreen() {
 
   //#region ... Hooks ...
   // Dados importados do backend
-  const { data, loading, error, fetchData, createRecord, updateRecord, deleteRecord, isMutating, mutationError } = useDataOperations(collectionName);
+  const { data, loading, handleCreateItem, handleUpdateItem, handleDeleteItem } = useDataCRUD(collectionName);
   const globalData = data?.length > 0 ? data[0] : null;
   const items = data?.length > 1 ? data.slice(1) : []; // Usamos o 'slice(1)' para pegar todos os elementos A PARTIR do índice 1.
   // Primeira camada de filtragem usando a barra de pesquisa
@@ -57,27 +57,17 @@ function AnimesScreen() {
   const handleDisplayStyle = (value) => setDisplayStyle(value);
 
   //#region ... Data ...
-  const handleUpdateItem = async (id, updatedFields) => {
-    try {
-      await updateRecord(collectionName, id, updatedFields);
-      await fetchData();
-      console.log(`Sucesso na atualização do item ${id}:`, updatedFields);
-
-    } catch (e) {
-      console.error("Falha ao atualizar o item:", e);
-    }
-  };
-
-  const handleDeleteItem = async (item) => {
-    try {
-      await deleteRecord(collectionName, item._id);
-      await fetchData(); // Recarrega a lista
-      console.log(`Sucesso ao apagar o item ${item._id}`);
-    } catch (e) {
-      console.error("Falha ao apagar o item:", e);
-    }
+  const handleDeleteAnime = async (item) => {
+    // Simplificando o try/catch pelo .then() e .catch()
+    await handleDeleteItem(item).catch((e) => { /* Tratar Erro: Opcional */ });
     setOpenActionMenuId(null);
   };
+  /* // Forma alternativa de Escrever a mesma função 'handleDeleteAnime'
+  const handleDeleteAnime = async (item) => {
+    try { await handleDeleteItem(item); } catch (e) { }
+    setOpenActionMenuId(null);
+  };
+  */
   //#endregion
 
   //#region ... Animes ...
@@ -114,6 +104,7 @@ function AnimesScreen() {
     }
     setOpenActionMenuId(null);
   };
+
   const handleAddNewCollection = (itemId) => {
     setAddItemToNewCollection(itemId); // Salva o ID do anime para adicionar após a criação da coleção
     openAddColletion();
@@ -220,7 +211,7 @@ function AnimesScreen() {
                 openActionMenuId={openActionMenuId}
                 setOpenActionMenuId={setOpenActionMenuId}
                 onEditAnime={handleEditAnime}
-                onDeleteAnime={handleDeleteItem}
+                onDeleteAnime={handleDeleteAnime}
                 onAddToExistingCollection={handleAddToExistingCollection}
                 onAddNewCollection={handleAddNewCollection}
               />

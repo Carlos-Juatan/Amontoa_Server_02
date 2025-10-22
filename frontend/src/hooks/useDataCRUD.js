@@ -1,9 +1,9 @@
-// src/hooks/useCollectionCRUD.js
+// src/hooks/useDataCRUD.js
 
 import useDataOperations from './useDataOperations';
 
 // Este hook encapsulará a lógica de criação, leitura, atualização e deletação. CRUD (Create, Read, Update, Delete)
-function useCollectionCRUD(collectionName) {
+function useDataCRUD(collectionName) {
   const { 
     data, 
     loading, 
@@ -79,4 +79,4 @@ function useCollectionCRUD(collectionName) {
   };
 }
 
-export default useCollectionCRUD;
+export default useDataCRUD;
