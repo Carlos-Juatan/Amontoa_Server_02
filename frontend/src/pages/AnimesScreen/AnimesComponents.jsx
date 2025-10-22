@@ -3,12 +3,30 @@ import React, { useState } from 'react';
 
 import { sortOptions } from '../../utils/sortFilterUtils';
 
+import AnimeActionsMenu from './AnimeActionsMenu';
 import CustomDropdown from '../../components/Common/CustomDropdown/CustomDropdown';
 import SearchBar from '../../components/Common/SearchBar/SearchBar';
 
-function AnimeCollectionsFilter({ globalCollections, selectedCollection, onCollectionFilter, addNewCollection }) {
+function AnimeCollectionsFilter({ globalCollections, selectedCollection, onCollectionFilter, addNewCollection, onRenameCollection, onDeleteCollection, ContextMenuComponent }) {
+  // Estado para controlar o menu de contexto
+  const [contextMenu, setContextMenu] = useState(null); // { name: string, x: number, y: number }
+
+  const handleContextMenu = (e, collectionName) => {
+    e.preventDefault(); // Impede que o menu de contexto padrão do navegador apareça
+    setContextMenu({
+      name: collectionName,
+      x: e.clientX,
+      y: e.clientY
+    });
+  };
+
+  const handleCloseContextMenu = () => {
+    setContextMenu(null);
+  };
+
   return (
-    <div className='anime-collections'> 
+    <div className='anime-collections'>
+      {/* Os itens fixos (Tudo, Temporada Atual, Favoritos) não podem ser renomeados/apagados */}
       <span onClick={() => onCollectionFilter('Tudo')} className={selectedCollection === 'Tudo' ? 'selected-collection' : ''}>
         Tudo
       </span>
@@ -18,14 +36,35 @@ function AnimeCollectionsFilter({ globalCollections, selectedCollection, onColle
       <span onClick={() => onCollectionFilter('Favoritos')} className={selectedCollection === 'Favoritos' ? 'selected-collection' : ''}>
         Favoritos
       </span>
+
+      {/* COLEÇÕES CRIADAS PELO USUÁRIO */}
       {globalCollections?.map(item => (
-        <span key={item} onClick={() => onCollectionFilter(item)} className={selectedCollection === item ? 'selected-collection' : ''}>
+        <span
+          key={item}
+          onClick={() => onCollectionFilter(item)}
+          onContextMenu={(e) => handleContextMenu(e, item)} // CHAVE: Botão direito
+          className={selectedCollection === item ? 'selected-collection' : ''}
+        >
           {item}
         </span>
       ))}
+
+      {/* Botão Adicionar */}
       <span className='new-collection' onClick={addNewCollection}>
         <i className="fa-solid fa-plus"></i>
       </span>
+
+      {/* EXIBE O MENU DE CONTEXTO SE O ESTADO ESTIVER PREENCHIDO */}
+      {contextMenu && (
+        <ContextMenuComponent
+          x={contextMenu.x}
+          y={contextMenu.y}
+          collectionName={contextMenu.name}
+          onRename={onRenameCollection}
+          onDelete={onDeleteCollection}
+          onClose={handleCloseContextMenu}
+        />
+      )}
     </div>
   );
 }
@@ -42,13 +81,13 @@ function AnimeOrganizationControls({ displaySort, handleSortSelect, displayStyle
         />
       </div>
       <div className='animes-organization-right'>
-        <span 
+        <span
           className={`${displayStyle === 'grid' ? 'animes-organization-right-selected' : ''}`}
           onClick={() => handleDisplayStyle('grid')}
         >
           <i className="fa-solid fa-table-cells-large"></i>
         </span>
-        <span 
+        <span
           className={`${displayStyle === 'list' ? 'animes-organization-right-selected' : ''}`}
           onClick={() => handleDisplayStyle('list')}
         >
@@ -59,41 +98,7 @@ function AnimeOrganizationControls({ displaySort, handleSortSelect, displayStyle
   );
 }
 
-function AnimesItemGrid({ id, imageUrl, japoneseTitle, englishTitle}) {
-  return(
-    <>
-      <img src={imageUrl} alt="" />
-      <h3 className="truncar-texto">{japoneseTitle}</h3>
-      <span className="truncar-texto">{englishTitle}</span>
-    </>
-  );
-}
-
-function AnimesItemList({ id, imageUrl, japoneseTitle, englishTitle, seasons, timeWhatched, score, launcheData }) {
-  return(
-    <>
-      <div className='animes-item-list-title'>
-        <img src={imageUrl} alt="" />
-        <div className='animes-item-list-title-text'>
-          <h3 className="truncar-texto">{japoneseTitle}</h3>
-          <span className="truncar-texto">{englishTitle}</span>
-        </div>
-      </div>
-      <span className='animes-item-list-item'>{seasons}</span>
-      <span className='animes-item-list-item'>{timeWhatched}</span>
-      <span className='animes-item-list-item'>{score}</span>
-      <div className='animes-item-list-item animes-item-list-launchedData'>
-        <span className='animes-item-list-launchedData-title'>{`${launcheData.season} ${launcheData.year}`}</span>
-        <span className='animes-item-list-launchedData-subtitle'>{`${launcheData.months}`}</span>
-      </div>
-      <div className="animes-item-list-item animes-item-list-options">
-        <i className="fa-solid fa-ellipsis"></i>
-      </div>
-    </>
-  );
-}
-
-function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo }) {
+function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo, globalCollections, openActionMenuId, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onAddNewCollection }) {
 
   // Mensagem de Feedback
   if (finalSortedItems.length === 0 && !loading) return <p>Nenhum item corresponde à sua busca.</p>;
@@ -110,6 +115,13 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo 
               imageUrl={item.imageUrl || "N/A"}
               japoneseTitle={item.name?.japonese || "N/A"}
               englishTitle={item.name?.english || "N/A"}
+              collections={globalCollections}
+              isMenuOpen={openActionMenuId === item._id}
+              setOpenActionMenuId={setOpenActionMenuId}
+              onEditAnime={onEditAnime}
+              onDeleteAnime={onDeleteAnime}
+              onAddToExistingCollection={onAddToExistingCollection}
+              onAddNewCollection={onAddNewCollection}
             />
           </li>
         ))}
@@ -140,11 +152,118 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo 
               timeWhatched={item.timeWhatched?.length || "-"}
               score={item.score?.personal || "-"}
               launcheData={seasonInfo(item.date?.launched)}
+              collections={globalCollections}
+              isMenuOpen={openActionMenuId === item._id}
+              setOpenActionMenuId={setOpenActionMenuId}
+              onEditAnime={onEditAnime}
+              onDeleteAnime={onDeleteAnime}
+              onAddToExistingCollection={onAddToExistingCollection}
+              onAddNewCollection={onAddNewCollection}
             />
           </li>
         ))}
       </ul>
     </>
+  );
+}
+
+function AnimesItemGrid({ id, imageUrl, japoneseTitle, englishTitle, collections, isMenuOpen, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onAddNewCollection }) {
+
+  // CHAVE: Previne o clique normal no item para abrir o menu
+  const handleMenuToggle = (e) => {
+    e.stopPropagation(); // Impede que o clique suba para o item (abertura do MediaSourceHandle)
+    setOpenActionMenuId(isMenuOpen ? null : id);
+  };
+
+  // CHAVE: Abre o MediaSourceHandle ao clicar no item (excluindo o ícone de opções)
+  const handleItemClick = () => {
+    // Lógica para abrir o MediaSourceHandle
+    console.log(`Abrindo MediaSourceHandle para o item: ${id}`);
+    // setMediaSourceHandleOpen(id) ou navigate para a página de detalhes, etc.
+  };
+
+  return (
+    // Adicionar onClick para abrir o MediaSourceHandle
+    <div className='animes-item-grid-content' onClick={handleItemClick}>
+      <div className='up'>
+        <img src={imageUrl} alt="" />
+        <div className='img-filter' />
+      </div>
+      <div className='bottom'>
+        <div className='left'>
+          <h3 className="truncar-texto">{japoneseTitle}</h3>
+          <span className="truncar-texto">{englishTitle}</span>
+        </div>
+        <div className='right'>
+          <i
+            className="fa-solid fa-ellipsis"
+            onClick={handleMenuToggle} // NOVO: Clique para abrir/fechar o menu
+          />
+        
+          {isMenuOpen && (
+            <AnimeActionsMenu
+              itemId={id}
+              collections={collections}
+              onEdit={onEditAnime}
+              onDelete={onDeleteAnime}
+              onAddToCollection={onAddToExistingCollection}
+              onAddNewCollection={onAddNewCollection}
+              onClose={() => setOpenActionMenuId(null)}
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AnimesItemList({ id, imageUrl, japoneseTitle, englishTitle, seasons, timeWhatched, score, launcheData, collections, isMenuOpen, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onAddNewCollection }) {
+
+  const handleMenuToggle = (e) => {
+    e.stopPropagation();
+    setOpenActionMenuId(isMenuOpen ? null : id);
+  };
+
+  const handleItemClick = () => {
+    // Lógica para abrir o MediaSourceHandle
+    console.log(`Abrindo MediaSourceHandle para o item: ${id}`);
+  };
+
+  return (
+    <div className='animes-item-list-content' onClick={handleItemClick}>
+      <div className='animes-item-list-title'>
+        <img src={imageUrl} alt="" />
+        <div className='animes-item-list-title-text'>
+          <h3 className="truncar-texto">{japoneseTitle}</h3>
+          <span className="truncar-texto">{englishTitle}</span>
+        </div>
+      </div>
+      <span className='animes-item-list-item'>{seasons}</span>
+      <span className='animes-item-list-item'>{timeWhatched}</span>
+      <span className='animes-item-list-item'>{score}</span>
+      <div className='animes-item-list-item animes-item-list-launchedData'>
+        <span className='animes-item-list-launchedData-title'>{`${launcheData.season} ${launcheData.year}`}</span>
+        <span className='animes-item-list-launchedData-subtitle'>{`${launcheData.months}`}</span>
+      </div>
+      <div className="animes-item-list-item animes-item-list-options">
+        <i
+          className="fa-solid fa-ellipsis"
+          onClick={handleMenuToggle} // NOVO: Clique para abrir/fechar o menu
+        />
+      
+        {isMenuOpen && (
+          <AnimeActionsMenu
+            itemId={id}
+            collections={collections}
+            onEdit={onEditAnime}
+            onDelete={onDeleteAnime}
+            onAddToCollection={onAddToExistingCollection}
+            onAddNewCollection={onAddNewCollection}
+            onClose={() => setOpenActionMenuId(null)}
+          />
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -154,50 +273,50 @@ function AnimeSidebar({ searchTerm, handleSearchChange, globalData, selectedTags
       <div className='animes-sidebar-title'>
         <h3>Filtros</h3>
       </div>
-      
+
       <div className='animes-sidebar-research'>
         <SearchBar
           searchTerm={searchTerm}
           onSearchChange={handleSearchChange}
           placeholder={`Pesquisar em ${'Animes'}...`}
         />
+      </div>
+
+      <hr />
+
+      <div className='animes-sidebar-content'>
+        <div className='animes-sidebar-option animes-sidebar-newAnime'>
+          <div onClick={addNewAnime}>
+            <span>Adicionar Anime</span>
+          </div>
         </div>
 
-        <hr/>
+        <hr />
 
-        <div className='animes-sidebar-content'>
-          <div className='animes-sidebar-option animes-sidebar-newAnime'>
-            <div onClick={ addNewAnime }>
-              <span>Adicionar Anime</span>
-            </div>
-          </div>
+        <CollapsibleMenu
+          title={"Gênero"}
+          options={globalData?.tags}
+          selectedList={selectedTags} // O estado que armazena as chaves
+          onToggle={toggleTags}
+        />
 
-          <hr/>
+        <hr />
 
-          <CollapsibleMenu
-            title={"Gênero"}
-            options={globalData?.tags}
-            selectedList={selectedTags} // O estado que armazena as chaves
-            onToggle={toggleTags}
-          />
+        <CollapsibleMenu
+          title={"Lançamento"}
+          options={launchOptions.map(o => o.displayLabel)} // Passamos o array de filterKey's para o CollapsibleMenu
+          selectedList={selectedLaunches} // O estado que armazena as chaves
+          onToggle={toggleLaunches}
+        />
 
-          <hr/>
+        <hr />
 
-          <CollapsibleMenu
-            title={"Lançamento"}
-            options={launchOptions.map(o => o.displayLabel)} // Passamos o array de filterKey's para o CollapsibleMenu
-            selectedList={selectedLaunches} // O estado que armazena as chaves
-            onToggle={toggleLaunches}
-          />
-
-          <hr/>
-          
       </div>
     </div>
   );
 }
 
-function CollapsibleMenu({ title, options, selectedList, onToggle }){
+function CollapsibleMenu({ title, options, selectedList, onToggle }) {
   const [hasOpen, setHasOpen] = useState(false);
   const toggleHasOpen = () => setHasOpen(!hasOpen);
 
@@ -230,7 +349,5 @@ export {
   AnimeCollectionsFilter,
   AnimeOrganizationControls,
   AnimeDisplayList,
-  AnimeSidebar,
-  AnimesItemGrid,
-  AnimesItemList
+  AnimeSidebar
 };

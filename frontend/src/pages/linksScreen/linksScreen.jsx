@@ -86,6 +86,17 @@ function LinksScreen() {
       // O erro de mutação será tratado no ActionModal
     }
   };
+
+  const createCollection = async (newCollectionName) => {
+    // ... (lógica de renomear/criar coleção no globalData) ...
+
+    // Se uma coleção foi criada, adicionamos o item a ela.
+    if (addItemToNewCollection) {
+      // Aguarda a atualização do globalInfo para ter o ID
+      // Chamamos a função de adicionar à coleção para a nova coleção criada
+      await handleAddToExistingCollection(addItemToNewCollection, newCollectionName);
+    }
+  };
   //#endregion
 
   //#region ---> Groups Functions <---
@@ -175,6 +186,12 @@ function LinksScreen() {
 
   const openDeleteModal = (item) => { setItemToDelete(item); setIsDeleteModalOpen(true); };
   const closeDeleteModal = () => { setIsDeleteModalOpen(false); setItemToDelete(null); };
+  
+  const closeAddColletion = () => {
+    setHasAddColletion(false);
+    setIsRenaming(null);
+    setAddItemToNewCollection(null); // Limpa o estado
+  };
 
   // FUNÇÃO QUE É PASSADA PARA LinksItem, que abre o modal
   const deleteItem = (id) => {
