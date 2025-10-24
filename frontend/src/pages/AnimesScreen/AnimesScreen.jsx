@@ -1,31 +1,36 @@
 // src/pages/AnimesScreen/AnimesScreen.jsx
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+// Global Hooks and Utils
 import useDataCRUD from '../../hooks/useDataCRUD';
 import useSearchFilter from '../../hooks/useSearchFilter';
-import useAnimeFiltering from '../../hooks/useAnimeFiltering';
 
-import { mapSeasonToOrder } from '../../utils/sortFilterUtils';
+// Private Hooks and Utils
+import useAnimeFiltering from './hooks/useAnimeFiltering';
+import useAnimeManager from './hooks/useAnimeManager';
+import { mapSeasonToOrder } from './utils/sortFilterUtils';
 
+// Modals (DOM)
 import { AddCollection } from './AnimesModal';
 import CollectionContextMenu from './CollectionContextMenu';
 
+// Components (DOM)
 import Header from '../../components/Common/Header/Header';
 import { AnimeCollectionsFilter, AnimeOrganizationControls, AnimeDisplayList, AnimeSidebar } from './AnimesComponents';
 
+// Styles
 import './AnimesScreen.css';
 
 function AnimesScreen() {
-  //#region ... Variables ...
+  
+//#region ... Variables ...
   const collectionName = 'animes';
   const navigate = useNavigate(); // to navegate between pages
   const [displayStyle, setDisplayStyle] = useState('grid');
-  const [hasAddCollection, setHasAddColletion] = useState(false);
-  const [openActionMenuId, setOpenActionMenuId] = useState(null);
-  const [addItemToNewCollection, setAddItemToNewCollection] = useState(null);
-  //#endregion
+//#endregion
 
-  //#region ... Hooks ...
+//#region ... Hooks ...
   // Dados importados do backend
   const { data, loading, handleCreateItem, handleUpdateItem, handleDeleteItem } = useDataCRUD(collectionName);
   const globalData = data?.length > 0 ? data[0] : null;
@@ -34,8 +39,40 @@ function AnimesScreen() {
   const { searchTerm, setSearchTerm, filteredItems, handleSearchChange } = useSearchFilter(items, '', ['name.english', 'name.japonese', 'description', 'tags']);
 
   // 3. Filtros e Ordenação 
-  const { finalSortedItems, displaySort, handleSortSelect, selectedTags, toggleTags, selectedLaunches, toggleLaunches, selectedCollection, handleCollectionFilter } =
-    useAnimeFiltering(filteredItems); // Passamos os itens filtrados pela busca da barra de pesquisa
+  const {
+    finalSortedItems,
+    displaySort,
+    handleSortSelect,
+    selectedTags,
+    toggleTags,
+    selectedLaunches,
+    toggleLaunches,
+    selectedCollection,
+    handleCollectionFilter
+  } = useAnimeFiltering(filteredItems); // Passamos os itens filtrados pela busca da barra de pesquisa
+
+  // Lógica de Gerenciamento de Animes e Coleções
+  const { 
+    // Estados de UI
+    openActionMenuId, 
+    setOpenActionMenuId,
+    hasAddCollection, 
+    isRenaming, 
+    
+    // Funções de Coleção
+    openAddColletion,
+    closeAddColletion,
+    openRenameCollection,
+    handleAddNewCollection,
+    createCollection,
+    handleDeleteCollection,
+    
+    // Funções de Item
+    handleAddNewAnime,
+    handleEditAnime,
+    handleDeleteAnime,
+    handleAddToExistingCollection,
+  } = useAnimeManager(collectionName, items, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem);
 
   //Formata as opções de lançamento para o CollapsibleMenu
   const launchOptions = useMemo(() => {
@@ -50,25 +87,12 @@ function AnimesScreen() {
         return { filterKey, displayLabel };
       });
   }, [globalData]);
-  //#endregion
+//#endregion
 
-  //#region ... Functions ...
+//#region ... Functions ...
   const handleBackToDashboard = () => navigate('/');
   const handleDisplayStyle = (value) => setDisplayStyle(value);
 
-  //#region ... Data ...
-  const handleDeleteAnime = async (item) => {
-    // Simplificando o try/catch pelo .then() e .catch()
-    await handleDeleteItem(item).catch((e) => { /* Tratar Erro: Opcional */ });
-    setOpenActionMenuId(null);
-  };
-  /* // Forma alternativa de Escrever a mesma função 'handleDeleteAnime'
-  const handleDeleteAnime = async (item) => {
-    try { await handleDeleteItem(item); } catch (e) { }
-    setOpenActionMenuId(null);
-  };
-  */
-  //#endregion
 
   //#region ... Animes ...
   const seasonInfo = (date) => {
@@ -84,159 +108,12 @@ function AnimesScreen() {
       months: month
     }
   }
-
-  const handleEditAnime = (itemId) => {
-    console.log(`Editando Anime: ${itemId}`);
-    setOpenActionMenuId(null);
-  };
-
-  const handleAddToExistingCollection = async (itemId, collectionName) => {
-    const itemToUpdate = items.find(item => item._id === itemId);
-
-    if (itemToUpdate) {
-      const newCollections = [...(itemToUpdate.collections || [])];
-      if (!newCollections.includes(collectionName)) {
-        newCollections.push(collectionName);
-      }
-
-      // Chama a função de atualização (collectionName é 'animes' do hook)
-      await handleUpdateItem(itemId, { collections: newCollections });
-    }
-    setOpenActionMenuId(null);
-  };
-
-  const handleAddNewCollection = (itemId) => {
-    setAddItemToNewCollection(itemId); // Salva o ID do anime para adicionar após a criação da coleção
-    openAddColletion();
-    setOpenActionMenuId(null);
-  };
   //#endregion
 
-  //#region ... Modals ...
-  const [isRenaming, setIsRenaming] = useState(null); // Armazena o nome da coleção a ser renomeada
+//#endregion
 
-  const openAddColletion = () => setHasAddColletion(true);
-  const closeAddColletion = () => {
-    setHasAddColletion(false);
-    setIsRenaming(null); // Limpa o estado de renomear ao fechar
-  };
 
-  const createCollection = async (newCollectionName) => {
-    const existingGlobalInfo = globalData?.globalInfo || {};
-    let updatedCollections = [...(existingGlobalInfo.collections || [])];
-
-    // Lógica de Renomear
-    if (isRenaming) {
-      const index = updatedCollections.indexOf(isRenaming);
-      if (index !== -1) {
-        updatedCollections[index] = newCollectionName; // Substitui o nome antigo
-      }
-    } else {
-      // Lógica de Criar Novo
-      if (newCollectionName && !updatedCollections.includes(newCollectionName)) {
-        updatedCollections.push(newCollectionName);
-      }
-    }
-
-    updatedCollections.sort((a, b) => a.localeCompare(b));
-
-    const payload = {
-      globalInfo: {
-        ...existingGlobalInfo,
-        collections: updatedCollections
-      }
-    };
-
-    await handleUpdateItem(globalData._id, payload);
-
-    // Se tiver Anime para adicionar a uma nova coleção
-    if(!addItemToNewCollection) return;
-
-    await handleAddToExistingCollection(addItemToNewCollection, newCollectionName);
-    setAddItemToNewCollection(null);
-  };
-
-  // Função que será passada para o ContextMenu (Renomear)
-  const handleRenameCollection = (oldName) => {
-    setIsRenaming(oldName); // Abre o modal, preenche com o nome antigo
-    openAddColletion();
-  };
-
-  // Função que será passada para o ContextMenu (Apagar)
-  const handleDeleteCollection = async (collectionToDelete) => {
-    // Removendo a coleção dos itens que possam ter a coleção
-    await handleRemoveCollectionFromItem(collectionToDelete);
-
-    // Removendo a coleção do banco de dados
-    const existingGlobalInfo = globalData?.globalInfo || {};
-    let currentCollections = [...(existingGlobalInfo.collections || [])];
-    
-    if (!collectionToDelete && !currentCollections.includes(newCollectionName)) return;
-
-    // 1. Remover o 'collectionToDelete' da lista atualizada de itens 'currentCollections'
-    const updatedCollections = currentCollections.filter(
-      (collection) => collection !== collectionToDelete
-    );
-
-    // 2. Criar o payload (como em createCollection)
-    const payload = {
-      globalInfo: {
-        ...existingGlobalInfo, // Mantém as outras propriedades (tags, seassons)
-        collections: updatedCollections
-      }
-    };
-
-    // 3. Chamar handleUpdateItem
-    await handleUpdateItem(globalData._id, payload);
-  };
-
-  const handleRemoveCollectionFromItem = async (collectionToDelete) => {
-    if(!collectionToDelete) return;
-
-    // 1. Filtrar os itens que contêm a coleção a ser deletada
-    const listToRemoveCollection = items.filter(e => {
-       return Array.isArray(e.collections) && e.collections.includes(collectionToDelete);
-    })
-
-    // Se não houver itens para atualizar, encerra a função
-    if (listToRemoveCollection.length === 0) return;
-
-    // 2. Preparar os payloads de atualização para cada item
-    const updatePromises = listToRemoveCollection.map(item => {
-      // Cria um novo array de coleções, excluindo a coleção a ser deletada
-      const newCollections = item.collections.filter(
-        (collection) => collection !== collectionToDelete
-      );
-
-      // Cria o payload de atualização
-      const payload = {
-        ...item, // Mantém todos os outros dados do item
-        collections: newCollections // Sobrescreve o campo 'collections'
-      };
-
-      // Retorna a Promise da função de atualização do item
-      // Assumimos que 'handleUpdateItem' pode lidar com um ID de item e o payload completo/parcial
-      return handleUpdateItem(item._id, payload); 
-    });
-
-    // 3. Executar todas as atualizações simultaneamente
-    try {
-      await Promise.all(updatePromises);
-      console.log(`Coleção '${collectionToDelete}' removida de ${updatePromises.length} itens com sucesso.`);
-    } catch (error) {
-      console.error("Erro ao remover a coleção dos itens:", error);
-      // Você pode adicionar um tratamento de erro mais sofisticado aqui
-    }
-  }
-  //#endregion
-
-  //#region ... Later
-  const addNewAnime = () => { console.log('Adicionando novo Anime'); }
-  //#endregion
-
-  //#endregion
-
-  //#region ... Dom Display ...
+//#region ... Dom Display ...
   return (
     <div className="animes-screen-container">
 
@@ -250,7 +127,7 @@ function AnimesScreen() {
           selectedCollection={selectedCollection}
           onCollectionFilter={handleCollectionFilter}
           addNewCollection={openAddColletion}
-          onRenameCollection={handleRenameCollection}
+          onRenameCollection={openRenameCollection}
           onDeleteCollection={handleDeleteCollection}
           ContextMenuComponent={CollectionContextMenu}
         />
@@ -291,7 +168,7 @@ function AnimesScreen() {
             launchOptions={launchOptions}
             selectedLaunches={selectedLaunches}
             toggleLaunches={toggleLaunches}
-            addNewAnime={addNewAnime}
+            onAddNewAnime={handleAddNewAnime}
           />
         </div>
       </div>
@@ -308,7 +185,7 @@ function AnimesScreen() {
 
     </div>
   );
-  //#endregion
+//#endregion
 }
 
 export default AnimesScreen;

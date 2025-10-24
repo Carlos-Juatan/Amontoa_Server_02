@@ -1,7 +1,7 @@
 // src/pages/AnimesScreen/AnimesComponents.jsx
 import React, { useState } from 'react';
 
-import { sortOptions } from '../../utils/sortFilterUtils';
+import { sortOptions } from './utils/sortFilterUtils';
 
 import AnimeActionsMenu from './AnimeActionsMenu';
 import CustomDropdown from '../../components/Common/CustomDropdown/CustomDropdown';
@@ -267,7 +267,7 @@ function AnimesItemList({ id, imageUrl, japoneseTitle, englishTitle, seasons, ti
   );
 }
 
-function AnimeSidebar({ searchTerm, handleSearchChange, globalData, selectedTags, toggleTags, launchOptions, selectedLaunches, toggleLaunches, addNewAnime }) {
+function AnimeSidebar({ searchTerm, handleSearchChange, globalData, selectedTags, toggleTags, launchOptions, selectedLaunches, toggleLaunches, onAddNewAnime }) {
   return (
     <div className='animes-sidebar'>
       <div className='animes-sidebar-title'>
@@ -286,7 +286,7 @@ function AnimeSidebar({ searchTerm, handleSearchChange, globalData, selectedTags
 
       <div className='animes-sidebar-content'>
         <div className='animes-sidebar-option animes-sidebar-newAnime'>
-          <div onClick={addNewAnime}>
+          <div onClick={onAddNewAnime}>
             <span>Adicionar Anime</span>
           </div>
         </div>
