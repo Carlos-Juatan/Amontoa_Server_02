@@ -121,7 +121,7 @@ function AnimesScreen() {
     setIsRenaming(null); // Limpa o estado de renomear ao fechar
   };
 
-  const createCollection = (newCollectionName) => {
+  const createCollection = async (newCollectionName) => {
     const existingGlobalInfo = globalData?.globalInfo || {};
     let updatedCollections = [...(existingGlobalInfo.collections || [])];
 
@@ -147,7 +147,13 @@ function AnimesScreen() {
       }
     };
 
-    handleUpdateItem(globalData._id, payload);
+    await handleUpdateItem(globalData._id, payload);
+
+    // Se tiver Anime para adicionar a uma nova coleção
+    if(!addItemToNewCollection) return;
+
+    await handleAddToExistingCollection(addItemToNewCollection, newCollectionName);
+    setAddItemToNewCollection(null);
   };
 
   // Função que será passada para o ContextMenu (Renomear)
@@ -157,14 +163,71 @@ function AnimesScreen() {
   };
 
   // Função que será passada para o ContextMenu (Apagar)
-  const handleDeleteCollection = (collectionToDelete) => {
-    // Implemente a lógica de exclusão aqui
-    console.log(`Apagando coleção: ${collectionToDelete}`);
-    // Exemplo:
-    // 1. Obter a lista atualizada (filtrando o item)
+  const handleDeleteCollection = async (collectionToDelete) => {
+    // Removendo a coleção dos itens que possam ter a coleção
+    await handleRemoveCollectionFromItem(collectionToDelete);
+
+    // Removendo a coleção do banco de dados
+    const existingGlobalInfo = globalData?.globalInfo || {};
+    let currentCollections = [...(existingGlobalInfo.collections || [])];
+    
+    if (!collectionToDelete && !currentCollections.includes(newCollectionName)) return;
+
+    // 1. Remover o 'collectionToDelete' da lista atualizada de itens 'currentCollections'
+    const updatedCollections = currentCollections.filter(
+      (collection) => collection !== collectionToDelete
+    );
+
     // 2. Criar o payload (como em createCollection)
+    const payload = {
+      globalInfo: {
+        ...existingGlobalInfo, // Mantém as outras propriedades (tags, seassons)
+        collections: updatedCollections
+      }
+    };
+
     // 3. Chamar handleUpdateItem
+    await handleUpdateItem(globalData._id, payload);
   };
+
+  const handleRemoveCollectionFromItem = async (collectionToDelete) => {
+    if(!collectionToDelete) return;
+
+    // 1. Filtrar os itens que contêm a coleção a ser deletada
+    const listToRemoveCollection = items.filter(e => {
+       return Array.isArray(e.collections) && e.collections.includes(collectionToDelete);
+    })
+
+    // Se não houver itens para atualizar, encerra a função
+    if (listToRemoveCollection.length === 0) return;
+
+    // 2. Preparar os payloads de atualização para cada item
+    const updatePromises = listToRemoveCollection.map(item => {
+      // Cria um novo array de coleções, excluindo a coleção a ser deletada
+      const newCollections = item.collections.filter(
+        (collection) => collection !== collectionToDelete
+      );
+
+      // Cria o payload de atualização
+      const payload = {
+        ...item, // Mantém todos os outros dados do item
+        collections: newCollections // Sobrescreve o campo 'collections'
+      };
+
+      // Retorna a Promise da função de atualização do item
+      // Assumimos que 'handleUpdateItem' pode lidar com um ID de item e o payload completo/parcial
+      return handleUpdateItem(item._id, payload); 
+    });
+
+    // 3. Executar todas as atualizações simultaneamente
+    try {
+      await Promise.all(updatePromises);
+      console.log(`Coleção '${collectionToDelete}' removida de ${updatePromises.length} itens com sucesso.`);
+    } catch (error) {
+      console.error("Erro ao remover a coleção dos itens:", error);
+      // Você pode adicionar um tratamento de erro mais sofisticado aqui
+    }
+  }
   //#endregion
 
   //#region ... Later

@@ -39,7 +39,16 @@ function AnimeActionsMenu({ itemId, collections, onEdit, onDelete, onAddToCollec
           Editar
         </li>
 
-        {/* 2. Adicionar à Coleção (Com Sub-Menu) */}
+        {/* 2. Adicionar aos Favoritos */}
+        <li
+          className="custom-option"
+          onClick={(e) => { e.stopPropagation(); onAddToCollection(itemId, 'Favoritos'); onClose(); }}
+          role="menuitem"
+        >
+          Adicionar aos Favoritos
+        </li>
+
+        {/* 3. Adicionar à Coleção (Com Sub-Menu) */}
         <li
           className="custom-option"
           onClick={(e) => { 
@@ -60,7 +69,7 @@ function AnimeActionsMenu({ itemId, collections, onEdit, onDelete, onAddToCollec
           )}
         </li>
 
-        {/* 3. Apagar */}
+        {/* 4. Apagar */}
         <li
           className="custom-option"
           onClick={(e) => { e.stopPropagation(); onDelete( { _id: itemId }); onClose(); }}
