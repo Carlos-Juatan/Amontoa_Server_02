@@ -150,7 +150,7 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo,
               englishTitle={item.name?.english || "N/A"}
               seasons={item.seasons?.length || "-"}
               timeWhatched={item.timeWhatched?.length || "-"}
-              score={item.score?.personal || "-"}
+              score={item.score || "-"}
               launcheData={seasonInfo(item.date?.launched)}
               collections={globalCollections}
               isMenuOpen={openActionMenuId === item._id}

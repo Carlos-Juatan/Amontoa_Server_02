@@ -12,7 +12,7 @@ import useAnimeManager from './hooks/useAnimeManager';
 import { mapSeasonToOrder } from './utils/sortFilterUtils';
 
 // Modals (DOM)
-import { AddCollection } from './AnimesModal';
+import { AddCollectionModal, AnimeDetailsModal, AnimeEditModal } from './AnimesModal';
 import CollectionContextMenu from './CollectionContextMenu';
 
 // Components (DOM)
@@ -58,6 +58,7 @@ function AnimesScreen() {
     setOpenActionMenuId,
     hasAddCollection, 
     isRenaming, 
+    hasAnimeModal,
     
     // Funções de Coleção
     openAddColletion,
@@ -174,12 +175,22 @@ function AnimesScreen() {
       </div>
 
       {hasAddCollection && (
-        <AddCollection
+        <AddCollectionModal
           isOpen={openAddColletion}
           onClose={closeAddColletion}
           title={isRenaming === null ? "Dê um nome à sua coleção" : "Altere o nome desta coleção"}
           onSubmit={createCollection}
           initialValue={isRenaming}
+        />
+      )}
+
+      {hasAnimeModal === 'details' && (
+        <AnimeDetailsModal
+        />
+      )}
+
+      {hasAnimeModal === 'edit' && (
+        <AnimeEditModal
         />
       )}
 

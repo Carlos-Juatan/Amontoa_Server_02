@@ -1,0 +1,399 @@
+/* src/pages/AnimesScreen/AnimesModal.css */
+
+.animes-modal-overlay {
+  /* Posicionamento Centralizado na tela */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000; /* Garante que o modal esteja na frente de outros elementos */
+
+  /* Alinha os itens no centro da tela */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* Efeitos de Fundo Atraz do modal */
+  background-color: rgba(0, 0, 0, 0.75); /* Cor de background preta 25% transparente */
+  backdrop-filter: blur(5px); /* Efeito de desfoque no background */
+}
+
+.animes-modal-overlay .animes-modal-anime-details {
+  display: flex;
+}
+
+.animes-modal-overlay .animes-modal-anime-details .back-anime-button,
+.animes-modal-overlay .animes-modal-anime-details .next-anime-button {
+  width: 10%;
+  max-height: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em;
+  cursor: pointer;
+}
+
+.animes-modal-overlay .animes-modal-anime-details .back-anime-button:hover,
+.animes-modal-overlay .animes-modal-anime-details .next-anime-button:hover {
+  background-color: var(--background-dark);
+  color: var(--highlight-blue);
+}
+
+.animes-modal-overlay .animes-modal-container {
+  /* Largura e altura */
+  width: 90%;
+  max-width: 80%;
+  max-height: 80%;
+
+  /* Disposição de Itens */
+  display: flex;
+  flex-direction: row;
+  padding: 30px;
+  gap: 25px;
+
+  /* Cores e Aparências */
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 30px var(--shadow-color-dark);
+  border-radius: 12px;
+
+  /* Animações */
+  animation: fadeIn 0.3s ease-out; /* Animação simples de entrada */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.animes-modal-overlay .animes-content-left {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.animes-modal-overlay .animes-content-left .animes-content-right-top-date {
+  display: flex;
+  justify-content: left;
+  gap: 15px;
+}
+
+.animes-modal-overlay .animes-content-left .animes-content-right-top-date .animes-content-right-top-date-context {
+  display: flex;
+  gap: 10px;
+}
+
+.animes-modal-overlay .animes-content-left .animes-content-right-top-movies {
+  display: flex;
+  gap: 15px;
+}
+
+.animes-modal-overlay .animes-content-left .animes-content-right-top-movies .movies-list {
+  display: flex;
+  gap: 10px;
+  color: var(--primary-purple);
+  cursor: pointer;
+}
+
+.animes-modal-overlay .animes-content-left .animes-content-right-top-movies .movies-list:hover {
+  color: var(--highlight-blue);
+}
+
+.animes-modal-overlay .animes-content-left .animes-content-right-top-time-watch {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.animes-modal-overlay .animes-content-left .animes-content-right-top-time-watch .acrttw-buttons {
+  display: flex;
+  flex-direction: column;
+  font-size: .7em;
+  cursor: pointer;
+}
+
+.animes-modal-overlay .animes-content-left .animes-content-right-top-time-watch .acrttw-buttons i:hover {
+  color: var(--highlight-blue);
+}
+
+.animes-modal-overlay .animes-content-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.animes-modal-overlay .animes-content-right .animes-content-right-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.animes-modal-overlay .animes-content-right .animes-content-right-top .animes-content-right-top-name {
+  display: flex;
+  flex-direction: column;
+}
+
+.animes-modal-overlay .animes-content-right .animes-content-right-top .animes-content-right-top-left {
+  display: flex;
+  gap: 100px;
+}
+
+.animes-content-description {
+  margin-top: 30px;
+}
+
+.animes-content-right-top-score-personal,
+.animes-content-right-top-score-global {
+  display: flex;
+  gap: 10px;
+}
+
+.animes-content-right-top-tags {
+  display: flex;
+  gap: 10px;
+}
+
+.animes-content-right-top-tags div {
+  display: flex;
+  gap: 10px;
+}
+
+.animes-content-right-top-collections {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.animes-content-right-top-collections .animes-content-right-top-collections-items {
+  display: flex;
+  gap: 10px;
+}
+
+.animes-content-right-top-collections .animes-content-right-top-collections-add-collection {
+  cursor: pointer;
+  color: var(--primary-purple);
+}
+
+.animes-content-right-top-collections .animes-content-right-top-collections-add-collection:hover {
+  color: var(--highlight-blue);
+}
+
+.animes-modal-overlay .animes-content-right .animes-bottom {
+  margin-top: 20px;
+  height: 35%;
+  width: 100%;
+  display: flex;
+  gap: 10%;
+}
+
+.animes-modal-overlay .animes-content-right .animes-bottom .animes-episodes-list, 
+.animes-modal-overlay .animes-content-right .animes-bottom .animes-sites-list { 
+  width: 45%;
+  height: 100%;
+}
+
+.animes-modal-overlay .animes-content-right .animes-bottom .animes-episodes-list .animes-episodes-list-title,
+.animes-modal-overlay .animes-content-right .animes-bottom .animes-sites-list .animes-sites-list-title { 
+  display: flex;
+  gap: 20px;
+}
+
+.animes-modal-overlay .animes-content-right .animes-bottom .animes-episodes-list .animes-episodes-list-title i,
+.animes-modal-overlay .animes-content-right .animes-bottom .animes-sites-list .animes-sites-list-title i {
+  cursor: pointer;
+  color: var(--primary-purple);
+}
+
+.animes-modal-overlay .animes-content-right .animes-bottom .animes-episodes-list .animes-episodes-list-title i:hover,
+.animes-modal-overlay .animes-content-right .animes-bottom .animes-sites-list .animes-sites-list-title i:hover {
+  color: var(--highlight-blue);
+}
+
+.animes-modal-overlay .animes-content-right .animes-bottom .animes-episodes-list hr, 
+.animes-modal-overlay .animes-content-right .animes-bottom .animes-sites-list hr { 
+  color: var(--border-color);
+}
+
+.animes-modal-overlay .animes-content-right .animes-bottom .animes-sites-list ul { 
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.animes-modal-overlay .animes-content-right .animes-bottom .animes-sites-list ul li { 
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.animes-modal-overlay .animes-content-right .animes-bottom .animes-sites-list ul li .animes-site-button {
+  padding: 2px 5px;
+  border-radius: 5px;
+  font-size: 0.9em;
+}
+
+.animes-modal-overlay .animes-content-right .animes-buttons {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  gap: 20px;
+}
+
+.animes-modal-overlay .animes-content-right .animes-buttons span {
+  cursor: pointer;
+  color: var(--primary-purple);
+}
+
+.animes-modal-overlay .animes-content-right .animes-buttons span:hover {
+  color: var(--highlight-blue);
+}
+
+.lista-tempodada-anime {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  gap: 10px;
+}
+
+.lista-tempodada-anime .lista-season-header {
+  display: flex;
+  gap: 30px;
+}
+
+.lista-tempodada-anime .lista-season-header .fa-plus {
+  color: var(--primary-purple);
+  cursor: pointer;
+}
+
+.lista-tempodada-anime .lista-season-header .fa-plus:hover {
+  color: var(--highlight-blue);
+}
+
+.lista-tempodada-anime .lista-season-header .season-title {
+  display: flex;
+  gap: 20px;
+  cursor: pointer;
+}
+
+.lista-tempodada-anime .lista-season-header .season-title:hover {
+  color: var(--highlight-blue);
+}
+
+.lista-tempodada-anime .episodes-list {
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+  color: var(--text-gray);
+}
+
+.lista-tempodada-anime .episodes-list .episode-item {
+  display: flex;
+  gap: 20px;
+  position: relative;
+  padding-left: 25px;
+}
+
+
+.episode-open-menu {
+  cursor: pointer;
+  color: var(--text-light);
+  background-color: var(--card-item);
+  padding: 0 5px;
+  border-radius: 25px;
+}
+
+.episode-open-menu:hover {
+  background-color: var(--card-item-selected);
+  color: var(--highlight-blue);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Hide the browser's default checkbox */
+.lista-tempodada-anime .episodes-list .episode-item input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.lista-tempodada-anime .episodes-list .episode-item .checkmark {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  height: 13px;
+  width: 13px;
+  background-color: var(--card-item-selected);
+  cursor: pointer;
+}
+
+/* On mouse-over, add a grey background color */
+.lista-tempodada-anime .episodes-list .episode-item .checkmark:hover {
+  background-color: var(--highlight-blue);
+}
+
+/* When the checkbox is checked, add a blue background */
+.lista-tempodada-anime .episodes-list .episode-item input:checked ~ .checkmark {
+  background-color: var(--primary-purple);
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.lista-tempodada-anime .episodes-list .episode-item .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.lista-tempodada-anime .episodes-list .episode-item input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.lista-tempodada-anime .episodes-list .episode-item .checkmark:after {
+  left: 3px;
+  top: 0px;
+  width: 4px;
+  height: 7px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
