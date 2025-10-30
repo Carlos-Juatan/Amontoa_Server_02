@@ -1,0 +1,73 @@
+/* src/components/Common/CustomCheckbox/CustomCheckbox.css */
+
+/* O contêiner relativo é importante para o posicionamento do input e do checkmark */
+.custom-checkbox-container {
+    display: inline-block;
+    position: relative;
+    height: var(--checkbox-size); /* Usa o tamanho da prop */
+    width: var(--checkbox-size);  /* Usa o tamanho da prop */
+    line-height: 0; /* Ajuda a alinhar o contêiner */
+}
+
+/* Esconde o checkbox padrão do navegador */
+.custom-checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+    z-index: 1; /* Garante que o input escondido esteja acima */
+}
+
+/* Cria o checkbox customizado (o quadrado visível) */
+.custom-checkbox-container .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* Usa o tamanho da prop */
+    height: var(--checkbox-size);
+    width: var(--checkbox-size);
+    /* Cores padrão */
+    background-color: var(--card-item-selected, #ccc); 
+    cursor: pointer;
+    border-radius: 3px; /* Adicionando um leve arredondamento */
+}
+
+/* No mouse-over, adiciona a cor de destaque */
+.custom-checkbox-container .checkmark:hover {
+    background-color: var(--highlight-blue, #88b0e7);
+}
+
+/* Quando marcado, adiciona a cor principal */
+.custom-checkbox-container input:checked ~ .checkmark {
+    background-color: var(--primary-purple, #6a0dad);
+}
+
+/* Cria o checkmark/indicador (inicialmente escondido) */
+.custom-checkbox-container .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Mostra o checkmark quando marcado */
+.custom-checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Estiliza o checkmark/indicador (o V) */
+.custom-checkbox-container .checkmark:after {
+    /* Posição e tamanho são relativos ao tamanho do input, usando as variáveis */
+    left: var(--checkmark-left, 3px);
+    top: var(--checkmark-top, 1px);
+    width: var(--checkmark-width, 4px);
+    height: var(--checkmark-height, 7px);
+    
+    border: solid white;
+    border-width: 0 var(--checkmark-border-width, 3px) var(--checkmark-border-width, 3px) 0;
+
+    /* Rotação e transformação */
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}

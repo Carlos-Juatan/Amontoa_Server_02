@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Modal from '../../components/Common/Modal/Modal';
 
 import Button from '../../components/Common/Button/Button';
+import CustomCheckbox from '../../components/Common/CustomCheckbox/CustomCheckbox';
 
 import './AnimesModal.css';
 
@@ -32,7 +33,7 @@ function AddCollectionModal({ isOpen, onClose, title, onSubmit, initialValue }) 
         submitButtonText={"Criar"}
         modalCustonStyle="item-add-collection-content"
       >
-        <input type="text" value={collectionName} onChange={handleChange}/>
+        <input type="text" value={collectionName} onChange={handleChange} />
       </Modal>
     </div>
   );
@@ -69,131 +70,147 @@ function AnimeDetailsModal({  }) {
 
   return (
     <div className='animes-modal-overlay'>
-      <div className='animes-modal-anime-details'>
-        <div className='back-anime-button' onClick={() => chageAnime(1)}>
-          <i className="fa-solid fa-angle-left"></i>
-        </div>
+      <div className='animes-modal-anime-container'>
+        {/* Botão de navegação esquerda */}
+        <div className='change-anime-button' onClick={() => chageAnime(1)}><i className="fa-solid fa-angle-left" /></div>
 
-        <div className='animes-modal-container'>
-          <div className='animes-content-left'>
-            <img src={item?.imageUrl} alt="" />
-            
-            <div className='animes-content-right-top-date'>
-              <span>Data:</span>
-              <div className='animes-content-right-top-date-context'>
-                <span>{`${item?.date?.launched?.season} ${item?.date?.launched?.year}`}</span>
-                <span>{`( ${getMonths(item?.date?.launched?.season)} )`}</span>
-              </div>
+        {/* Conteúdo principal do modal */}
+        <div className='animes-modal-content'>
+
+          {/* Painel Esquerdo: Imagem e Informações Auxiliares */}
+          <div className='modal-left-panel'>
+            <div className='modal-image-wrapper'>
+              <img src={item?.imageUrl} alt='Anime cover' className='anime-cover-image' />
             </div>
             
-            <div className='animes-content-right-top-movies'>
-              <span>Filmes:</span>
-              <div className='movies-list' onClick={moviesDetails}>
-                <span>{item?.movies?.length}</span>
-                {item?.movies?.length > 0 && (
-                  <div>Detalhes</div>
-                )}
-              </div>
-            </div>
-            
-            <div className='animes-content-right-top-time-watch'>
-              <span>Vezes Assistido:</span>
-              <span>{item?.timeWhatched}</span>
-              <div className='acrttw-buttons'>
-                <i className="fa-solid fa-angle-up" onClick={() => setTimeWatched(1)}></i>
-                <i className="fa-solid fa-angle-down" onClick={() => setTimeWatched(-1)}></i>
-              </div>
-            </div>
-          </div>
-          <div className='animes-content-right'>
-            <div className='animes-content-right-top'>
-              <div className='animes-content-right-top-name'>
-                <span>{item?.name?.japonese}</span>
-                <span>{item?.name?.english}</span>
+            <div className='modal-info-details'>
+              {/* Data de Lançamento */}
+              <div className='info-detail-item'>
+                <span className='info-label'>Data:</span>
+                <div className='info-value date-value'>
+                  <span>{`${item?.date?.launched?.season} ${item?.date?.launched?.year}`}</span>
+                  <span className='date-months'>{`( ${getMonths(item?.date?.launched?.season)} )`}</span>
+                </div>
               </div>
 
-              <div className='animes-content-right-top-left'>
-                <div className='animes-content-right-top-score'>
-                  <div className='animes-content-right-top-score-personal'>
-                    <div>Nota:</div>
-                    <div>{item?.score}</div>
+              {/* Filmes */}
+              <div className='info-detail-item'>
+                <span className='info-label'>Filmes:</span>
+                <div className='info-value movies-value' onClick={moviesDetails}>
+                  <span>{item?.movies?.length || 0}</span>
+                  {item?.movies?.length > 0 && (
+                    <div className='movies-details-link'>Detalhes</div>
+                  )}
+                </div>
+              </div>
+
+              {/* Vezes Assistido */}
+              <div className='info-detail-item'>
+                <span className='info-label'>Vezes Assistido:</span>
+                <div className='info-value times-watched-value'>
+                  <span className='watch-count'>{item?.timeWhatched || 0}</span>
+                  <div className='watch-controls'>
+                    <i className="fa-solid fa-angle-up" onClick={() => setTimeWatched(1)} />
+                    <i className="fa-solid fa-angle-down" onClick={() => setTimeWatched(-1)} />
                   </div>
                 </div>
               </div>
-
             </div>
+          </div>
 
-            <div className='animes-content-description'>
-              <div>Sinopse:</div>
-              <p>{item?.description}</p>
-            </div>
-
-            <div className='animes-content-right-top-tags'>
-              <span>tags:</span>
-              <div>
-                {item?.tags?.map(tag => (
-                  <span key={tag}>{tag}</span>
-                ))}
+          {/* Conteúdo Direito: Títulos, Sinopse, Temporadas, Links */}
+          <div className='modal-right-content'>
+            
+            {/* Bloco de Título e Nota */}
+            <div className='anime-header-block'>
+              <div className='anime-titles'>
+                <span className='title-japanese'>{item?.name?.japonese}</span>
+                <span className='title-english'>{item?.name?.english}</span>
               </div>
-            </div>
 
-            <div className='animes-content-right-top-collections'>
-              <span>coleções:</span>
-              <div className='animes-content-right-top-collections-items'>
-                {/* Se não tiver nenhuma coleção */}
-                {!item?.collections?.length > 0 && (
-                  <span>Nenhuma</span>
-                )}
-
-                {/* Lista de coleções */}
-                {item?.collections?.map(col => (
-                  <span>{col}</span>
-                ))}
-              </div>
-              <div className='animes-content-right-top-collections-add-collection' onClick={openCollectionDropdown}>Adicionar</div>
-            </div>
-
-            <div className='animes-bottom'>
-              <div className='animes-episodes-list'>
-                <div className='animes-episodes-list-title'>
-                  <span>Temporadas</span>
-                  <span onClick={addNewSeason}><i className="fa-solid fa-plus"></i></span>
+              <div className='anime-score-wrapper'>
+                <div className='anime-score'>
+                  <div className='score-label'>Nota:</div>
+                  <div className='score-value'>{item?.score || '-'}</div>
                 </div>
-                <hr />
-                <ul className='lista-tempodada-anime'>
-                  {item?.seasons?.map((season, index) => {
-                    // 3. Variável de verificação: true se o índice atual for o índice aberto
-                    const isSeasonOpen = openSeasonIndex === index;
+              </div>
+            </div>
+
+            {/* Bloco de Informações: Sinopse, Tags, Coleções */}
+            <div className='anime-info-block'>
+
+              {/* Sinopse */}
+              <div className='info-section synopsis-section'>
+                <div className='section-label'>Sinopse:</div>
+                <p className='synopsis-text'>{item?.description || 'Undefined'}</p>
+              </div>
+
+              {/* Tags */}
+              <div className='info-section tags-section'>
+                <span className='section-label'>tags:</span>
+                <div className='tags-list'>
+                  {(item?.tags || 'Undefined').map(tag => (
+                    <span key={tag} className='tag-item'>{tag}</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Coleções */}
+              <div className='info-section collections-section'>
+                <span className='section-label'>coleções:</span>
+                <div className='collections-list'>
+                  {/* Se não tiver nenhuma coleção */}
+                  {!(item?.collections?.length > 0) && (
+                    <span className='collection-item empty-collection'>Nenhuma</span>
+                  )}
+
+                  {/* Lista de coleções */}
+                  {(item?.collections || []).map(col => (
+                    <span key={col} className='collection-item'>{col}</span>
+                  ))}
+                </div>
+                <div className='add-collection-link' onClick={openCollectionDropdown}>Adicionar</div>
+              </div>
+            </div>
+
+            {/* Bloco de Temporadas e Links */}
+            <div className='seasons-and-links-block'>
+
+              {/* Seção de Temporadas */}
+              <div className='seasons-section'>
+                <div className='section-title-wrapper'>
+                  <span className='section-title'>Temporadas</span>
+                  <span className='add-new-button' onClick={addNewSeason}><i className="fa-solid fa-plus"></i></span>
+                </div>
+                <hr className='section-divider' />
+
+
+                <ul className='season-list'>
+                  {(item?.seasons || []).map((season, index) => {
+                    const isSeasonOpen = openSeasonIndex === index; // Varifica se o índice atual for o índice aberto
 
                     return (
-                      <li key={index}> {/* Use <li> para itens de <ul> */}
-                        <div className='lista-season-header'>
-                          <div className='season-title' onClick={() => toggleSeason(index)}>
-                            <i className={`fa-solid ${isSeasonOpen ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
-                            <span>{season.season}</span>
-                            {/* Ícone muda baseado no estado */}
+                      <li key={index} className='season-list-item'>
+                        <div className='season-header'>
+                          <div className='season-title-wrapper' onClick={() => toggleSeason(index)}>
+                            <i className={`fa-solid season-toggle-icon ${isSeasonOpen ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
+                            <span className='season-title'>{season.season}</span>
                           </div>
-                          <span onClick={addNewEpisode}><i className="fa-solid fa-plus"></i></span>
+                          <span className='add-episode-button' onClick={addNewEpisode}><i className="fa-solid fa-plus"></i></span>
                         </div>
-                        
-                        {/* 4. Renderiza os episódios APENAS se isSeasonOpen for true */}
-                        {isSeasonOpen && (
-                          <div className='episodes-list'>
-                            {/* Itera sobre os episódios da temporada atual */}
-                            {season.episodes.map((ep, epIndex) => (
-                              <div key={epIndex} className='episode-item'>
-                                {/* Adição do Checkbox */}
-                                <input
-                                  type="checkbox"
-                                  checked={ep.hasWacth} // O estado do checkbox é controlado por hasWacth
-                                  onChange={() => toggleWatchStatus(index, epIndex)} // 'index' é o índice da temporada, 'epIndex' é o índice do episódio
-                                />
-                                <span class="checkmark"></span>
 
-                                {/* Título do episódio */}
-                                <span>{ep.title}</span>
-                                <span><i className="fa-solid fa-ellipsis episode-open-menu" onClick={handleEpisodeMenuToggle} /></span>
-                                
+                        {/* Lista de Episódios (condicional) */}
+                        {isSeasonOpen && (
+                          <div className='episodes-list-wrapper'>
+                            {(season.episodes || []).map((ep, epIndex) => (
+                              <div key={epIndex} className='episode-item'>
+                                <CustomCheckbox
+                                  checked={ep.hasWacth}
+                                  onChange={() => toggleWatchStatus(index, epIndex)}
+                                  size={13}
+                                />
+                                <span className='episode-title'>{ep.title}</span>
+                                <span className='episode-menu-button'><i className="fa-solid fa-ellipsis" onClick={handleEpisodeMenuToggle} /></span>
                               </div>
                             ))}
                           </div>
@@ -203,38 +220,35 @@ function AnimeDetailsModal({  }) {
                   })}
                 </ul>
               </div>
-              <div className='animes-sites-list'>
-                <div className='animes-sites-list-title'>
-                  <span>Links para assistir</span>
-                  <span onClick={addNewLinkToWatch}><i className="fa-solid fa-plus"></i></span>
+
+              {/* Seção de Links para Assistir */}
+              <div className='watch-links-section'>
+                <div className='section-title-wrapper'>
+                  <span className='section-title'>Links para assistir</span>
+                  <span className='add-new-button' onClick={addNewLinkToWatch}><i className="fa-solid fa-plus" /></span>
                 </div>
-                <hr />
-                <ul>
-                  {item?.links?.map((link, index) => (
-                    <li key={`${link.title}-${index}`}>
-                      <span>{link.title}</span>
-                      <Button 
-                         className='animes-site-button' 
-                         onClick={() => handleOpenLink(link.url)}
-                      >
-                         Abrir
-                      </Button>
+                <hr className='section-divider' />
+                <ul className='links-list'>
+                  {(item?.links || []).map((link, index) => (
+                    <li key={`${link.title}-${index}`} className='link-list-item'>
+                      <span className='link-title'>{link.title}</span>
+                      <Button className='link-open-button' onClick={() => handleOpenLink(link.url)}>Abrir</Button>
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
 
-            <div className='animes-buttons'>
-              <span onClick={handleOpenEditModal}>Editar</span>
-              <span onClick={handleCloseModal}>Fechar</span>
+            {/* Botões de Ação do Modal */}
+            <div className='modal-action-buttons'>
+              <span className='action-button button-edit' onClick={handleOpenEditModal}>Editar</span>
+              <span className='action-button button-close' onClick={handleCloseModal}>Fechar</span>
             </div>
           </div>
         </div>
 
-        <div className='next-anime-button' onClick={() => chageAnime(1)}> 
-          <i className="fa-solid fa-angle-right"></i>
-        </div>
+        {/* Botão de navegação direita */}
+        <div className='change-anime-button' onClick={() => chageAnime(1)}><i className="fa-solid fa-angle-right" /></div>
       </div>
     </div>
   );
