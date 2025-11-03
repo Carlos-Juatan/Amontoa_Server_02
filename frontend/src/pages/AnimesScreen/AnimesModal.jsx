@@ -99,7 +99,7 @@ function AnimeDetailsModal({  }) {
                 <div className='info-value movies-value' onClick={moviesDetails}>
                   <span>{item?.movies?.length || 0}</span>
                   {item?.movies?.length > 0 && (
-                    <div className='movies-details-link'>Detalhes</div>
+                    <div className='info-details'>Detalhes</div>
                   )}
                 </div>
               </div>
@@ -108,11 +108,19 @@ function AnimeDetailsModal({  }) {
               <div className='info-detail-item'>
                 <span className='info-label'>Vezes Assistido:</span>
                 <div className='info-value times-watched-value'>
-                  <span className='watch-count'>{item?.timeWhatched || 0}</span>
                   <div className='watch-controls'>
-                    <i className="fa-solid fa-angle-up" onClick={() => setTimeWatched(1)} />
-                    <i className="fa-solid fa-angle-down" onClick={() => setTimeWatched(-1)} />
+                    <i className="fa-solid fa-angle-left" onClick={() => setTimeWatched(1)} />
+                    <span className='watch-count'>{item?.timeWhatched || 0}</span>
+                    <i className="fa-solid fa-angle-right" onClick={() => setTimeWatched(-1)} />
                   </div>
+                </div>
+              </div>
+
+              {/* Coleções */}
+              <div className='info-detail-item'>
+                <span className='info-label'>Coleções:</span>
+                <div className='info-value collection-value' onClick={openCollectionDropdown}>
+                    <div className='info-details'>Detalhes</div>
                 </div>
               </div>
             </div>
@@ -153,23 +161,6 @@ function AnimeDetailsModal({  }) {
                     <span key={tag} className='tag-item'>{tag}</span>
                   ))}
                 </div>
-              </div>
-
-              {/* Coleções */}
-              <div className='info-section collections-section'>
-                <span className='section-label'>coleções:</span>
-                <div className='collections-list'>
-                  {/* Se não tiver nenhuma coleção */}
-                  {!(item?.collections?.length > 0) && (
-                    <span className='collection-item empty-collection'>Nenhuma</span>
-                  )}
-
-                  {/* Lista de coleções */}
-                  {(item?.collections || []).map(col => (
-                    <span key={col} className='collection-item'>{col}</span>
-                  ))}
-                </div>
-                <div className='add-collection-link' onClick={openCollectionDropdown}>Adicionar</div>
               </div>
             </div>
 
@@ -241,8 +232,12 @@ function AnimeDetailsModal({  }) {
 
             {/* Botões de Ação do Modal */}
             <div className='modal-action-buttons'>
+              <Button className='action-button button-edit' onClick={handleOpenEditModal}>Editar</Button>
+              <Button className='action-button button-close' onClick={handleCloseModal}>Fechar</Button>
+              {/*
               <span className='action-button button-edit' onClick={handleOpenEditModal}>Editar</span>
               <span className='action-button button-close' onClick={handleCloseModal}>Fechar</span>
+              */}
             </div>
           </div>
         </div>

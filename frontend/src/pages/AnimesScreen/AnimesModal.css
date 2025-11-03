@@ -1,137 +1,77 @@
 /* src/pages/AnimesScreen/AnimesModal.css */
 
 .custom-checkbox-container {
-  margin: auto 0;
+    margin: auto 0;
 }
 
 .animes-modal-overlay {
-  /* Posicionamento Centralizado na tela */
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1000; /* Garante que o modal esteja na frente de outros elementos */
+    /* Posicionamento Centralizado na tela */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    /* Garante que o modal esteja na frente de outros elementos */
 
-  /* Alinha os itens no centro da tela */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    /* Alinha os itens no centro da tela */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-  /* Efeitos de Fundo Atraz do modal */
-  background-color: rgba(0, 0, 0, 0.75); /* Cor de background preta 25% transparente */
-  backdrop-filter: blur(5px); /* Efeito de desfoque no background */
+    /* Efeitos de Fundo Atraz do modal */
+    background-color: rgba(0, 0, 0, 0.75);
+    /* Cor de background preta 25% transparente */
+    backdrop-filter: blur(5px);
+    /* Efeito de desfoque no background */
+
+    color: var(--text-light);
 }
 
 .animes-modal-overlay .animes-modal-anime-container {
-  display: flex;
+    width: 100%;
+    display: flex;
 }
 
 .animes-modal-overlay .animes-modal-anime-container .change-anime-button {
-  width: 10%;
-  max-height: 80%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2em;
-  cursor: pointer;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    cursor: pointer;
 }
 
 .animes-modal-overlay .animes-modal-anime-container .change-anime-button:hover {
-  background-color: var(--background-dark);
-  color: var(--highlight-blue);
-}
-
-.animes-modal-overlay .animes-modal-anime-container .animes-modal-content {
-  /* Largura e altura */
-  width: 90%;
-  max-width: 80%;
-  max-height: 80%;
-
-  /* Disposição de Itens */
-  display: flex;
-  flex-direction: row;
-  padding: 30px;
-  gap: 25px;
-
-  /* Cores e Aparências */
-  background-color: var(--card-background);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 8px 30px var(--shadow-color-dark);
-  border-radius: 12px;
-
-  /* Animações */
-  animation: fadeIn 0.3s ease-out; /* Animação simples de entrada */
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* --- VARIAVEIS (Exemplo) --- */
-:root {
-    --card-background: #1e1e2d; /* Fundo do modal, roxo escuro da imagem */
-    --background-dark: #12121c; /* Fundo do overlay */
-    --border-color: #3f3f5a; /* Borda sutil */
-    --text-color-primary: #e0e0f0; /* Texto principal claro */
-    --text-color-secondary: #aaaaaa; /* Texto de nota ou label */
-    --highlight-blue: #6c75f5; /* Cor de destaque (links, botões) */
-    --highlight-green: #4caf50; /* Cor para checado */
-    --shadow-color-dark: rgba(0, 0, 0, 0.4);
-    --font-size-default: 0.95rem;
-}
-
-/* ---------------------------------------------------- */
-/* --- ESTILOS JÁ FORNECIDOS E AJUSTES DE BASE --- */
-/* ---------------------------------------------------- */
-
-.animes-modal-overlay {
-    /* ... (Estilos de posicionamento e fundo já definidos) ... */
-    color: var(--text-color-primary); /* Define a cor padrão do texto */
-    font-size: var(--font-size-default);
-}
-
-.animes-modal-overlay .animes-modal-anime-container .change-anime-button {
-    /* ... (Estilos já definidos) ... */
-    /* Adiciona padding para o ícone não ficar grudado no modal */
-    padding: 0 15px; 
+    background-color: var(--background-dark);
+    color: var(--highlight-blue);
 }
 
 .animes-modal-overlay .animes-modal-anime-container .animes-modal-content {
     /* Largura e altura */
-    width: 900px; /* Largura fixa sugerida para desktops */
-    max-width: 80%;
-    max-height: 80vh; /* Altura máxima da viewport */
+    max-width: 65%;
+    max-height: 70vh; /* Altura máxima da viewport */
 
-    /* Disposição de Itens - CHAVE: Flexbox para as duas colunas */
+    /* Disposição de Itens */
     display: flex;
     flex-direction: row;
     padding: 30px;
-    gap: 30px; /* Espaço entre as colunas */
-    overflow-y: auto; /* Permite scroll se o conteúdo for muito grande */
+    gap: 30px;
 
     /* Cores e Aparências */
     background-color: var(--card-background);
     border: 1px solid var(--border-color);
     box-shadow: 0 8px 30px var(--shadow-color-dark);
     border-radius: 12px;
+
+    /* Animações */
+    animation: fadeIn 0.3s ease-out;
+    /* Animação simples de entrada */
 }
 
+
 /* ---------------------------------------------------- */
-/* --- 1. LAYOUT PRINCIPAL (Colunas Esquerda e Direita) --- */
+/* --- 1. PAINEL ESQUERDO (Imagem e Meta-dados) --- */
 /* ---------------------------------------------------- */
 
 .animes-modal-content .modal-left-panel {
@@ -143,36 +83,23 @@
     gap: 20px;
 }
 
-.animes-modal-content .modal-right-content {
-    /* Títulos, Sinopse, Listas */
-    flex-grow: 1; /* Permite que a coluna direita preencha o espaço restante */
-    display: flex;
-    flex-direction: column;
-    gap: 25px; /* Espaço entre os principais blocos (título, sinopse, listas) */
-}
-
-/* ---------------------------------------------------- */
-/* --- 2. PAINEL ESQUERDO (Imagem e Meta-dados) --- */
-/* ---------------------------------------------------- */
-
 .modal-left-panel .anime-cover-image {
     width: 100%;
     height: auto;
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-color);
 }
 
 .modal-left-panel .info-detail-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     padding: 5px 0;
 }
 
 .modal-left-panel .info-label {
-    color: var(--text-color-secondary);
-    font-weight: 500;
+    color: var(--text-gray);
 }
 
 .modal-left-panel .info-value {
@@ -182,16 +109,22 @@
 }
 
 .modal-left-panel .date-months {
-    color: var(--text-color-secondary);
+    color: var(--text-gray);
 }
 
-.modal-left-panel .movies-details-link {
-    color: var(--highlight-blue);
+.modal-left-panel .info-details {
+    color: var(--primary-purple);
     cursor: pointer;
     text-decoration: underline;
 }
 
-.modal-left-panel .times-watched-value {
+.modal-left-panel .info-details:hover {
+    color: var(--highlight-blue);
+}
+
+.modal-left-panel .watch-controls {
+    display: flex;
+    align-items: center;
     gap: 10px;
 }
 
@@ -207,15 +140,21 @@
 }
 
 /* ---------------------------------------------------- */
-/* --- 3. CONTEÚDO DIREITO (Cabeçalho e Sinopse) --- */
+/* --- 2. CONTEÚDO DIREITO (Cabeçalho e Sinopse) --- */
 /* ---------------------------------------------------- */
+
+.animes-modal-content .modal-right-content {
+    /* Títulos, Sinopse, Listas */
+    flex-grow: 1; /* Permite que a coluna direita preencha o espaço restante */
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Espaço entre os principais blocos (título, sinopse, listas) */
+}
 
 /* Cabeçalho (Títulos e Nota) */
 .modal-right-content .anime-header-block {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    padding-bottom: 5px;
 }
 
 .anime-header-block .title-japanese {
@@ -226,7 +165,7 @@
 
 .anime-header-block .title-english {
     font-size: 1.1rem;
-    color: var(--text-color-secondary);
+    color: var(--text-gray);
     display: block;
 }
 
@@ -243,14 +182,14 @@
     padding: 4px 10px;
     border-radius: 5px;
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 1.2rem;
 }
 
 .anime-header-block .score-label {
-    color: var(--text-color-secondary);
+    color: var(--text-light-gray);
 }
 
-/* Informações (Sinopse, Tags, Coleções) */
+/* Informações (Sinopse, Tags) */
 .modal-right-content .anime-info-block {
     display: flex;
     flex-direction: column;
@@ -259,7 +198,7 @@
 
 .anime-info-block .section-label {
     font-weight: bold;
-    color: var(--text-color-secondary);
+    color: var(--text-gray);
     text-transform: uppercase;
     font-size: 0.8rem;
     margin-bottom: 5px;
@@ -285,22 +224,17 @@
     padding: 4px 10px;
     border-radius: 20px;
     font-size: 0.8rem;
-    color: var(--text-color-primary);
-}
-
-.anime-info-block .add-collection-link {
-    color: var(--highlight-blue);
-    cursor: pointer;
-    margin-left: 10px;
+    color: var(--text-light);
 }
 
 /* ---------------------------------------------------- */
-/* --- 4. TEMPORADAS E LINKS --- */
+/* --- 3. TEMPORADAS E LINKS --- */
 /* ---------------------------------------------------- */
 
 .modal-right-content .seasons-and-links-block {
     display: flex;
     gap: 30px;
+    flex-grow: 1;
 }
 
 .seasons-and-links-block .seasons-section,
@@ -314,24 +248,32 @@
     align-items: center;
     font-weight: bold;
     margin-bottom: 5px;
+    padding: 0 10px 0 0;
 }
 
 .seasons-and-links-block .section-divider {
     border: none;
     border-top: 1px solid var(--border-color);
-    margin: 5px 0 15px 0;
+    margin: 5px 10px 15px 0;
 }
 
 .seasons-and-links-block .add-new-button {
-    color: var(--highlight-blue);
+    color: var(--primary-purple);
     cursor: pointer;
 }
 
-/* Lista de Temporadas */
-.season-list {
+.seasons-and-links-block .add-new-button:hover {
+    color: var(--highlight-blue);
+}
+
+/* Lista de Temporadas e Links */
+.seasons-and-links-block .season-list,
+.seasons-and-links-block .links-list {
+    height: 140px;
     list-style: none;
-    padding: 0;
     margin: 0;
+    padding: 0 10px 0 0;
+    overflow-y: auto;
 }
 
 .season-list-item {
@@ -355,7 +297,7 @@
 }
 
 .season-list-item .season-toggle-icon {
-    color: var(--highlight-blue); /* Ícone de seta */
+    color: var(--primary-purple); /* Ícone de seta */
 }
 
 /* Lista de Episódios */
@@ -376,11 +318,6 @@
 }
 
 /* Lista de Links */
-.links-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
 
 .link-list-item {
     display: flex;
@@ -390,47 +327,12 @@
 }
 
 .link-open-button {
-    background-color: var(--highlight-blue);
-    color: var(--text-color-primary);
-    border: none;
     padding: 5px 15px;
-    border-radius: 5px;
-    cursor: pointer;
     font-size: 0.85rem;
-    transition: background-color 0.2s;
-}
-
-.link-open-button:hover {
-    background-color: #4b55be;
-}
-
-/* Custom Checkbox (Necessita de ajuste no CSS real para o seu componente CustomCheckbox) */
-.custom-checkbox-container {
-    width: 13px; /* Tamanho do checkbox definido no JSX */
-    height: 13px;
-    border: 1px solid var(--text-color-secondary);
-    border-radius: 3px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: all 0.2s;
-}
-
-.custom-checkbox-container.checked {
-    background-color: var(--highlight-green);
-    border-color: var(--highlight-green);
-}
-
-.custom-checkbox-container i {
-    font-size: 0.7rem;
-    color: var(--text-color-primary);
-    line-height: 1;
 }
 
 /* ---------------------------------------------------- */
-/* --- 5. BOTÕES DE AÇÃO (Editar, Fechar) --- */
+/* --- . BOTÕES DE AÇÃO (Editar, Fechar) --- */
 /* ---------------------------------------------------- */
 
 .modal-right-content .modal-action-buttons {
@@ -441,26 +343,30 @@
 }
 
 .modal-action-buttons .action-button {
-    cursor: pointer;
-    padding: 8px 15px;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.2s;
+  padding: 5px 15px;
 }
 
 .modal-action-buttons .button-edit {
-    color: var(--highlight-blue);
-    /* Geralmente o botão 'Editar' é um link ou com fundo transparente */
+    background-color: var(--button-confirm);
+    border-color: var(--button-confirm-border);
 }
 
 .modal-action-buttons .button-edit:hover {
-    background-color: rgba(108, 117, 245, 0.1);
+    background-color: var(--button-confirm-hover);
+    border-color: var(--button-confirm-hover-border);
 }
 
 .modal-action-buttons .button-close {
-    color: var(--text-color-secondary);
+    background-color: var(--button-delete);
+    border-color: var(--button-delete);
 }
 
 .modal-action-buttons .button-close:hover {
-    color: var(--text-color-primary);
+    background-color: var(--button-delete-hover);
+    border-color: var(--button-delete-hover-border);
 }
+
+
+/* 
+    overflow-y: auto;
+*/
