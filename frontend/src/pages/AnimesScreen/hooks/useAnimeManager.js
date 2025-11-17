@@ -9,8 +9,6 @@ export default function useAnimeManager(collectionName = 'animes', items, global
   const [hasAddCollection, setHasAddColletion] = useState(false);
   const [isRenaming, setIsRenaming] = useState(null); // Armazena o nome da coleção a ser renomeada
   const [addItemToNewCollection, setAddItemToNewCollection] = useState(null);
-  // Modal de Animes
-  const [hasAnimeModal, setHasAnimeModal] = useState('details');
 //#endregion
 
 //#region --- 2. FUNÇÕES DO MODAL COLEÇÃO ---
@@ -145,8 +143,6 @@ export default function useAnimeManager(collectionName = 'animes', items, global
 //#endregion
 
 //#region --- 3. FUNÇÃO DOS MODAL DOS ANIMES ---
-//#region --- 3 - 1. FUNÇÕES DE ABRIR OU FECHAR MODAL DOS ANIMES ---
-//#endregion
 
 //#region --- 3 - 2. FUNÇÕES DOS ANIMES ---
   const handleAddNewAnime = () => {
@@ -192,7 +188,6 @@ export default function useAnimeManager(collectionName = 'animes', items, global
     setOpenActionMenuId,
     hasAddCollection, 
     isRenaming, 
-    hasAnimeModal,
     
     // Funções de Coleção
     openAddColletion,

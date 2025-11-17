@@ -65,8 +65,8 @@ const useSelectionIndex = (items) => {
     currentIndex,
     setCurrentIndex, // Útil para resetar a seleção de fora (e.g., ao pesquisar)
     selectedObject,
-    handleNext,
     handlePrev,
+    handleNext,
     handleItemSelect,
   };
 };

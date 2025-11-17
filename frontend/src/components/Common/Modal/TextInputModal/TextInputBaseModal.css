@@ -1,0 +1,110 @@
+
+.text-input-base-modal {
+  flex-grow: 1; /* Ocupa todo o espaço disponível do 'div pai' */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* ---------------------------------------------------- */
+/* --- 1. HEADER (Título e botão 'X' para fecahr) --- */
+/* ---------------------------------------------------- */
+
+.text-input-base-modal .stib-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.text-input-base-modal .stib-modal-header .stib-modal-header-content h2 {
+  margin: 0;
+  color: var(--primary-purple); /* Título com a cor primária */
+  font-size: 1.8em;
+  text-shadow: 0 0 5px rgba(140, 115, 204, 0.2); /* Sombra de texto sutil */
+}
+
+.text-input-base-modal .stib-modal-header .stib-modal-close-button {
+  background: none;
+  border: none;
+  font-size: 2.2rem; /* Ícone de fechar maior */
+  color: var(--text-light); /* Cor do texto claro */
+  cursor: pointer;
+  padding: 5px; /* Adiciona padding para facilitar o clique */
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+
+
+.text-input-base-modal .stib-modal-header .stib-modal-close-button:hover {
+  color: var(--button-delete); /* Cor de hover como destaque */
+  transform: rotate(180deg); /* Pequena rotação no hover */
+}
+
+/* ---------------------------------------------------- */
+/* --- 2. BODY (Input de texto e 'divs filhos' herdados do 'div pai') --- */
+/* ---------------------------------------------------- */
+
+.text-input-base-modal .stib-modal-body {
+  flex-grow: 1;
+  color: var(--text-light); /* Texto do corpo com cor clara */
+  line-height: 1.6;
+  font-size: 1.1em;
+  overflow-y: auto;
+}
+
+.text-input-base-modal .stib-modal-body input {
+  width: calc(100% - 30px); /* Largura total com padding */
+  padding: 12px 10px;
+  margin-top: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--background-dark); /* Fundo do input mais escuro */
+  color: var(--text-light);
+  font-size: 1em;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+
+
+.text-input-base-modal .stib-modal-body input::placeholder {
+  color: var(--text-light-muted); /* Cor mais suave para o placeholder */
+  opacity: 0.7;
+}
+
+.text-input-base-modal .stib-modal-body input:focus {
+  outline: none;
+  border-color: var(--primary-purple); /* Borda primária no foco */
+  box-shadow: 0 0 0 3px rgba(140, 115, 204, 0.3); /* Sombra sutil no foco */
+}
+
+/* ---------------------------------------------------- */
+/* --- 3. FOTER (Botões de cancelar e salvar) --- */
+/* ---------------------------------------------------- */
+
+.text-input-base-modal .stib-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px; /* Espaçamento maior entre botões */
+  padding-top: 20px;
+  margin-top: 10px; /* Reduz a margem superior para o padding fazer o trabalho */
+}
+
+.stib-modal-submit-button,
+.stib-modal-cancel-button {
+  padding: 12px 25px; /* Padding maior para os botões */
+  border: none;
+  border-radius: 8px; /* Bordas mais arredondadas */
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.stib-modal-cancel-button {
+  background-color: var(--button-delete-hover);
+}
+
+.stib-modal-cancel-button:hover {
+  background-color: var(--button-delete);
+}

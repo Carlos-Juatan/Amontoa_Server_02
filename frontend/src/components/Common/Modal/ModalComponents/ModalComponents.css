@@ -1,0 +1,40 @@
+
+.modal-overlay {
+  /* Posicionamento Centralizado na tela */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000; /* Garante que o modal esteja acima de outros elementos */
+  
+  /* Alinha os itens no centro da tela */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* Visual do efeito */
+  background-color: rgba(0, 0, 0, 0.75); /* Fundo semi-transparente escuro */
+  backdrop-filter: blur(5px); /* Efeito de desfoque no fundo */
+}
+
+.modal-screen {
+  /* Posicionamento e tamanho na tela */
+  min-width: 30%;
+  min-height: 30%;
+  max-width: 80%; /* Largura máxima um pouco maior para conteúdo */
+  max-height: 80%;
+
+  /* Posicionamento e organização dos 'Filhos' */
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  gap: 25px; /* Espaçamento interno entre seções */
+
+  /* Estilização da tela */
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background-color: var(--card-background); /* Fundo do modal com a cor do card */
+  box-shadow: 0 8px 30px var(--shadow-color-dark); /* Sombra mais pronunciada */
+  animation: fadeIn 0.3s ease-out; /* Animação simples de entrada */
+}

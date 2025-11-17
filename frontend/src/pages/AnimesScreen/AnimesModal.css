@@ -49,8 +49,8 @@
 
 .animes-modal-overlay .animes-modal-anime-container .animes-modal-content {
     /* Largura e altura */
-    max-width: 65%;
-    max-height: 70vh; /* Altura máxima da viewport */
+    width: 65%;
+    height: 70vh; /* Altura máxima da viewport */
 
     /* Disposição de Itens */
     display: flex;
@@ -370,3 +370,55 @@
 /* 
     overflow-y: auto;
 */
+
+
+
+
+
+/* Posiciona os wrappers para que os dropdowns sejam absolutos a eles */
+.movies-value-wrapper, 
+.collection-value-wrapper {
+  position: relative;
+  /* Garanta que o espaço seja suficiente ou ajuste */
+}
+
+/* Estilo para os Containers dos Dropdowns (pode ir nos arquivos específicos .css) */
+.movies-dropdown-container, 
+.collections-dropdown-container {
+  position: absolute;
+  top: 100%; /* Posiciona abaixo do link "Detalhes" */
+  right: 0; /* Alinha à direita (ajuste conforme a necessidade) */
+  min-width: 250px;
+  background-color: #333; /* Cor de fundo escura */
+  border: 1px solid #555;
+  border-radius: 4px;
+  z-index: 1000; /* Garante que fique acima de outros elementos */
+  padding: 5px;
+}
+
+
+/* Em CollectionsDropdown.css ou similar */
+
+.collection-value-wrapper {
+  /* Garante que os dropdowns aninhados sejam posicionados em relação a este wrapper */
+  position: relative; 
+}
+
+.collections-dropdown-container {
+  /* ... estilos existentes ... */
+  /* Pode ser necessário um z-index para garantir que esteja acima de outros elementos */
+  z-index: 10;
+}
+
+.global-collections-dropdown-container {
+  position: absolute;
+  top: 0; /* Começa no topo do dropdown pai */
+  left: 100%; /* Posiciona o novo dropdown à direita do dropdown pai */
+  /* Outros estilos de caixa e sombra */
+  border: 1px solid #ccc;
+  background-color: #333; /* Fundo escuro */
+  min-width: 200px;
+  z-index: 11; /* Acima do dropdown pai */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  padding: 5px;
+}

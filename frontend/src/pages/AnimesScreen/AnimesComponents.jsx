@@ -98,7 +98,7 @@ function AnimeOrganizationControls({ displaySort, handleSortSelect, displayStyle
   );
 }
 
-function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo, globalCollections, openActionMenuId, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onAddNewCollection }) {
+function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo, globalCollections, openActionMenuId, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onAddNewCollection, handleItemClick }) {
 
   // Mensagem de Feedback
   if (finalSortedItems.length === 0 && !loading) return <p>Nenhum item corresponde à sua busca.</p>;
@@ -108,10 +108,12 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo,
   if (displayStyle === 'grid') {
     return (
       <ul className='animes-list-grid'>
-        {finalSortedItems.map(item => (
+        {finalSortedItems.map((item, index) => (
           <li className='animes-item-grid' key={item._id}>
             <AnimesItemGrid
               id={item._id}
+              index={index}
+              onItemClick={handleItemClick}
               imageUrl={item.imageUrl || "N/A"}
               japoneseTitle={item.name?.japonese || "N/A"}
               englishTitle={item.name?.english || "N/A"}
@@ -141,10 +143,12 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo,
       </div>
 
       <ul className='animes-list-list'>
-        {finalSortedItems.map(item => (
+        {finalSortedItems.map((item, index) => (
           <li className='animes-item-list' key={item._id}>
             <AnimesItemList
               id={item._id}
+              index={index}
+              onItemClick={handleItemClick}
               imageUrl={item.imageUrl || "N/A"}
               japoneseTitle={item.name?.japonese || "N/A"}
               englishTitle={item.name?.english || "N/A"}
@@ -167,7 +171,7 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo,
   );
 }
 
-function AnimesItemGrid({ id, imageUrl, japoneseTitle, englishTitle, collections, isMenuOpen, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onAddNewCollection }) {
+function AnimesItemGrid({ id, index, onItemClick, imageUrl, japoneseTitle, englishTitle, collections, isMenuOpen, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onAddNewCollection }) {
 
   // CHAVE: Previne o clique normal no item para abrir o menu
   const handleMenuToggle = (e) => {
@@ -175,16 +179,9 @@ function AnimesItemGrid({ id, imageUrl, japoneseTitle, englishTitle, collections
     setOpenActionMenuId(isMenuOpen ? null : id);
   };
 
-  // CHAVE: Abre o MediaSourceHandle ao clicar no item (excluindo o ícone de opções)
-  const handleItemClick = () => {
-    // Lógica para abrir o MediaSourceHandle
-    console.log(`Abrindo MediaSourceHandle para o item: ${id}`);
-    // setMediaSourceHandleOpen(id) ou navigate para a página de detalhes, etc.
-  };
-
   return (
     // Adicionar onClick para abrir o MediaSourceHandle
-    <div className='animes-item-grid-content' onClick={handleItemClick}>
+    <div className='animes-item-grid-content' onClick={() => onItemClick(index)}>
       <div className='up'>
         <img src={imageUrl} alt="" />
         <div className='img-filter' />
@@ -217,20 +214,15 @@ function AnimesItemGrid({ id, imageUrl, japoneseTitle, englishTitle, collections
   );
 }
 
-function AnimesItemList({ id, imageUrl, japoneseTitle, englishTitle, seasons, timeWhatched, score, launcheData, collections, isMenuOpen, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onAddNewCollection }) {
+function AnimesItemList({ id, index, onItemClick, imageUrl, japoneseTitle, englishTitle, seasons, timeWhatched, score, launcheData, collections, isMenuOpen, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onAddNewCollection }) {
 
   const handleMenuToggle = (e) => {
     e.stopPropagation();
     setOpenActionMenuId(isMenuOpen ? null : id);
   };
 
-  const handleItemClick = () => {
-    // Lógica para abrir o MediaSourceHandle
-    console.log(`Abrindo MediaSourceHandle para o item: ${id}`);
-  };
-
   return (
-    <div className='animes-item-list-content' onClick={handleItemClick}>
+    <div className='animes-item-list-content' onClick={() => onItemClick(index)}>
       <div className='animes-item-list-title'>
         <img src={imageUrl} alt="" />
         <div className='animes-item-list-title-text'>

@@ -9,10 +9,11 @@ import useSearchFilter from '../../hooks/useSearchFilter';
 // Private Hooks and Utils
 import useAnimeFiltering from './hooks/useAnimeFiltering';
 import useAnimeManager from './hooks/useAnimeManager';
+import useAnimeModalManager from './hooks/useAnimeModalManager';
 import { mapSeasonToOrder } from './utils/sortFilterUtils';
 
 // Modals (DOM)
-import { AddCollectionModal, AnimeDetailsModal, AnimeEditModal } from './AnimesModal';
+import { AddCollectionModal, AnimeDetailsModal } from './AnimesModal';
 import CollectionContextMenu from './CollectionContextMenu';
 
 // Components (DOM)
@@ -58,7 +59,6 @@ function AnimesScreen() {
     setOpenActionMenuId,
     hasAddCollection, 
     isRenaming, 
-    hasAnimeModal,
     
     // Funções de Coleção
     openAddColletion,
@@ -74,6 +74,37 @@ function AnimesScreen() {
     handleDeleteAnime,
     handleAddToExistingCollection,
   } = useAnimeManager(collectionName, items, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem);
+
+  // Lógica para o modal de detalhes de animes
+  const { 
+    // Abrir ou fechar o modal de animeModal de anime
+    openAnimeOpenModal,
+    closeAnimeModal,
+    hasAnimeModal,
+    handleItemClick, // Abrir o modal ao clicar no item
+
+    // Anime selecionado e funções de seleção
+    currentIndex,
+    selectedObject,
+    handlePrev,
+    handleNext,
+
+    // Lado esqeurdo do modal
+    getMonths,
+    isMoviesDropdownOpen, // Primeiro Dropdown dos filmes
+    handleIsMoviesDropdownOpen, // 1°
+    moviesDetailsDropdown, // 1°
+    isCollectionsDropdownOpen, // Primeiro Dropdown das coleções
+    openCollectionDropdown, // 1°
+    handleIsCollectionsDropdown, // 1°
+    isGlobalCollectionsDropdownOpen, // Segundo Dropdown das coleções
+    handleIsGlobalCollectionsDropdownOpen, // 2°
+
+    // Lado Direito do modal
+    openSeasonIndex,
+    toggleSeason,
+    handleOpenLink,
+   } = useAnimeModalManager( finalSortedItems, globalData );
 
   //Formata as opções de lançamento para o CollapsibleMenu
   const launchOptions = useMemo(() => {
@@ -155,6 +186,7 @@ function AnimesScreen() {
                 onDeleteAnime={handleDeleteAnime}
                 onAddToExistingCollection={handleAddToExistingCollection}
                 onAddNewCollection={handleAddNewCollection}
+                handleItemClick={handleItemClick}
               />
             </div>
           </div>
@@ -184,16 +216,36 @@ function AnimesScreen() {
         />
       )}
 
-      {hasAnimeModal === 'details' && (
-        <AnimeDetailsModal
-        />
-      )}
+      <AnimeDetailsModal
+        // Abrir e fechar o modal
+        hasAnimeModal={hasAnimeModal}
+        closeModal={closeAnimeModal}
+        handleModalType={openAnimeOpenModal}
 
-      {hasAnimeModal === 'edit' && (
-        <AnimeEditModal
-        />
-      )}
+        // Dados do item
+        item={selectedObject}
+        prevAnime={handlePrev}
+        nextAnime={handleNext}
 
+        // Dados Globais
+        globalData={globalData}
+        
+        // Lado esqeurdo do modal
+        getMonths={getMonths}
+        isMoviesDropdownOpen={isMoviesDropdownOpen} // Primeiro Dropdown dos filmes
+        handleIsMoviesDropdownOpen={handleIsMoviesDropdownOpen} // 1°
+        moviesDetailsDropdown={moviesDetailsDropdown} // 1°
+        isCollectionsDropdownOpen={isCollectionsDropdownOpen} // Primeiro Dropdown das coleções
+        openCollectionDropdown={openCollectionDropdown} // 1°
+        handleIsCollectionsDropdown={handleIsCollectionsDropdown} // 1°
+        isGlobalCollectionsDropdownOpen={isGlobalCollectionsDropdownOpen} // Segundo Dropdown das coleções
+        handleIsGlobalCollectionsDropdownOpen={handleIsGlobalCollectionsDropdownOpen} // 2°
+        
+        // Lado Direito do modal
+        openSeasonIndex={openSeasonIndex}
+        toggleSeason={toggleSeason}
+        handleOpenLink={handleOpenLink}
+      />
     </div>
   );
 //#endregion
