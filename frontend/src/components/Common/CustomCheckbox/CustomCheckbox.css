@@ -29,7 +29,8 @@
     height: var(--checkbox-size);
     width: var(--checkbox-size);
     /* Cores padrão */
-    background-color: var(--card-item-selected, #ccc); 
+    background-color: var(--border-color);
+    border: 1px solid var(--text-gray);
     cursor: pointer;
     border-radius: 3px; /* Adicionando um leve arredondamento */
 }

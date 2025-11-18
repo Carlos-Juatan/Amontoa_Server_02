@@ -78,7 +78,7 @@ function AnimesScreen() {
   // Lógica para o modal de detalhes de animes
   const { 
     // Abrir ou fechar o modal de animeModal de anime
-    openAnimeOpenModal,
+    openAnimeModal,
     closeAnimeModal,
     hasAnimeModal,
     handleItemClick, // Abrir o modal ao clicar no item
@@ -91,12 +91,11 @@ function AnimesScreen() {
 
     // Lado esqeurdo do modal
     getMonths,
+    closeAllDropdowns,
     isMoviesDropdownOpen, // Primeiro Dropdown dos filmes
-    handleIsMoviesDropdownOpen, // 1°
-    moviesDetailsDropdown, // 1°
+    openMoviesDropdown, // 1°
     isCollectionsDropdownOpen, // Primeiro Dropdown das coleções
     openCollectionDropdown, // 1°
-    handleIsCollectionsDropdown, // 1°
     isGlobalCollectionsDropdownOpen, // Segundo Dropdown das coleções
     handleIsGlobalCollectionsDropdownOpen, // 2°
 
@@ -220,7 +219,7 @@ function AnimesScreen() {
         // Abrir e fechar o modal
         hasAnimeModal={hasAnimeModal}
         closeModal={closeAnimeModal}
-        handleModalType={openAnimeOpenModal}
+        handleModalType={openAnimeModal}
 
         // Dados do item
         item={selectedObject}
@@ -232,12 +231,11 @@ function AnimesScreen() {
         
         // Lado esqeurdo do modal
         getMonths={getMonths}
+        closeAllDropdowns={closeAllDropdowns}
         isMoviesDropdownOpen={isMoviesDropdownOpen} // Primeiro Dropdown dos filmes
-        handleIsMoviesDropdownOpen={handleIsMoviesDropdownOpen} // 1°
-        moviesDetailsDropdown={moviesDetailsDropdown} // 1°
+        openMoviesDropdown={openMoviesDropdown} // 1°
         isCollectionsDropdownOpen={isCollectionsDropdownOpen} // Primeiro Dropdown das coleções
         openCollectionDropdown={openCollectionDropdown} // 1°
-        handleIsCollectionsDropdown={handleIsCollectionsDropdown} // 1°
         isGlobalCollectionsDropdownOpen={isGlobalCollectionsDropdownOpen} // Segundo Dropdown das coleções
         handleIsGlobalCollectionsDropdownOpen={handleIsGlobalCollectionsDropdownOpen} // 2°
         

@@ -139,6 +139,227 @@
     color: var(--highlight-blue);
 }
 
+
+/* ========================================================================= */
+/* 1. ESTILOS DO CONTAINER: Posicionamento e Aparência de "Dropdown Personalizado" */
+/* ========================================================================= */
+
+/* Garante que o wrapper do valor seja o ponto de referência para os dropdowns */
+.movies-value-wrapper, 
+.collection-value-wrapper {
+    position: relative;
+}
+
+/* Aplica o estilo de contêiner "custom-options" aos dropdowns */
+.movies-dropdown-container, 
+.collections-dropdown-container {
+    /* * CORREÇÃO DE POSICIONAMENTO PARA ABRIR ACIMA (bottom: 100%) 
+     * e alinhar à direita (right: 0) do elemento de acionamento.
+     */
+    position: absolute;
+    bottom: calc(100% + 5px); /* Posiciona acima do link "Detalhes", com 5px de margem */
+    left: 50%; /* Alinha o dropdown à direita do seu wrapper */
+    
+    /* Novo Design: Copiado de .custom-options */
+    list-style: none; /* remove bullet points */
+    padding: 5px;
+    margin: 0;
+    width: max-content; /* Se adapta ao conteúdo mais largo */
+    min-width: 250px;
+    
+    background-color: var(--card-background, #333); 
+    border: 1px solid var(--border-color, #555);
+    border-radius: 10px; /* Borda arredondada moderna */
+    box-shadow: 0 4px 6px var(--background-dark);
+    z-index: 10;
+}
+
+/* Estilo da lista interna de conteúdo */
+.movies-list-content,
+.collections-list-content {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* ========================================================================= */
+/* 2. ESTILOS DOS ITENS: Replicando o 'custom-option' */
+/* ========================================================================= */
+
+.movie-item-row,
+.collection-item-row,
+.add-new-item-action,
+.no-movies-message,
+.no-collections-message {
+    /* Novo Design: Copiado de .custom-option */
+    padding: 10px;
+    color: var(--text-dark, #ccc);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    border-radius: 6px; /* Um pouco menor que o container */
+    white-space: nowrap; /* Não quebra linha */
+    
+    /* Layout */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* ESTILO HOVER (Para itens clicáveis) */
+.movie-item-row:hover,
+.collection-item-row:hover,
+.add-new-item-action:hover {
+    background-color: var(--card-item-selected); 
+    color: var(--text-light-on-dark, #fff); 
+}
+
+/* Alinhamento específico do item do filme */
+.movie-item-row {
+    justify-content: space-between; /* Título à esquerda, Checkbox à direita */
+}
+
+.movie-item-row .movie-title {
+    flex-grow: 1;
+    margin-right: 10px; /* Espaço entre o título e o checkbox */
+}
+
+/* Ação de Adicionar: Ícone e Texto */
+.add-new-item-action {
+    margin-top: 5px; /* Separação da lista */
+    font-weight: bold;
+    color: var(--color-primary); /* Cor primária para destaque */
+    justify-content: flex-start; /* Alinha ícone e texto à esquerda */
+}
+
+.add-new-item-action i {
+    margin-right: 8px;
+}
+
+/* Mensagens de Vazio */
+.no-movies-message,
+.no-collections-message {
+    cursor: default;
+    justify-content: center;
+    font-style: italic;
+    opacity: 0.7;
+}
+
+/* Remove o hover do item de mensagem vazia para evitar confusão */
+.no-movies-message:hover,
+.no-collections-message:hover {
+    background-color: transparent;
+    color: var(--text-dark, #ccc);
+}
+
+/* Estilo para a ação de "Remover da Coleção" */
+.collection-item-row .remove-collection-action {
+    display: block; /* O span deve preencher o <li> para receber o clique/hover */
+    width: 100%;
+}
+
+
+/* ========================================================================= */
+/* 3. ESTILOS DO MENU DE CONTEXTO (CLIQUE DIREITO) */
+/* ========================================================================= */
+
+/* Replicando o estilo do CollectionContextMenu, mas com position: absolute */
+.context-menu {
+    /* Use 'fixed' como no CollectionContextMenu para manter na tela, ou 'absolute' 
+     * em relação ao container mais próximo com position: relative/absolute, 
+     * mas 'fixed' é melhor para menus de contexto.
+     */
+    position: fixed; 
+    
+    /* Novo Design: Copiado de .custom-options */
+    list-style: none;
+    padding: 5px;
+    margin: 0;
+    width: max-content;
+    
+    background-color: var(--card-background, #333); 
+    border: 1px solid var(--border-color, #555);
+    border-radius: 10px; 
+    box-shadow: 0 4px 6px var(--background-dark);
+    z-index: 2000; /* Z-index muito alto */
+}
+
+.context-menu > div {
+    /* Novo Design: Copiado de .custom-option */
+    padding: 10px;
+    color: var(--text-dark, #ccc);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    border-radius: 6px; 
+    white-space: nowrap;
+}
+
+.context-menu > div:hover {
+    background-color: var(--card-item-selected); 
+    color: var(--text-light-on-dark, #fff); 
+}
+
+/* ========================================================================= */
+/* 4. ESTILOS DO DROPDOWN ANINHADO (GlobalCollectionsDropdown) */
+/* ========================================================================= */
+
+.global-collections-dropdown-container {
+    /* Mantém o posicionamento relativo ao CollectionsDropdown */
+    position: absolute;
+    top: 0; 
+    left: calc(100% + 5px); /* Posiciona à direita do pai com 5px de margem */
+    
+    /* Novo Design: Copiado de .custom-options (o mesmo do contêiner principal) */
+    list-style: none; 
+    padding: 5px;
+    margin: 0;
+    width: max-content; 
+    min-width: 200px;
+    
+    background-color: var(--card-background, #333); 
+    border: 1px solid var(--border-color, #555);
+    border-radius: 10px; 
+    box-shadow: 0 4px 6px var(--background-dark);
+    z-index: 11; /* Acima do dropdown pai (z-index: 10) */
+}
+
+.global-collections-list-content {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Aplica o estilo de item 'custom-option' para os itens globais */
+.available-collection-item,
+.create-new-collection-action,
+.no-available-collections-message {
+    /* Novo Design: Copiado de .custom-option */
+    padding: 10px;
+    color: var(--text-dark, #ccc);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    border-radius: 6px; 
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.available-collection-item:hover,
+.create-new-collection-action:hover {
+    background-color: var(--card-item-selected); 
+    color: var(--text-light-on-dark, #fff); 
+}
+
+.create-new-collection-action {
+    font-weight: bold;
+    color: var(--color-secondary); /* Outra cor para diferenciar a ação de criação */
+}
+
+.create-new-collection-action i {
+    margin-right: 8px;
+}
+
+
 /* ---------------------------------------------------- */
 /* --- 2. CONTEÚDO DIREITO (Cabeçalho e Sinopse) --- */
 /* ---------------------------------------------------- */
@@ -371,54 +592,3 @@
     overflow-y: auto;
 */
 
-
-
-
-
-/* Posiciona os wrappers para que os dropdowns sejam absolutos a eles */
-.movies-value-wrapper, 
-.collection-value-wrapper {
-  position: relative;
-  /* Garanta que o espaço seja suficiente ou ajuste */
-}
-
-/* Estilo para os Containers dos Dropdowns (pode ir nos arquivos específicos .css) */
-.movies-dropdown-container, 
-.collections-dropdown-container {
-  position: absolute;
-  top: 100%; /* Posiciona abaixo do link "Detalhes" */
-  right: 0; /* Alinha à direita (ajuste conforme a necessidade) */
-  min-width: 250px;
-  background-color: #333; /* Cor de fundo escura */
-  border: 1px solid #555;
-  border-radius: 4px;
-  z-index: 1000; /* Garante que fique acima de outros elementos */
-  padding: 5px;
-}
-
-
-/* Em CollectionsDropdown.css ou similar */
-
-.collection-value-wrapper {
-  /* Garante que os dropdowns aninhados sejam posicionados em relação a este wrapper */
-  position: relative; 
-}
-
-.collections-dropdown-container {
-  /* ... estilos existentes ... */
-  /* Pode ser necessário um z-index para garantir que esteja acima de outros elementos */
-  z-index: 10;
-}
-
-.global-collections-dropdown-container {
-  position: absolute;
-  top: 0; /* Começa no topo do dropdown pai */
-  left: 100%; /* Posiciona o novo dropdown à direita do dropdown pai */
-  /* Outros estilos de caixa e sombra */
-  border: 1px solid #ccc;
-  background-color: #333; /* Fundo escuro */
-  min-width: 200px;
-  z-index: 11; /* Acima do dropdown pai */
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-  padding: 5px;
-}

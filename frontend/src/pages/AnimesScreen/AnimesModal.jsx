@@ -1,9 +1,11 @@
 // src/pages/AnimesScreen/AnimesModal.jsx
 import React, { useState, useRef, useEffect } from 'react';
 
-import SingleTextInputModal from '../../components/Common/Modal/TextInputModal/SingleTextInputModal';
+import useClickOutside from '../../hooks/useClickOutside'; 
 
 import { toTitleCase } from './utils/modalUtils';
+
+import SingleTextInputModal from '../../components/Common/Modal/TextInputModal/SingleTextInputModal';
 
 import Button from '../../components/Common/Button/Button';
 import CustomCheckbox from '../../components/Common/CustomCheckbox/CustomCheckbox';
@@ -67,12 +69,11 @@ function AnimeDetailsModal({
 
   // Lado esqeurdo do modal
   getMonths,
+  closeAllDropdowns,
   isMoviesDropdownOpen, // Primeiro Dropdown dos filmes
-  handleIsMoviesDropdownOpen, // 1°
-  moviesDetailsDropdown, // 1°
+  openMoviesDropdown, // 1°
   isCollectionsDropdownOpen, // Primeiro Dropdown das coleções
   openCollectionDropdown, // 1°
-  handleIsCollectionsDropdown, // 1°
   isGlobalCollectionsDropdownOpen, // Segundo Dropdown das coleções
   handleIsGlobalCollectionsDropdownOpen, // 2°
 
@@ -119,27 +120,13 @@ function AnimeDetailsModal({
   };
 
   // 2. Adiciona o anime a uma coleção existente
-  const handleAddToExistingCollection = (collectionName) => {
-    console.log(`[Coleção] Adicionando anime à coleção existente: ${collectionName}`);
-    // Após a ação, fechar ambos os dropdowns
-    handleIsGlobalCollectionsDropdownOpen(false);
-    handleIsCollectionsDropdown(false);
-  };
+  const handleAddToExistingCollection = (collectionName) => { console.log(`[Coleção] Adicionando anime à coleção existente: ${collectionName}`); };
 
   // 3. Abre o modal de input para criar uma nova coleção
-  const handleOpenNewCollectionInput = () => {
-    console.log('[Coleção] Abrindo modal de input para nova coleção');
-    handleIsGlobalCollectionsDropdownOpen(false); // Fecha o dropdown de seleção
-    setIsNewCollectionInputOpen(true); // Abre o modal de input
-  };
+  const handleOpenNewCollectionInput = () => { console.log('[Coleção] Abrindo modal de input para nova coleção'); };
 
   // 4. Criação e adição da nova coleção (Função de submissão do modal de input)
-  const handleSubmitNewCollection = (collectionName) => {
-    console.log(`[Coleção] Criando e adicionando nova coleção: ${collectionName}`);
-    // Lógica de salvar no banco e adicionar ao anime...
-    setIsNewCollectionInputOpen(false);
-    handleIsCollectionsDropdown(false);
-  };
+  const handleSubmitNewCollection = (collectionName) => { console.log(`[Coleção] Criando e adicionando nova coleção: ${collectionName}`); };
 
 
 
@@ -160,10 +147,10 @@ function AnimeDetailsModal({
             // Dados Globais
             globalData={globalData}
             getMonths={getMonths} 
+            closeAllDropdowns={closeAllDropdowns}
             // Filmes
             isMoviesDropdownOpen={isMoviesDropdownOpen}
-            handleIsMoviesDropdownOpen={handleIsMoviesDropdownOpen}
-            moviesDetailsDropdown={moviesDetailsDropdown}
+            openMoviesDropdown={openMoviesDropdown}
             handleAddNewMovie={handleAddNewMovie}
             handleEditMovie={handleEditMovie}
             handleDeleteMovie={handleDeleteMovie}
@@ -173,7 +160,6 @@ function AnimeDetailsModal({
             // Coleções
             isCollectionsDropdownOpen={isCollectionsDropdownOpen}
             openCollectionDropdown={openCollectionDropdown}
-            handleIsCollectionsDropdown={handleIsCollectionsDropdown}
             handleRemoveFromCollection={handleRemoveFromCollection}
             handleAddNewCollection={handleOpenGlobalCollectionsDropdown}
             isGlobalCollectionsDropdownOpen={isGlobalCollectionsDropdownOpen}
@@ -223,9 +209,9 @@ function ModalLeftPanel({
 
   // Primeiro Dropdown dos filmes
   isMoviesDropdownOpen,
-  handleIsMoviesDropdownOpen,
+  closeAllDropdowns,
   toggleMovieWatchStatus,
-  moviesDetailsDropdown,
+  openMoviesDropdown,
   handleAddNewMovie,
   handleEditMovie,
   handleDeleteMovie,
@@ -236,7 +222,6 @@ function ModalLeftPanel({
   // Primeiro Dropdown das coleções
   isCollectionsDropdownOpen,
   openCollectionDropdown,
-  handleIsCollectionsDropdown,
   handleAddNewCollection,
   handleRemoveFromCollection,
 
@@ -266,10 +251,10 @@ function ModalLeftPanel({
         {/* Filmes */}
         <div className='info-detail-item'>
           <span className='info-label'>Filmes:</span>
-          <div className='info-value movies-value-wrapper'> {/* Novo wrapper para posicionamento */}
+          <div className='info-value movies-value-wrapper'> {/* wrapper para posicionamento */}
             <div 
               className='info-value movies-value' 
-              onClick={(item?.movies?.length > 0) ? moviesDetailsDropdown : handleAddNewMovie} // Usa a nova função
+              onClick={(item?.movies?.length > 0) ? openMoviesDropdown : handleAddNewMovie} // Usa a nova função
             >
               <span>{item?.movies?.length || 0}</span>
               {item?.movies?.length > 0 && (
@@ -284,7 +269,7 @@ function ModalLeftPanel({
             {isMoviesDropdownOpen && (
               <MoviesDropdown 
                 movies={item?.movies} 
-                onClose={() => handleIsMoviesDropdownOpen(false)} 
+                onClose={closeAllDropdowns} 
                 toggleMovieWatchStatus={toggleMovieWatchStatus}
                 handleAddNewMovie={handleAddNewMovie}
                 handleEditMovie={handleEditMovie}
@@ -309,7 +294,7 @@ function ModalLeftPanel({
         {/* Coleções */}
         <div className='info-detail-item'>
           <span className='info-label'>Coleções:</span>
-          <div className='info-value collection-value-wrapper'> {/* Novo wrapper para posicionamento */}
+          <div className='info-value collection-value-wrapper'> {/* wrapper para posicionamento */}
             <div 
               className='info-value collection-value' 
               onClick={openCollectionDropdown} // Usa a nova função
@@ -321,10 +306,10 @@ function ModalLeftPanel({
             {isCollectionsDropdownOpen && (
               <CollectionsDropdown 
                 collections={item?.collections} 
-                onClose={() => handleIsCollectionsDropdown(false)}
+                onClose={closeAllDropdowns}
                 handleAddNewCollection={handleAddNewCollection}
                 handleRemoveFromCollection={handleRemoveFromCollection}
-                // NOVOS PROPS
+                // 2° Dropdown
                 globalCollections={globalData?.globalInfo?.collections || []}
                 isGlobalCollectionsDropdownOpen={isGlobalCollectionsDropdownOpen}
                 handleIsGlobalCollectionsDropdownOpen={handleIsGlobalCollectionsDropdownOpen}
@@ -347,23 +332,10 @@ function MoviesDropdown({
   handleEditMovie, 
   handleDeleteMovie 
 }) {
-  const dropdownRef = useRef(null);
+  const dropdownRef = useClickOutside(onClose); 
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, movieTitle: null });
 
-  // 1. Lógica para fechar ao clicar fora (ou quando `onClose` é chamado)
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        onClose(); // Fecha o dropdown principal
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [onClose]);
-
-  // 2. Lógica do Menu de Contexto (clique direito)
+  // Lógica do Menu de Contexto (clique direito)
   const handleContextMenu = (e, movieTitle) => {
     e.preventDefault(); // Impede o menu de contexto padrão do navegador
     setContextMenu({
@@ -377,12 +349,6 @@ function MoviesDropdown({
   const closeContextMenu = () => {
     setContextMenu({ ...contextMenu, visible: false });
   };
-  
-  // Fecha o menu de contexto ao clicar em qualquer lugar
-  useEffect(() => {
-      document.addEventListener('click', closeContextMenu);
-      return () => document.removeEventListener('click', closeContextMenu);
-  }, []);
 
   return (
     <div className="movies-dropdown-container" ref={dropdownRef}>
@@ -395,12 +361,12 @@ function MoviesDropdown({
               className='movie-item-row'
               onContextMenu={(e) => handleContextMenu(e, movie.title)} // Clique direito
             >
+              <span className='movie-title'>{movie.title}</span>
               <CustomCheckbox
                 checked={movie.hasWatched}
                 onChange={() => toggleMovieWatchStatus(movie.title)}
                 size={13}
               />
-              <span className='movie-title'>{movie.title}</span>
             </li>
           ))
         ) : (
@@ -440,20 +406,7 @@ function CollectionsDropdown({
   handleAddToExistingCollection,
   handleOpenNewCollectionInput
 }) {
-  const dropdownRef = useRef(null);
-
-  // Lógica para fechar ao clicar fora
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        onClose();
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [onClose]);
+  const dropdownRef = useClickOutside(onClose); 
 
   return (
     <div className="collections-dropdown-container" ref={dropdownRef}>
@@ -494,44 +447,25 @@ function CollectionsDropdown({
   );
 }
 
-function GlobalCollectionsDropdown({ currentCollections = [], globalCollections, onClose, onSelectCollection, onNewCollection }) {
+function GlobalCollectionsDropdown({ 
+  currentCollections = [], 
+  globalCollections, 
+  onClose, 
+  onSelectCollection, 
+  onNewCollection 
+}) {
 
-  const dropdownRef = useRef(null);
+  const dropdownRef = useClickOutside(onClose); 
 
   // Lista as coleções que o anime NÃO tem
   const availableCollections = globalCollections.filter(
     (globalName) => !currentCollections.includes(globalName)
   );
 
-  // Lógica para fechar ao clicar fora (deste dropdown específico)
-  useEffect(() => {
-    function handleClickOutside(event) {
-      // Usa event.stopPropagation no item pai (CollectionsDropdown) para evitar fechar ambos com um clique
-      // Aqui, garante que fechemos apenas se o clique não for dentro deste dropdown.
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        onClose();
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [onClose]);
-
   return (
     // Classe para posicionamento, deve ser estilizada para aparecer ao lado/acima do 'Adicionar Nova Coleção'
     <div className="global-collections-dropdown-container" ref={dropdownRef}>
       <ul className="global-collections-list-content">
-        <li className='dropdown-title-header'>Adicionar a uma Coleção:</li>
-        <hr />
-
-        {/* Opção para Criar Nova Coleção (Abre o modal de input) */}
-        <li className='create-new-collection-action' onClick={onNewCollection}>
-          <i className="fa-solid fa-folder-plus"></i> Criar Nova Coleção
-        </li>
-
-        <hr />
-
         {/* Lista de Coleções Disponíveis */}
         {availableCollections.length > 0 ? (
           availableCollections.map((collectionName, index) => (
@@ -546,6 +480,11 @@ function GlobalCollectionsDropdown({ currentCollections = [], globalCollections,
         ) : (
           <li className='no-available-collections-message'>Todas as coleções já estão incluídas.</li>
         )}
+        
+        {/* Opção para Criar Nova Coleção (Abre o modal de input) */}
+        <li className='create-new-collection-action' onClick={onNewCollection}>
+          <i className="fa-solid fa-folder-plus"></i> Criar Nova Coleção
+        </li>
       </ul>
     </div>
   );

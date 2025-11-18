@@ -73,4 +73,3 @@ function CollectionContextMenu({ x, y, collectionName, onRename, onDelete, onClo
 }
 
 export default CollectionContextMenu;
-// Lembre-se de exportar e importar isso em AnimesScreen.jsx

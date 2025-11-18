@@ -24,14 +24,13 @@ export default function useAnimeModalManager( itens, globalData ) {
 //#region Manipulação do anime selecionado
   // Funcção para abrir o modal ao clicar no item
   const { currentIndex, setCurrentIndex, selectedObject, handleNext, handlePrev } = useSelectionIndex(itens);
-
     
-  const openAnimeOpenModal = (modalType) => setHasAnimeModal(modalType);
+  const openAnimeModal = (modalType) => setHasAnimeModal(modalType);
   const closeAnimeModal = () => setHasAnimeModal(null);
   
   const handleItemClick = (index) => {
     setCurrentIndex(index);
-    openAnimeOpenModal('details');
+    openAnimeModal('details');
   }
 //#endregion
 
@@ -41,37 +40,26 @@ export default function useAnimeModalManager( itens, globalData ) {
   }
 
 //#region Manipuladores de Dropdown
+  // Função auxiliar para fechar todos os dropdowns relacionados
+  const closeAllDropdowns = () => {
+    setIsMoviesDropdownOpen(false);
+    setIsCollectionsDropdownOpen(false);
+    setIsGlobalCollectionsDropdownOpen(false);
+  };
 //#region  Filmes
-  const handleIsMoviesDropdownOpen = (value) => { setIsMoviesDropdownOpen(value); }
-
   // Funções de manipulação do clique
-  const moviesDetailsDropdown = (e) => {
-    // Para que o dropdown apareça ao lado do link "Detalhes"
-    // Pode ser necessário passar as coordenadas se o posicionamento CSS for complexo.
-    // Neste exemplo, vamos apenas alternar o estado:
-    e.stopPropagation(); // Evita que o evento se propague (se estiver dentro de outro clicável)
-    setIsMoviesDropdownOpen(prev => !prev);
-    // Garante que o 1° dropdown de coleções está fechado
-    if (isCollectionsDropdownOpen) setIsCollectionsDropdownOpen(false);
-    // Garante que o 2° dropdown de coleções está fechado
-    if (isGlobalCollectionsDropdownOpen) setIsGlobalCollectionsDropdownOpen(false);
+  const openMoviesDropdown = (e) => {
+    e.stopPropagation();
+    closeAllDropdowns(); // Fecha todos os dropdowns primeiro
+    setIsMoviesDropdownOpen(prev => !prev); // abre o dropdown do filme
   };
 //#endregion
 
 //#region Coleções
-  const handleIsCollectionsDropdown = (value) => {
-    setIsCollectionsDropdownOpen(value); // Fechar o 1° dropdown
-    // Fechar o 2° dropdown quando o 1° dropdown for fechado
-    if (!value) setIsGlobalCollectionsDropdownOpen(false);
-  }
-
   const openCollectionDropdown = (e) => {
     e.stopPropagation();
-    setIsCollectionsDropdownOpen(prev => !prev);
-    // Garante que o 1° dropdown filmes está fechado
-    if (isMoviesDropdownOpen) setIsMoviesDropdownOpen(false);
-    // Garante que o 2° dropdown de coleções também está fechado
-    setIsGlobalCollectionsDropdownOpen(false);
+    closeAllDropdowns(); // Fecha todos os dropdowns primeiro
+    setIsCollectionsDropdownOpen(prev => !prev); // abre o dropdown de coleções
   };
 
   // Manipula o 2° dropdown de coleções globais
@@ -94,7 +82,7 @@ export default function useAnimeModalManager( itens, globalData ) {
 
   return {
     // Abrir ou fechar o modal de animeModal de anime
-    openAnimeOpenModal,
+    openAnimeModal,
     closeAnimeModal,
     hasAnimeModal,
     handleItemClick, // Abrir o modal ao clicar no item
@@ -107,12 +95,11 @@ export default function useAnimeModalManager( itens, globalData ) {
 
     // Lado esqeurdo do modal
     getMonths,
+    closeAllDropdowns,
     isMoviesDropdownOpen, // Primeiro Dropdown dos filmes
-    handleIsMoviesDropdownOpen, // 1°
-    moviesDetailsDropdown, // 1°
+    openMoviesDropdown, // 1°
     isCollectionsDropdownOpen, // Primeiro Dropdown das coleções
     openCollectionDropdown, // 1°
-    handleIsCollectionsDropdown, // 1°
     isGlobalCollectionsDropdownOpen, // Segundo Dropdown das coleções
     handleIsGlobalCollectionsDropdownOpen, // 2°
 
