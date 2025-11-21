@@ -13,7 +13,7 @@ import useAnimeModalManager from './hooks/useAnimeModalManager';
 import { mapSeasonToOrder } from './utils/sortFilterUtils';
 
 // Modals (DOM)
-import { AddCollectionModal, AnimeDetailsModal } from './AnimesModal';
+import { AddCollectionModal, AddMovieModal, AnimeDetailsModal } from './AnimesModal';
 import CollectionContextMenu from './CollectionContextMenu';
 
 // Components (DOM)
@@ -67,6 +67,8 @@ function AnimesScreen() {
     handleAddNewCollection,
     createCollection,
     handleDeleteCollection,
+    handleAddCollectionToSingleItem,
+    handleRemoveCollectionFromSingleItem,
     
     // Funções de Item
     handleAddNewAnime,
@@ -94,6 +96,18 @@ function AnimesScreen() {
     closeAllDropdowns,
     isMoviesDropdownOpen, // Primeiro Dropdown dos filmes
     openMoviesDropdown, // 1°
+    toggleMovieWatchStatus, // 1°
+    handleDeleteMovie, // Segundo Dropdown dos filmes
+
+    hasAddEditMovie, // Modal de edição dos filmes
+    openAddEditMovie, // Modal de edição dos filmes
+    closeAddEditMovie, // Modal de edição dos filmes
+    hasMovieNamed, // Modal de edição dos filmes
+    hasMovieWatched, // Modal de edição dos filmes
+    createEditMovie, // Modal de edição dos filmes
+
+    setTimeWatched,
+
     isCollectionsDropdownOpen, // Primeiro Dropdown das coleções
     openCollectionDropdown, // 1°
     isGlobalCollectionsDropdownOpen, // Segundo Dropdown das coleções
@@ -103,7 +117,7 @@ function AnimesScreen() {
     openSeasonIndex,
     toggleSeason,
     handleOpenLink,
-   } = useAnimeModalManager( finalSortedItems, globalData );
+   } = useAnimeModalManager( finalSortedItems, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem );
 
   //Formata as opções de lançamento para o CollapsibleMenu
   const launchOptions = useMemo(() => {
@@ -205,16 +219,6 @@ function AnimesScreen() {
         </div>
       </div>
 
-      {hasAddCollection && (
-        <AddCollectionModal
-          isOpen={openAddColletion}
-          onClose={closeAddColletion}
-          title={isRenaming === null ? "Dê um nome à sua coleção" : "Altere o nome desta coleção"}
-          onSubmit={createCollection}
-          initialValue={isRenaming}
-        />
-      )}
-
       <AnimeDetailsModal
         // Abrir e fechar o modal
         hasAnimeModal={hasAnimeModal}
@@ -234,16 +238,45 @@ function AnimesScreen() {
         closeAllDropdowns={closeAllDropdowns}
         isMoviesDropdownOpen={isMoviesDropdownOpen} // Primeiro Dropdown dos filmes
         openMoviesDropdown={openMoviesDropdown} // 1°
+        toggleMovieWatchStatus={toggleMovieWatchStatus} // 1°
+        handleAddNewMovie={openAddEditMovie} // 1°
+        handleDeleteMovie={handleDeleteMovie} // Segundo Dropdown dos filmes
+        
+        setTimeWatched={setTimeWatched}
+
         isCollectionsDropdownOpen={isCollectionsDropdownOpen} // Primeiro Dropdown das coleções
         openCollectionDropdown={openCollectionDropdown} // 1°
         isGlobalCollectionsDropdownOpen={isGlobalCollectionsDropdownOpen} // Segundo Dropdown das coleções
         handleIsGlobalCollectionsDropdownOpen={handleIsGlobalCollectionsDropdownOpen} // 2°
+        addNewCollection={handleAddNewCollection}
+        onAddCollection={handleAddCollectionToSingleItem}
+        onRemoveCollection={handleRemoveCollectionFromSingleItem}
         
         // Lado Direito do modal
         openSeasonIndex={openSeasonIndex}
         toggleSeason={toggleSeason}
         handleOpenLink={handleOpenLink}
       />
+
+      {hasAddCollection && (
+        <AddCollectionModal
+          onClose={closeAddColletion}
+          title={isRenaming === null ? "Dê um nome à sua coleção" : "Altere o nome desta coleção"}
+          onSubmit={createCollection}
+          initialValue={isRenaming}
+        />
+      )}
+
+      {hasAddEditMovie && (
+        <AddMovieModal
+          onClose={closeAddEditMovie}
+          title={hasMovieNamed === null ? "Dê um nome ao filme" : "Altere o nome do filme"}
+          initialMovieName={hasMovieNamed}
+          initialMovieValue={hasMovieWatched}
+          checkmarkSize={20}
+          onSubmit={createEditMovie}
+        />
+      )}
     </div>
   );
 //#endregion

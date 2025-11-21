@@ -190,3 +190,9 @@
 .modal-submit-button.delete-confirm:hover {
   background-color: var(--error-red-dark);
 }
+
+afda {
+  display: flex;
+  justify-content: center;
+  align-items: end;
+}

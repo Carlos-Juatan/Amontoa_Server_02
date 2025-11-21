@@ -6,13 +6,14 @@ import useClickOutside from '../../hooks/useClickOutside';
 import { toTitleCase } from './utils/modalUtils';
 
 import SingleTextInputModal from '../../components/Common/Modal/TextInputModal/SingleTextInputModal';
+import SingleTextInputWithCheckboxModal from '../../components/Common/Modal/TextInputModal/SingleTextInputWithCheckboxModal';
 
 import Button from '../../components/Common/Button/Button';
 import CustomCheckbox from '../../components/Common/CustomCheckbox/CustomCheckbox';
 
 import './AnimesModal.css';
 
-function AddCollectionModal({ isOpen, onClose, title, onSubmit, initialValue }) {
+function AddCollectionModal({ onClose, title, onSubmit, initialValue }) {
   const [collectionName, setCollectionName] = useState(initialValue || '');
 
   const handleChange = (e) => setCollectionName(e.target.value);
@@ -26,7 +27,6 @@ function AddCollectionModal({ isOpen, onClose, title, onSubmit, initialValue }) 
     }
   };
 
-
   return (
     <div className='animes-modal-add-collection'>
       <SingleTextInputModal 
@@ -37,18 +37,40 @@ function AddCollectionModal({ isOpen, onClose, title, onSubmit, initialValue }) 
         handleChangeInput={handleChange}
         handleChange={handleChange}
       />
-      {/*
-      <Modal
-        isOpen={isOpen}
+    </div>
+  );
+}
+
+function AddMovieModal({ onClose, title, onSubmit, initialMovieName, initialMovieValue, checkmarkSize }) {
+  const [movieName, setMovieName] = useState(initialMovieName || '');
+  const [movieValue, setMovieValue] = useState(initialMovieValue || false);
+  
+  const handleChangeName = (e) => setMovieName(e.target.value);
+  const handleChangeValue = () => setMovieValue(!movieValue);
+
+  const handleSubmit = () => {
+    if (movieName.trim()) {
+      const formattedName = toTitleCase(movieName); 
+      onSubmit(formattedName, movieValue);
+      setMovieName('');
+      setMovieValue(false);
+      onClose();
+    }
+  };
+
+  return (
+    <div className='animes-modal-add-collection'>
+      <SingleTextInputWithCheckboxModal 
         onClose={onClose}
         title={title}
+        inputValue={movieName}
+        handleChangeInput={handleChangeName}
+        handleChange={handleChangeName}
+        checkmarkValue={movieValue}
+        onChangeValue={handleChangeValue}
+        size={checkmarkSize}
         onSubmit={handleSubmit}
-        submitButtonText={"Criar"}
-        modalCustonStyle="item-add-collection-content"
-      >
-        <input type="text" value={collectionName} onChange={handleChange} />
-      </Modal>
-      */}
+      />
     </div>
   );
 }
@@ -72,10 +94,19 @@ function AnimeDetailsModal({
   closeAllDropdowns,
   isMoviesDropdownOpen, // Primeiro Dropdown dos filmes
   openMoviesDropdown, // 1°
+  toggleMovieWatchStatus, // 1°
+  handleAddNewMovie, // 1°
+  handleDeleteMovie, // Segundo Dropdown dos filmes
+
+  setTimeWatched,
+
   isCollectionsDropdownOpen, // Primeiro Dropdown das coleções
   openCollectionDropdown, // 1°
   isGlobalCollectionsDropdownOpen, // Segundo Dropdown das coleções
   handleIsGlobalCollectionsDropdownOpen, // 2°
+  addNewCollection,
+  onAddCollection,
+  onRemoveCollection,
 
   // Lado Direito do modal
   openSeasonIndex,
@@ -87,46 +118,13 @@ function AnimeDetailsModal({
 
   // Funções temporárias de ação
   const handleOpenEditModal = () => { console.log('Abrindo Modal de editar anime'); }
-  const setTimeWatched = (value) => { console.log(`Mudando vezes assistidas em: ${value}`); }
   const addNewSeason = () => { console.log('Adicionando nova temporada na lista'); }
   const addNewEpisode = () => { console.log('Adicionando novo epsódio na lista'); }
   const toggleWatchStatus = (seasonIndex, episodeIndex) => { console.log(`Temporada ${seasonIndex + 1}, Episódio ${episodeIndex + 1}: Status alterado!`);};
   const handleEpisodeMenuToggle = (e) => { console.log('Abrindo menu de episódio'); }
   const addNewLinkToWatch = () => { console.log('Adicionando novo link para assitir'); }
-
-  // Funções temporárias de ação do movies dropdown
-  const toggleMovieWatchStatus = (movieTitle) => { console.log(`[Filme] Status de assistido alterado para: ${movieTitle}`); };
-  const handleEditMovie = (movieTitle) => { console.log(`[Filme] Abrindo modal de edição para: ${movieTitle}`); };
-  const handleDeleteMovie = (movieTitle) => { console.log(`[Filme] Deletando: ${movieTitle}`); };
-  const handleAddNewMovie = () => { console.log('[Filme] Adicionando novo filme'); };
   
-  // Funções temporárias de ação do colection dropdown
-  const handleRemoveFromCollection = (collectionName) => { console.log(`[Coleção] Removendo da coleção: ${collectionName}`); };
 
-
-
-
-
-
-  // NOVO: Manipuladores para o fluxo de "Adicionar Nova Coleção"
-  const [isNewCollectionInputOpen, setIsNewCollectionInputOpen] = useState(false);
-
-  // 1. Abre o dropdown de coleções globais
-  const handleOpenGlobalCollectionsDropdown = () => {
-    console.log('[Coleção] Abrindo dropdown de coleções globais');
-    handleIsGlobalCollectionsDropdownOpen(true);
-    // Certifica-se de que o modal de input de nova coleção está fechado
-    setIsNewCollectionInputOpen(false);
-  };
-
-  // 2. Adiciona o anime a uma coleção existente
-  const handleAddToExistingCollection = (collectionName) => { console.log(`[Coleção] Adicionando anime à coleção existente: ${collectionName}`); };
-
-  // 3. Abre o modal de input para criar uma nova coleção
-  const handleOpenNewCollectionInput = () => { console.log('[Coleção] Abrindo modal de input para nova coleção'); };
-
-  // 4. Criação e adição da nova coleção (Função de submissão do modal de input)
-  const handleSubmitNewCollection = (collectionName) => { console.log(`[Coleção] Criando e adicionando nova coleção: ${collectionName}`); };
 
 
 
@@ -152,7 +150,6 @@ function AnimeDetailsModal({
             isMoviesDropdownOpen={isMoviesDropdownOpen}
             openMoviesDropdown={openMoviesDropdown}
             handleAddNewMovie={handleAddNewMovie}
-            handleEditMovie={handleEditMovie}
             handleDeleteMovie={handleDeleteMovie}
             toggleMovieWatchStatus={toggleMovieWatchStatus}
             // Vezes Assistido
@@ -160,12 +157,12 @@ function AnimeDetailsModal({
             // Coleções
             isCollectionsDropdownOpen={isCollectionsDropdownOpen}
             openCollectionDropdown={openCollectionDropdown}
-            handleRemoveFromCollection={handleRemoveFromCollection}
-            handleAddNewCollection={handleOpenGlobalCollectionsDropdown}
+            onRemoveCollection={onRemoveCollection}
+            handleAddNewCollection={() => handleIsGlobalCollectionsDropdownOpen(true)}
             isGlobalCollectionsDropdownOpen={isGlobalCollectionsDropdownOpen}
             handleIsGlobalCollectionsDropdownOpen={handleIsGlobalCollectionsDropdownOpen}
-            handleAddToExistingCollection={handleAddToExistingCollection}
-            handleOpenNewCollectionInput={handleOpenNewCollectionInput}
+            onAddCollection={onAddCollection}
+            addNewCollection={addNewCollection}
           />
 
           {/* Conteúdo Direito: Títulos, Sinopse, Temporadas, Links */}
@@ -223,13 +220,13 @@ function ModalLeftPanel({
   isCollectionsDropdownOpen,
   openCollectionDropdown,
   handleAddNewCollection,
-  handleRemoveFromCollection,
+  onRemoveCollection,
 
   // Segundo Dropdown das coleções
   isGlobalCollectionsDropdownOpen,
   handleIsGlobalCollectionsDropdownOpen,
-  handleAddToExistingCollection,
-  handleOpenNewCollectionInput,
+  onAddCollection,
+  addNewCollection,
 }) {
   
   return (
@@ -254,15 +251,10 @@ function ModalLeftPanel({
           <div className='info-value movies-value-wrapper'> {/* wrapper para posicionamento */}
             <div 
               className='info-value movies-value' 
-              onClick={(item?.movies?.length > 0) ? openMoviesDropdown : handleAddNewMovie} // Usa a nova função
+              onClick={openMoviesDropdown} // Usa a nova função
             >
               <span>{item?.movies?.length || 0}</span>
-              {item?.movies?.length > 0 && (
-                <div className='info-details'>Detalhes</div>
-              )}
-              {item?.movies?.length == 0 && (
-                <div className='info-details'>Adicionar</div>
-              )}
+              <div className='info-details'>Detalhes</div>
             </div>
             
             {/* Renderiza o Dropdown de Filmes condicionalmente */}
@@ -270,10 +262,10 @@ function ModalLeftPanel({
               <MoviesDropdown 
                 movies={item?.movies} 
                 onClose={closeAllDropdowns} 
-                toggleMovieWatchStatus={toggleMovieWatchStatus}
-                handleAddNewMovie={handleAddNewMovie}
-                handleEditMovie={handleEditMovie}
-                handleDeleteMovie={handleDeleteMovie}
+                toggleMovieWatchStatus={(movieTitle) => toggleMovieWatchStatus(item?._id, movieTitle)}
+                handleAddNewMovie={() => handleAddNewMovie(item?._id, '', false)}
+                handleEditMovie={(movieTitle, checkmarkValue) => handleAddNewMovie(item?._id, movieTitle, checkmarkValue)}
+                handleDeleteMovie={(movieTitle) => handleDeleteMovie(item?._id, movieTitle)}
               />
             )}
           </div>
@@ -284,9 +276,9 @@ function ModalLeftPanel({
           <span className='info-label'>Vezes Assistido:</span>
           <div className='info-value times-watched-value'>
             <div className='watch-controls'>
-              <i className="fa-solid fa-angle-left" onClick={() => setTimeWatched(-1)} />
+              <i className="fa-solid fa-angle-left" onClick={() => setTimeWatched(item._id, -1)} />
               <span className='watch-count'>{item?.timeWhatched || 0}</span>
-              <i className="fa-solid fa-angle-right" onClick={() => setTimeWatched(1)} />
+              <i className="fa-solid fa-angle-right" onClick={() => setTimeWatched(item._id, 1)} />
             </div>
           </div>
         </div>
@@ -308,13 +300,13 @@ function ModalLeftPanel({
                 collections={item?.collections} 
                 onClose={closeAllDropdowns}
                 handleAddNewCollection={handleAddNewCollection}
-                handleRemoveFromCollection={handleRemoveFromCollection}
+                onRemoveCollection={(col) => onRemoveCollection(item._id, col)}
                 // 2° Dropdown
                 globalCollections={globalData?.globalInfo?.collections || []}
                 isGlobalCollectionsDropdownOpen={isGlobalCollectionsDropdownOpen}
                 handleIsGlobalCollectionsDropdownOpen={handleIsGlobalCollectionsDropdownOpen}
-                handleAddToExistingCollection={handleAddToExistingCollection}
-                handleOpenNewCollectionInput={handleOpenNewCollectionInput}
+                onAddCollection={(col) => onAddCollection(item._id, col)}
+                addNewCollection={() => addNewCollection(item._id)}
               />
             )}
           </div>
@@ -333,16 +325,17 @@ function MoviesDropdown({
   handleDeleteMovie 
 }) {
   const dropdownRef = useClickOutside(onClose); 
-  const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, movieTitle: null });
+  const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, movieTitle: null, checkmarkValue: false });
 
   // Lógica do Menu de Contexto (clique direito)
-  const handleContextMenu = (e, movieTitle) => {
+  const handleContextMenu = (e, movieTitle, checkmarkValue) => {
     e.preventDefault(); // Impede o menu de contexto padrão do navegador
     setContextMenu({
       visible: true,
       x: e.clientX,
       y: e.clientY,
       movieTitle,
+      checkmarkValue,
     });
   };
 
@@ -359,7 +352,7 @@ function MoviesDropdown({
             <li 
               key={index} 
               className='movie-item-row'
-              onContextMenu={(e) => handleContextMenu(e, movie.title)} // Clique direito
+              onContextMenu={(e) => handleContextMenu(e, movie.title, movie.hasWatched)} // Clique direito
             >
               <span className='movie-title'>{movie.title}</span>
               <CustomCheckbox
@@ -386,7 +379,7 @@ function MoviesDropdown({
           style={{ top: contextMenu.y, left: contextMenu.x }}
           onMouseLeave={closeContextMenu} // Opção de fechar ao tirar o mouse
         >
-          <div onClick={() => { handleEditMovie(contextMenu.movieTitle); closeContextMenu(); }}>Editar</div>
+          <div onClick={() => { handleEditMovie(contextMenu.movieTitle, contextMenu.checkmarkValue); closeContextMenu(); }}>Editar</div>
           <div onClick={() => { handleDeleteMovie(contextMenu.movieTitle); closeContextMenu(); }}>Deletar</div>
         </div>
       )}
@@ -398,13 +391,13 @@ function CollectionsDropdown({
   collections = [], 
   onClose, 
   handleAddNewCollection, 
-  handleRemoveFromCollection,
+  onRemoveCollection,
   // NOVOS PROPS
   globalCollections,
   isGlobalCollectionsDropdownOpen,
   handleIsGlobalCollectionsDropdownOpen,
-  handleAddToExistingCollection,
-  handleOpenNewCollectionInput
+  onAddCollection,
+  addNewCollection
 }) {
   const dropdownRef = useClickOutside(onClose); 
 
@@ -417,9 +410,9 @@ function CollectionsDropdown({
             <li key={index} className='collection-item-row'>
               <span 
                 className='remove-collection-action' 
-                onClick={() => handleRemoveFromCollection(collectionName)}
+                onClick={() => onRemoveCollection(collectionName)}
               >
-                Remover da coleção {collectionName}
+                Remover de <div className='remove-collection-action-col'>{collectionName}</div>
               </span>
             </li>
           ))
@@ -439,8 +432,8 @@ function CollectionsDropdown({
           currentCollections={collections}
           globalCollections={globalCollections}
           onClose={() => handleIsGlobalCollectionsDropdownOpen(false)}
-          onSelectCollection={handleAddToExistingCollection}
-          onNewCollection={handleOpenNewCollectionInput}
+          onSelectCollection={onAddCollection}
+          onNewCollection={addNewCollection}
         />
       )}
     </div>
@@ -454,7 +447,6 @@ function GlobalCollectionsDropdown({
   onSelectCollection, 
   onNewCollection 
 }) {
-
   const dropdownRef = useClickOutside(onClose); 
 
   // Lista as coleções que o anime NÃO tem
@@ -626,5 +618,6 @@ function ModalRightPanel ({
 
 export {
   AddCollectionModal,
+  AddMovieModal,
   AnimeDetailsModal,
 };

@@ -2,23 +2,23 @@
 
 import { useState, useMemo } from 'react';
 
-export default function useAnimeManager(collectionName = 'animes', items, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem) {
+export default function useAnimeManager(dataCollectionName = 'animes', items, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem) {
 
-//#region --- 1. ESTADOS DE AÇÃO/MODAL ---
+  //#region --- 1. ESTADOS DE AÇÃO/MODAL ---
   const [openActionMenuId, setOpenActionMenuId] = useState(null);
   const [hasAddCollection, setHasAddColletion] = useState(false);
   const [isRenaming, setIsRenaming] = useState(null); // Armazena o nome da coleção a ser renomeada
   const [addItemToNewCollection, setAddItemToNewCollection] = useState(null);
-//#endregion
+  //#endregion
 
-//#region --- 2. FUNÇÕES DO MODAL COLEÇÃO ---
-//#region --- 2 - 1. FUNÇÕES DE ABRIR E FECHAR A MODAL DE ADICIONAR COLEÇÃO ---
+  //#region --- 2. FUNÇÕES DO MODAL COLEÇÃO ---
+  //#region --- 2 - 1. FUNÇÕES DE ABRIR E FECHAR A MODAL DE ADICIONAR COLEÇÃO ---
   const openAddColletion = () => setHasAddColletion(true);
   const closeAddColletion = () => {
-      setHasAddColletion(false);
-      setIsRenaming(null);
-      setAddItemToNewCollection(null);
-  }; 
+    setHasAddColletion(false);
+    setIsRenaming(null);
+    setAddItemToNewCollection(null);
+  };
 
   // Função que abre o modal de criar coleção com dados do nome da coleção que será atualizada
   const openRenameCollection = (oldName) => {
@@ -32,11 +32,11 @@ export default function useAnimeManager(collectionName = 'animes', items, global
     setHasAddColletion(true);
     setOpenActionMenuId(null);
   };
-//#endregion
+  //#endregion
 
-//#region --- 2 - 2. LÓGICA DE COLEÇÕES ---
+  //#region --- 2 - 2. LÓGICA DE COLEÇÕES ---
 
-    // Handler para criar ou renomear coleção
+  // Handler para criar ou renomear coleção
   const createCollection = async (newCollectionName) => {
     const existingGlobalInfo = globalData?.globalInfo || {};
     let updatedCollections = [...(existingGlobalInfo.collections || [])];
@@ -66,21 +66,21 @@ export default function useAnimeManager(collectionName = 'animes', items, global
     await handleUpdateItem(globalData._id, payload);
 
     // Se tiver Anime para adicionar a uma nova coleção
-    if(!addItemToNewCollection) return;
+    if (!addItemToNewCollection) return;
 
     await handleAddToExistingCollection(addItemToNewCollection, newCollectionName);
     setAddItemToNewCollection(null);
   };
-  
+
   // Função que irá deletar a coleção do banco de dados
   const handleDeleteCollection = async (collectionToDelete) => {
     // Removendo a coleção dos itens que possam ter a coleção
-    await handleRemoveCollectionFromItem(collectionToDelete);
+    await handleRemoveCollectionFromAllItems(collectionToDelete);
 
     // Removendo a coleção do banco de dados
     const existingGlobalInfo = globalData?.globalInfo || {};
     let currentCollections = [...(existingGlobalInfo.collections || [])];
-    
+
     if (!collectionToDelete && !currentCollections.includes(newCollectionName)) return;
 
     // 1. Remover o 'collectionToDelete' da lista atualizada de itens 'currentCollections'
@@ -101,12 +101,12 @@ export default function useAnimeManager(collectionName = 'animes', items, global
   };
 
   // Função de remover a coleção de todos os itens que estavam na coleção que será deletada
-  const handleRemoveCollectionFromItem = async (collectionToDelete) => {
-    if(!collectionToDelete) return;
+  const handleRemoveCollectionFromAllItems = async (collectionToDelete) => {
+    if (!collectionToDelete) return;
 
     // 1. Filtrar os itens que contêm a coleção a ser deletada
     const listToRemoveCollection = items.filter(e => {
-       return Array.isArray(e.collections) && e.collections.includes(collectionToDelete);
+      return Array.isArray(e.collections) && e.collections.includes(collectionToDelete);
     })
 
     // Se não houver itens para atualizar, encerra a função
@@ -127,7 +127,7 @@ export default function useAnimeManager(collectionName = 'animes', items, global
 
       // Retorna a Promise da função de atualização do item
       // Assumimos que 'handleUpdateItem' pode lidar com um ID de item e o payload completo/parcial
-      return handleUpdateItem(item._id, payload); 
+      return handleUpdateItem(item._id, payload);
     });
 
     // 3. Executar todas as atualizações simultaneamente
@@ -139,12 +139,50 @@ export default function useAnimeManager(collectionName = 'animes', items, global
       // Você pode adicionar um tratamento de erro mais sofisticado aqui
     }
   }
-//#endregion
-//#endregion
 
-//#region --- 3. FUNÇÃO DOS MODAL DOS ANIMES ---
+  const handleAddCollectionToSingleItem = async (itemId, colectionToAdd) => {
+    const itemToUpdate = items.find(item => item._id === itemId);
 
-//#region --- 3 - 2. FUNÇÕES DOS ANIMES ---
+    if (itemToUpdate) {
+      // Garante que é um array e o copia
+      const updatedCollections = [...(itemToUpdate.collections || [])]; 
+
+      // Verifica se a coleção existe
+      if (!updatedCollections.includes(colectionToAdd)) { 
+        // Adicionar a nova coleção e reorganizar as coleções em ordem alfabética
+        updatedCollections.push(colectionToAdd); 
+        updatedCollections.sort((a, b) => a.localeCompare(b));
+        // Chama a função de atualização
+        await handleUpdateItem(itemId, { collections: updatedCollections }); 
+      }
+    }
+  }
+
+  const handleRemoveCollectionFromSingleItem = async (itemId, colectionToRemove) => {
+    const itemToUpdate = items.find(item => item._id === itemId);
+
+    if (itemToUpdate) {
+      // Garante que a lista de coleções é um array, senão usa um vazio
+      const currentCollections = itemToUpdate.collections || [];
+      const initialLength = currentCollections.length;
+
+      // Filtra a coleção a ser removida
+      const updatedCollections = currentCollections.filter(
+        (collection) => collection !== colectionToRemove
+      );
+
+      // Só atualiza se a coleção foi realmente removida (o tamanho do array mudou)
+      if (updatedCollections.length < initialLength) {
+        await handleUpdateItem(itemId, { collections: updatedCollections });
+      }
+    }
+  }
+  //#endregion
+  //#endregion
+
+  //#region --- 3. FUNÇÃO DOS MODAL DOS ANIMES ---
+
+  //#region --- 3 - 2. FUNÇÕES DOS ANIMES ---
   const handleAddNewAnime = () => {
     console.log('Adicionando novo Anime');
   }
@@ -180,15 +218,15 @@ export default function useAnimeManager(collectionName = 'animes', items, global
     }
     setOpenActionMenuId(null);
   };
-//#endregion
+  //#endregion
 
   return {
     // Estados de UI
-    openActionMenuId, 
+    openActionMenuId,
     setOpenActionMenuId,
-    hasAddCollection, 
-    isRenaming, 
-    
+    hasAddCollection,
+    isRenaming,
+
     // Funções de Coleção
     openAddColletion,
     closeAddColletion,
@@ -196,7 +234,9 @@ export default function useAnimeManager(collectionName = 'animes', items, global
     handleAddNewCollection,
     createCollection,
     handleDeleteCollection,
-    
+    handleAddCollectionToSingleItem,
+    handleRemoveCollectionFromSingleItem,
+
     // Funções de Item
     handleAddNewAnime,
     handleEditAnime,

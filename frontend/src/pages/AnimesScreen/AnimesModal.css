@@ -253,8 +253,14 @@
 
 /* Estilo para a ação de "Remover da Coleção" */
 .collection-item-row .remove-collection-action {
-    display: block; /* O span deve preencher o <li> para receber o clique/hover */
+    display: flex; /* O span deve preencher o <li> para receber o clique/hover */
     width: 100%;
+    gap: 5px;
+}
+
+.collection-item-row .remove-collection-action-col {
+    font-weight: 700;
+    color: var(--text-light);
 }
 
 
