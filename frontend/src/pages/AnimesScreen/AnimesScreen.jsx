@@ -13,8 +13,8 @@ import useAnimeModalManager from './hooks/useAnimeModalManager';
 import { mapSeasonToOrder } from './utils/sortFilterUtils';
 
 // Modals (DOM)
-import { AddCollectionModal, AddMovieModal, AnimeDetailsModal } from './AnimesModal';
-import CollectionContextMenu from './CollectionContextMenu';
+import { AddCollectionModal, AddMovieModal, AddEditLinksModal, AnimeDetailsModal } from './AnimesModal';
+import ContextMenu from './ContextMenu';
 
 // Components (DOM)
 import Header from '../../components/Common/Header/Header';
@@ -105,6 +105,12 @@ function AnimesScreen() {
     hasMovieNamed, // Modal de edição dos filmes
     hasMovieWatched, // Modal de edição dos filmes
     createEditMovie, // Modal de edição dos filmes
+    hasAddEditLink, // Modal de edição de links
+    openAddEditLink, // Modal de edição de links
+    closeAddEditLink, // Modal de edição de links
+    hasLinkTitle, // Modal de edição de links
+    hasLinkUrl, // Modal de edição de links
+
 
     setTimeWatched,
 
@@ -117,6 +123,8 @@ function AnimesScreen() {
     openSeasonIndex,
     toggleSeason,
     handleOpenLink,
+    onEditLink,
+    onDeleteLink,
    } = useAnimeModalManager( finalSortedItems, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem );
 
   //Formata as opções de lançamento para o CollapsibleMenu
@@ -174,7 +182,7 @@ function AnimesScreen() {
           addNewCollection={openAddColletion}
           onRenameCollection={openRenameCollection}
           onDeleteCollection={handleDeleteCollection}
-          ContextMenuComponent={CollectionContextMenu}
+          ContextMenuComponent={ContextMenu}
         />
 
         <div className='animes-content'>
@@ -256,6 +264,8 @@ function AnimesScreen() {
         openSeasonIndex={openSeasonIndex}
         toggleSeason={toggleSeason}
         handleOpenLink={handleOpenLink}
+        openAddEditLink={openAddEditLink}
+        onDeleteLink={onDeleteLink}
       />
 
       {hasAddCollection && (
@@ -275,6 +285,16 @@ function AnimesScreen() {
           initialMovieValue={hasMovieWatched}
           checkmarkSize={20}
           onSubmit={createEditMovie}
+        />
+      )}
+
+      {hasAddEditLink && (
+        <AddEditLinksModal
+          onClose={closeAddEditLink}
+          title={hasLinkTitle === null ? "Dê um título ao link" : "Altere o título do link"}
+          initialLinkTitle={hasLinkTitle}
+          initialUrl ={hasLinkUrl}
+          onSubmit={onEditLink}
         />
       )}
     </div>

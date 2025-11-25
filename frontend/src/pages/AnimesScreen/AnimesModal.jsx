@@ -4,16 +4,20 @@ import React, { useState, useRef, useEffect } from 'react';
 import useClickOutside from '../../hooks/useClickOutside'; 
 
 import { toTitleCase } from './utils/modalUtils';
+import ContextMenu from './ContextMenu';
 
 import SingleTextInputModal from '../../components/Common/Modal/TextInputModal/SingleTextInputModal';
 import SingleTextInputWithCheckboxModal from '../../components/Common/Modal/TextInputModal/SingleTextInputWithCheckboxModal';
+import DoubleTextInputModal from '../../components/Common/Modal/TextInputModal/DoubleTextInputModal';
 
 import Button from '../../components/Common/Button/Button';
 import CustomCheckbox from '../../components/Common/CustomCheckbox/CustomCheckbox';
+import ListItemAction from '../../components/Common/ListItemAction/ListItemAction';
+import ActionDropdownContainer from '../../components/Common/ActionDropdownContainer/ActionDropdownContainer';
 
 import './AnimesModal.css';
 
-function AddCollectionModal({ onClose, title, onSubmit, initialValue }) {
+function AddCollectionModal({ onClose, title, initialValue, onSubmit }) {
   const [collectionName, setCollectionName] = useState(initialValue || '');
 
   const handleChange = (e) => setCollectionName(e.target.value);
@@ -41,7 +45,7 @@ function AddCollectionModal({ onClose, title, onSubmit, initialValue }) {
   );
 }
 
-function AddMovieModal({ onClose, title, onSubmit, initialMovieName, initialMovieValue, checkmarkSize }) {
+function AddMovieModal({ onClose, title, initialMovieName, initialMovieValue, checkmarkSize, onSubmit }) {
   const [movieName, setMovieName] = useState(initialMovieName || '');
   const [movieValue, setMovieValue] = useState(initialMovieValue || false);
   
@@ -73,6 +77,35 @@ function AddMovieModal({ onClose, title, onSubmit, initialMovieName, initialMovi
       />
     </div>
   );
+}
+
+function AddEditLinksModal({ onClose, title, initialLinkTitle, initialUrl, onSubmit }) {
+  const [linkTitle, setLinkTitle] = useState(initialLinkTitle || '');
+  const [url, setUrl] = useState(initialUrl || '');
+  
+  const handleChangeTitle = (e) => setLinkTitle(e.target.value);
+  const handleChangeUrl = (e) => setUrl(e.target.value);
+  
+  const handleSubmit = () => {
+    if (linkTitle.trim()) {
+        onSubmit(linkTitle, url);
+        setLinkTitle('');
+        setUrl('');
+        onClose();
+      }
+    }
+
+  return (
+    <DoubleTextInputModal
+      onClose={onClose}
+      title={title}
+      inputTitleValue={linkTitle}
+      handleChangeTitleInput={handleChangeTitle}
+      inputURLValue={url}
+      handleChangeURLInput={handleChangeUrl}
+      onSubmit={handleSubmit}
+    />
+  )
 }
 
 function AnimeDetailsModal({
@@ -111,7 +144,9 @@ function AnimeDetailsModal({
   // Lado Direito do modal
   openSeasonIndex,
   toggleSeason,
-  handleOpenLink
+  handleOpenLink,
+  openAddEditLink,
+  onDeleteLink,
 }) {
 
   if (hasAnimeModal === null) return;
@@ -122,7 +157,6 @@ function AnimeDetailsModal({
   const addNewEpisode = () => { console.log('Adicionando novo epsódio na lista'); }
   const toggleWatchStatus = (seasonIndex, episodeIndex) => { console.log(`Temporada ${seasonIndex + 1}, Episódio ${episodeIndex + 1}: Status alterado!`);};
   const handleEpisodeMenuToggle = (e) => { console.log('Abrindo menu de episódio'); }
-  const addNewLinkToWatch = () => { console.log('Adicionando novo link para assitir'); }
   
 
 
@@ -178,10 +212,14 @@ function AnimeDetailsModal({
             handleEpisodeMenuToggle={handleEpisodeMenuToggle}
             // Links
             handleOpenLink={handleOpenLink}
-            addNewLinkToWatch={addNewLinkToWatch}
             // Buttons
             handleOpenEditModal={handleOpenEditModal}
             closeModal={closeModal}
+
+            // 🔑 PROPS DO CONTEXT MENU PARA LINKS
+            openAddEditLink={openAddEditLink}             // 👈 Passando a função do hook
+            onDeleteLink={onDeleteLink}         // 👈 Passando a função do hook
+            ContextMenuComponent={ContextMenu}  // 👈 Passando o componente
           />
         </div>
 
@@ -324,7 +362,6 @@ function MoviesDropdown({
   handleEditMovie, 
   handleDeleteMovie 
 }) {
-  const dropdownRef = useClickOutside(onClose); 
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, movieTitle: null, checkmarkValue: false });
 
   // Lógica do Menu de Contexto (clique direito)
@@ -344,7 +381,7 @@ function MoviesDropdown({
   };
 
   return (
-    <div className="movies-dropdown-container" ref={dropdownRef}>
+    <ActionDropdownContainer onClose={onClose} className="movies-dropdown-container">
       <ul className="movies-list-content">
         {/* Renderiza a lista de Filmes */}
         {movies.length > 0 ? (
@@ -374,16 +411,16 @@ function MoviesDropdown({
 
       {/* Menu de Contexto (Aparece ao clicar com o botão direito) */}
       {contextMenu.visible && (
-        <div 
-          className="context-menu" 
-          style={{ top: contextMenu.y, left: contextMenu.x }}
-          onMouseLeave={closeContextMenu} // Opção de fechar ao tirar o mouse
-        >
-          <div onClick={() => { handleEditMovie(contextMenu.movieTitle, contextMenu.checkmarkValue); closeContextMenu(); }}>Editar</div>
-          <div onClick={() => { handleDeleteMovie(contextMenu.movieTitle); closeContextMenu(); }}>Deletar</div>
-        </div>
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          // Passe as props específicas para filmes:
+          onRename={() => handleEditMovie(contextMenu.movieTitle, contextMenu.checkmarkValue)}
+          onDelete={() => handleDeleteMovie(contextMenu.movieTitle)}
+          onClose={closeContextMenu}
+        />
       )}
-    </div>
+    </ActionDropdownContainer>
   );
 }
 
@@ -399,10 +436,9 @@ function CollectionsDropdown({
   onAddCollection,
   addNewCollection
 }) {
-  const dropdownRef = useClickOutside(onClose); 
 
   return (
-    <div className="collections-dropdown-container" ref={dropdownRef}>
+    <ActionDropdownContainer onClose={onClose} className="collections-dropdown-container">
       <ul className="collections-list-content">
         {/* Renderiza a lista de Coleções */}
         {collections.length > 0 ? (
@@ -421,9 +457,11 @@ function CollectionsDropdown({
         )}
 
         {/* Opção para Adicionar Nova Coleção */}
-        <li className='add-new-item-action' onClick={handleAddNewCollection}>
-          <i className="fa-solid fa-plus"></i> Adicionar Nova Coleção
-        </li>
+        <ListItemAction 
+          iconClass="fa-plus" 
+          text="Adicionar Nova Coleção" 
+          onClick={handleAddNewCollection} 
+        />
       </ul>
 
       {/* NOVO: Renderiza o Dropdown de Seleção Global condicionalmente */}
@@ -436,7 +474,7 @@ function CollectionsDropdown({
           onNewCollection={addNewCollection}
         />
       )}
-    </div>
+    </ActionDropdownContainer>
   );
 }
 
@@ -447,7 +485,6 @@ function GlobalCollectionsDropdown({
   onSelectCollection, 
   onNewCollection 
 }) {
-  const dropdownRef = useClickOutside(onClose); 
 
   // Lista as coleções que o anime NÃO tem
   const availableCollections = globalCollections.filter(
@@ -456,7 +493,7 @@ function GlobalCollectionsDropdown({
 
   return (
     // Classe para posicionamento, deve ser estilizada para aparecer ao lado/acima do 'Adicionar Nova Coleção'
-    <div className="global-collections-dropdown-container" ref={dropdownRef}>
+    <ActionDropdownContainer onClose={onClose} className="global-collections-dropdown-container">
       <ul className="global-collections-list-content">
         {/* Lista de Coleções Disponíveis */}
         {availableCollections.length > 0 ? (
@@ -474,11 +511,13 @@ function GlobalCollectionsDropdown({
         )}
         
         {/* Opção para Criar Nova Coleção (Abre o modal de input) */}
-        <li className='create-new-collection-action' onClick={onNewCollection}>
-          <i className="fa-solid fa-folder-plus"></i> Criar Nova Coleção
-        </li>
+        <ListItemAction 
+          iconClass="fa-folder-plus" 
+          text="Criar Nova Coleção" 
+          onClick={onNewCollection} 
+        />
       </ul>
-    </div>
+    </ActionDropdownContainer>
   );
 }
 //#endregion
@@ -493,10 +532,31 @@ function ModalRightPanel ({
   toggleWatchStatus,
   handleEpisodeMenuToggle,
   handleOpenLink,
-  addNewLinkToWatch,
   handleOpenEditModal,
-  closeModal
+  closeModal,
+  // NOVAS PROPS NECESSÁRIAS:
+  openAddEditLink,
+  onDeleteLink,
+  ContextMenuComponent 
 }) {
+  const [linkContextMenu, setLinkContextMenu] = useState(null); // { url: string, title: string, x: number, y: number }
+
+  // 2. Função para abrir o menu de contexto
+  const handleLinkContextMenu = (e, itemId, linkItem) => {
+    e.preventDefault(); // Impede que o menu de contexto padrão do navegador apareça
+    setLinkContextMenu({
+      _id: itemId,
+      title: linkItem.title,
+      url: linkItem.url,
+      x: e.clientX,
+      y: e.clientY
+    });
+  };
+
+  // Função para fechar o menu de contexto
+  const handleCloseLinkContextMenu = () => {
+    setLinkContextMenu(null);
+  };
 
   return(
     <div className='modal-right-content'>
@@ -588,12 +648,12 @@ function ModalRightPanel ({
         <div className='watch-links-section'>
           <div className='section-title-wrapper'>
             <span className='section-title'>Links para assistir</span>
-            <span className='add-new-button' onClick={addNewLinkToWatch}><i className="fa-solid fa-plus" /></span>
+            <span className='add-new-button' onClick={() => openAddEditLink(item._id, '', '')}><i className="fa-solid fa-plus" /></span>
           </div>
           <hr className='section-divider' />
           <ul className='links-list'>
             {(item?.links || []).map((link, index) => (
-              <li key={`${link.title}-${index}`} className='link-list-item'>
+              <li key={`${link.title}-${index}`} className='link-list-item' onContextMenu={(e) => handleLinkContextMenu(e, item._id, link)}>
                 <span className='link-title'>{link.title}</span>
                 <Button className='link-open-button' onClick={() => handleOpenLink(link.url)}>Abrir</Button>
               </li>
@@ -611,6 +671,25 @@ function ModalRightPanel ({
         <span className='action-button button-close' onClick={closeModal}>Fechar</span>
         */}
       </div>
+
+      {/* 3. Renderização Condicional do Menu de Contexto */}
+      {linkContextMenu && ContextMenuComponent && (
+        <ContextMenu
+          x={linkContextMenu.x}
+          y={linkContextMenu.y}
+
+          // Ação de Renomear/Editar (passando o item de link completo ou o URL/Title)
+          onRename={() => openAddEditLink(linkContextMenu._id, linkContextMenu.title, linkContextMenu.url)}
+
+          // Ação de Apagar (passando o URL para identificação)
+          onDelete={() => onDeleteLink(linkContextMenu._id, linkContextMenu.title)}
+
+          onClose={handleCloseLinkContextMenu}
+
+          // Opcional: Se o ContextMenuComponent exige props de nome
+          nameForDisplay={linkContextMenu.title}
+        />
+      )}
     </div>
   );
 }
@@ -619,5 +698,6 @@ function ModalRightPanel ({
 export {
   AddCollectionModal,
   AddMovieModal,
+  AddEditLinksModal,
   AnimeDetailsModal,
 };

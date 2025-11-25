@@ -79,6 +79,24 @@
 }
 
 /* ---------------------------------------------------- */
+/* --- Exlusivo para o 'DoubleTextInputModal' --- */
+/* ---------------------------------------------------- */
+
+.text-input-base-modal .double-text-input-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.text-input-base-modal .double-text-input-modal .stim-span {
+  color: var(--text-gray);
+}
+
+.text-input-base-modal .double-text-input-modal .stim-input {
+  margin: 0 0 10px 0;
+}
+
+/* ---------------------------------------------------- */
 /* --- 3. FOTER (Botões de cancelar e salvar) --- */
 /* ---------------------------------------------------- */
 
@@ -108,3 +126,4 @@
 .stib-modal-cancel-button:hover {
   background-color: var(--button-delete);
 }
+

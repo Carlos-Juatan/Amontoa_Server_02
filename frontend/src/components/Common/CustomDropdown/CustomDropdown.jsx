@@ -1,5 +1,6 @@
 // src/components/Common/CustomDropdown/CustomDropdown.jsx
 import React, { useState, useRef, useEffect } from 'react';
+import useClickOutside from '../../../hooks/useClickOutside';
 import './CustomDropdown.css'; 
 // Use a tag "Dropdown.css" ou "CustomDropdown.css" para o arquivo de estilos
 
@@ -8,7 +9,7 @@ function CustomDropdown({ options = [], value, onChange, placeholder = "Selecion
   const [isOpen, setIsOpen] = useState(false);
   
   // Referência para o container do dropdown. Usado para fechar o menu ao clicar fora.
-  const dropdownRef = useRef(null);
+  const dropdownRef = useClickOutside(() => setIsOpen(false));
 
   // Encontra o item selecionado para exibir no campo
   const selectedOption = options.find(opt => opt.value === value);
@@ -19,24 +20,6 @@ function CustomDropdown({ options = [], value, onChange, placeholder = "Selecion
     onChange(optionValue); // Envia o novo valor para o componente pai
     setIsOpen(false);      // Fecha o dropdown
   };
-
-  // Efeito para fechar o dropdown quando o usuário clica em qualquer lugar FORA do componente
-  useEffect(() => {
-    function handleClickOutside(event) {
-      // Verifica se o clique foi fora do componente (fora da div principal)
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    }
-    
-    // Adiciona o listener de evento quando o componente é montado
-    document.addEventListener("mousedown", handleClickOutside);
-    
-    // Remove o listener de evento quando o componente é desmontado (limpeza)
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [dropdownRef]); // Roda apenas uma vez na montagem
 
   return (
     <div className="custom-select-wrapper" ref={dropdownRef}>

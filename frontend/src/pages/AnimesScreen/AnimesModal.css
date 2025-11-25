@@ -336,7 +336,6 @@
 
 /* Aplica o estilo de item 'custom-option' para os itens globais */
 .available-collection-item,
-.create-new-collection-action,
 .no-available-collections-message {
     /* Novo Design: Copiado de .custom-option */
     padding: 10px;
@@ -350,19 +349,9 @@
     justify-content: flex-start;
 }
 
-.available-collection-item:hover,
-.create-new-collection-action:hover {
+.available-collection-item:hover {
     background-color: var(--card-item-selected); 
     color: var(--text-light-on-dark, #fff); 
-}
-
-.create-new-collection-action {
-    font-weight: bold;
-    color: var(--color-secondary); /* Outra cor para diferenciar a ação de criação */
-}
-
-.create-new-collection-action i {
-    margin-right: 8px;
 }
 
 
@@ -550,7 +539,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 0;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.link-list-item:hover {
+    background-color: var(--card-item-selected);
 }
 
 .link-open-button {

@@ -1,34 +1,20 @@
 // src/pages/AnimesScreen/AnimeActionsMenu.jsx (Novo Arquivo)
 import React, { useState, useRef, useEffect } from 'react';
+import ActionDropdownContainer from '../../components/Common/ActionDropdownContainer/ActionDropdownContainer';
 import '../../components/Common/CustomDropdown/CustomDropdown.css'; // Reutilizando os estilos
 
 
 function AnimeActionsMenu({ itemId, collections, onEdit, onDelete, onAddToCollection, onAddNewCollection, onClose }) {
-  const menuRef = useRef(null);
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
 
-  // Fecha o menu principal e sub-menu ao clicar fora/Escape
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        onClose();
-      }
-    }
-    function handleKey(event) {
-      if (event.key === 'Escape') {
-        onClose();
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleKey);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleKey);
-    };
-  }, [onClose]);
+  // Função para fechar o sub-menu ao selecionar uma coleção ou adicionar uma nova
+  const handleCloseSubMenu = () => {
+    setIsSubMenuOpen(false);
+    onClose(); // Fecha também o menu principal
+  }
 
   return (
-    <div className="custom-select-wrapper" ref={menuRef}>
+    <ActionDropdownContainer onClose={onClose} className="custom-select-wrapper">
       <ul className="custom-options" role="menu">
         {/* 1. Editar */}
         <li
@@ -64,7 +50,7 @@ function AnimeActionsMenu({ itemId, collections, onEdit, onDelete, onAddToCollec
               collections={collections}
               onAddToCollection={(col) => onAddToCollection(itemId, col)}
               onAddNewCollection={() => onAddNewCollection(itemId)}
-              onClose={onClose}
+              onClose={handleCloseSubMenu}
             />
           )}
         </li>
@@ -78,7 +64,7 @@ function AnimeActionsMenu({ itemId, collections, onEdit, onDelete, onAddToCollec
           Apagar
         </li>
       </ul>
-    </div>
+    </ActionDropdownContainer>
   );
 }
 

@@ -18,12 +18,21 @@ export default function useClickOutside(callback) {
       }
     }
 
+    function handleKeydown(event) {
+      // Adiciona a lógica para a tecla 'Escape'
+      if (event.key === 'Escape') {
+        callback();
+      }
+    }
+
     // Adiciona o listener de evento
     document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeydown);
     
     // Cleanup: Remove o listener quando o componente for desmontado ou a função for alterada
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeydown);
     };
   }, [callback]); // O callback é uma dependência para garantir que a função mais recente seja usada.
 

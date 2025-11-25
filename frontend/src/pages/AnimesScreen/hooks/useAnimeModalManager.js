@@ -15,10 +15,15 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   const [isGlobalCollectionsDropdownOpen, setIsGlobalCollectionsDropdownOpen] = useState(false); // 2° Dropdown das coleções
 
   // Controla os Modais de adicionar e editar
+  const [UpdatedItemId, setUpdatedItemId] = useState(null);
+  // para o modal de filmes
   const [hasAddEditMovie, setHasAddEditMovie] = useState(false);
-  const [hasMovieItemId, setHasMovieItemId] = useState(null);
   const [hasMovieNamed, setHasMovieNamed] = useState(null);
   const [hasMovieWatched, setHasMovieWatched] = useState(false);
+  // para o modal de links
+  const [hasAddEditLink, setHasAddEditLink] = useState(false);
+  const [hasLinkTitle, setHasLinkTitle] = useState(null);
+  const [hasLinkUrl, setHasLinkUrl] = useState(null);
 
   // Estado para controlar qual temporada está aberta.
   // Usamos null para nenhuma aberta, ou o índice da temporada.
@@ -70,7 +75,7 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
 
   const openAddEditMovie = async (itemId = '', movieTitle = '', checkmarckValue = false) => {
     setHasAddEditMovie(true);
-    setHasMovieItemId(itemId);
+    setUpdatedItemId(itemId);
     setHasMovieNamed(movieTitle);
     setHasMovieWatched(checkmarckValue);
 
@@ -78,13 +83,13 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
 
   const closeAddEditMovie = () => {
     setHasAddEditMovie(false);
-    setHasMovieItemId(null);
+    setUpdatedItemId(null);
     setHasMovieNamed(null);
     setHasMovieWatched(false);
   };
 
   const createEditMovie = async (newMovieTile, newCheckmarkValue) => {
-    const currentItem = items.find(item => item._id === hasMovieItemId);
+    const currentItem = items.find(item => item._id === UpdatedItemId);
     const oldMovieTitle = hasMovieNamed;
 
     if (!currentItem || !Array.isArray(currentItem.movies)) return;
@@ -125,7 +130,7 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     // 3. Ordena e Atualiza:
     finalMovies.sort((a, b) => a.title.localeCompare(b.title));
 
-    await handleUpdateItem(hasMovieItemId, { movies: finalMovies });
+    await handleUpdateItem(UpdatedItemId, { movies: finalMovies });
     closeAddEditMovie(); // Fecha o modal após a atualização bem-sucedida
   };
 
@@ -191,14 +196,85 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   };
   //#endregion
   //#endregion
+  
+  //#endregion
 
   //#region Lado Direito do modal
   // Função para alternar o estado de abertura da 'gaveta' de epsódios da temperada
   const toggleSeason = (index) => { setOpenSeasonIndex(openSeasonIndex === index ? null : index); };
 
   const handleOpenLink = (url) => { window.open(url, '_blank'); };
-  //#endregion
 
+  // --- NOVAS FUNÇÕES DE MANIPULAÇÃO DE LINKS ---
+
+  const openAddEditLink = (itemId = '', linkTitle = '', url = '' ) => {
+    setHasAddEditLink(true);
+    setUpdatedItemId(itemId);
+    setHasLinkTitle(linkTitle);
+    setHasLinkUrl(url);
+
+  }
+
+  const closeAddEditLink = () => {
+    setHasAddEditLink(false);
+    setUpdatedItemId(null);
+    setHasLinkTitle(null);
+    setHasLinkUrl(null);
+  }
+
+  const onEditLink = async (newLinkTitle, newLinkUrl) => {
+    const currentItem = items.find(item => item._id === UpdatedItemId);
+    const oldLinkTitle = hasLinkTitle;
+
+    if (!currentItem || !Array.isArray(currentItem.movies)) return;
+
+    let isEditing = false;
+    const updatedLinks = currentItem.links.map(link => {
+      if (oldLinkTitle && link.title === oldLinkTitle) {
+        isEditing = true;
+        return {
+          title: newLinkTitle || link.title, // Usa o novo título, se fornecido
+          url: newLinkUrl || link.url   // Usa a nova URL, se fornecida
+        };
+      }
+      return link;
+    });
+
+    let finalLinks = updatedLinks;
+
+    // Se for uma nova adição
+    if (!isEditing) {
+      const newLink = { title: newLinkTitle, url: newLinkUrl };
+
+      const alreadyExists = updatedLinks.some(link => link.title === newLinkTitle);
+
+      if (!alreadyExists) {
+        finalLinks = [...updatedLinks, newLink];
+      } else {
+        // Tratar erro ou apenas retornar se já existir
+        console.warn(`Links "${newLinkTitle}" já existe na lista.`);
+        return; // Evita a atualização
+      }
+    }
+
+    finalLinks.sort((a, b) => a.title.localeCompare(b.title));
+
+    await handleUpdateItem(UpdatedItemId, { links: finalLinks });
+  };
+
+  const onDeleteLink = async (itemId, linkToDelete) => {
+    const currentItem = items.find(item => item._id === itemId);
+
+    if (currentItem && Array.isArray(currentItem.links)) {
+      const updatedLinks = currentItem.links.filter(link => {
+        return link.title !== linkToDelete;
+      });
+
+      if (updatedLinks.length < currentItem.links.length) {
+        await handleUpdateItem(itemId, { links: updatedLinks });
+      }
+    }
+  };
   //#endregion
 
   return {
@@ -228,6 +304,11 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     hasMovieNamed, // Modal de edição dos filmes
     hasMovieWatched, // Modal de edição dos filmes
     createEditMovie, // Modal de edição dos filmes
+    hasAddEditLink, // Modal de edição de links
+    openAddEditLink, // Modal de edição de links
+    closeAddEditLink, // Modal de edição de links
+    hasLinkTitle, // Modal de edição de links
+    hasLinkUrl, // Modal de edição de links
 
     setTimeWatched,
 
@@ -240,5 +321,7 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     openSeasonIndex,
     toggleSeason,
     handleOpenLink,
+    onEditLink,
+    onDeleteLink,
   };
 }
