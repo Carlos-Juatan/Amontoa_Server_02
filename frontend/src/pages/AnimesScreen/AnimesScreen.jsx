@@ -13,7 +13,7 @@ import useAnimeModalManager from './hooks/useAnimeModalManager';
 import { mapSeasonToOrder } from './utils/sortFilterUtils';
 
 // Modals (DOM)
-import { AddCollectionModal, AddMovieModal, AddEditLinksModal, AnimeDetailsModal } from './AnimesModal';
+import { AddCollectionModal, AddMovieModal, AddEditEpisodesModal, AddEditLinksModal, AnimeDetailsModal } from './AnimesModal';
 import ContextMenu from './ContextMenu';
 
 // Components (DOM)
@@ -91,25 +91,31 @@ function AnimesScreen() {
     handlePrev,
     handleNext,
 
-    // Lado esqeurdo do modal
+    // Lado esquerdo do modal
     getMonths,
     closeAllDropdowns,
     isMoviesDropdownOpen, // Primeiro Dropdown dos filmes
     openMoviesDropdown, // 1°
     toggleMovieWatchStatus, // 1°
     handleDeleteMovie, // Segundo Dropdown dos filmes
-
     hasAddEditMovie, // Modal de edição dos filmes
     openAddEditMovie, // Modal de edição dos filmes
     closeAddEditMovie, // Modal de edição dos filmes
     hasMovieNamed, // Modal de edição dos filmes
     hasMovieWatched, // Modal de edição dos filmes
     createEditMovie, // Modal de edição dos filmes
+
+    // Lado Direito do modal
+    hasAddEditEpisode,
+    openAddEditEpisode,
+    closeAddEditEpisode,
+    onAddEditEpisode,
+    hasEpisodeInfo,
+    onDeleteEpisode,
     hasAddEditLink, // Modal de edição de links
     openAddEditLink, // Modal de edição de links
     closeAddEditLink, // Modal de edição de links
-    hasLinkTitle, // Modal de edição de links
-    hasLinkUrl, // Modal de edição de links
+    hasLinkInfo, // Modal de edição de links
 
 
     setTimeWatched,
@@ -263,6 +269,8 @@ function AnimesScreen() {
         // Lado Direito do modal
         openSeasonIndex={openSeasonIndex}
         toggleSeason={toggleSeason}
+        openAddEditEpisode={openAddEditEpisode}
+        onDeleteEpisode={onDeleteEpisode}
         handleOpenLink={handleOpenLink}
         openAddEditLink={openAddEditLink}
         onDeleteLink={onDeleteLink}
@@ -288,12 +296,23 @@ function AnimesScreen() {
         />
       )}
 
+      {hasAddEditEpisode && (
+        <AddEditEpisodesModal
+          onClose={closeAddEditEpisode}
+          title={hasEpisodeInfo.title === null ? "Dê um título ao episódio" : "Altere o título do episódio"}
+          initialEpisodeName={hasEpisodeInfo.title}
+          initialEpisodeValue ={hasEpisodeInfo.hasWatched}
+          checkmarkSize={20}
+          onSubmit={onAddEditEpisode}
+        />
+      )}
+
       {hasAddEditLink && (
         <AddEditLinksModal
           onClose={closeAddEditLink}
-          title={hasLinkTitle === null ? "Dê um título ao link" : "Altere o título do link"}
-          initialLinkTitle={hasLinkTitle}
-          initialUrl ={hasLinkUrl}
+          title={hasLinkInfo.title === null ? "Dê um título ao link" : "Altere o título do link"}
+          initialLinkTitle={hasLinkInfo.title}
+          initialUrl ={hasLinkInfo.url}
           onSubmit={onEditLink}
         />
       )}

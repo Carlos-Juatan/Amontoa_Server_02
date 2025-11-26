@@ -534,7 +534,7 @@
 }
 
 /* Lista de Links */
-
+.episode-item,
 .link-list-item {
     display: flex;
     justify-content: space-between;
@@ -543,7 +543,7 @@
     cursor: pointer;
     border-radius: 5px;
 }
-
+.episode-item:hover,
 .link-list-item:hover {
     background-color: var(--card-item-selected);
 }

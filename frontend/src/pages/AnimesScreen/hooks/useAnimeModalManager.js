@@ -20,10 +20,12 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   const [hasAddEditMovie, setHasAddEditMovie] = useState(false);
   const [hasMovieNamed, setHasMovieNamed] = useState(null);
   const [hasMovieWatched, setHasMovieWatched] = useState(false);
+  // para o modal de episodios
+  const [hasAddEditEpisode, setHasAddEditEpisode] = useState(false);
+  const [hasEpisodeInfo, setHasEpisodeInfo] = useState(null)
   // para o modal de links
   const [hasAddEditLink, setHasAddEditLink] = useState(false);
-  const [hasLinkTitle, setHasLinkTitle] = useState(null);
-  const [hasLinkUrl, setHasLinkUrl] = useState(null);
+  const [hasLinkInfo, setHasLinkInfo] = useState(null);
 
   // Estado para controlar qual temporada está aberta.
   // Usamos null para nenhuma aberta, ou o índice da temporada.
@@ -205,26 +207,54 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
 
   const handleOpenLink = (url) => { window.open(url, '_blank'); };
 
-  // --- NOVAS FUNÇÕES DE MANIPULAÇÃO DE LINKS ---
+  // --- FUNÇÕES DE MANIPULAÇÃO DE Episódios ---
+
+  const openAddEditEpisode = (itemId = '', seasonIndex = null, episodeTitle = '', hasWatched = false,) => {
+    setHasAddEditEpisode(true);
+    setUpdatedItemId(itemId);
+    console.log(seasonIndex);
+    setHasEpisodeInfo({
+      index: seasonIndex,
+      title: episodeTitle,
+      hasWatched: hasWatched
+    });
+  }
+
+  const closeAddEditEpisode = () => {
+    setHasAddEditEpisode(false);
+    setUpdatedItemId(null);
+    setHasEpisodeInfo(null);
+  }
+
+  const onAddEditEpisode = (newEpisodeTitle, newEpisodeHasWacthed) => {
+    console.log(`Testando as funções de editar episódio: ${UpdatedItemId} - Temporada: ${hasEpisodeInfo.index} - Novo título: ${newEpisodeTitle} - novo hasWatched ${newEpisodeHasWacthed}`)
+  }
+
+  const onDeleteEpisode = (itemId = '', seasonIndex = null, episodeTitle = '') => {
+    console.log(`Testando as funções de deletar episódio: ${itemId} - Temporada: ${seasonIndex} - título: ${episodeTitle}`)
+  }
+
+  // --- FUNÇÕES DE MANIPULAÇÃO DE LINKS ---
 
   const openAddEditLink = (itemId = '', linkTitle = '', url = '' ) => {
     setHasAddEditLink(true);
     setUpdatedItemId(itemId);
-    setHasLinkTitle(linkTitle);
-    setHasLinkUrl(url);
+    setHasLinkInfo({ 
+      title: linkTitle,
+      url: url
+    });
 
   }
 
   const closeAddEditLink = () => {
     setHasAddEditLink(false);
     setUpdatedItemId(null);
-    setHasLinkTitle(null);
-    setHasLinkUrl(null);
+    setHasLinkInfo(null);
   }
 
   const onEditLink = async (newLinkTitle, newLinkUrl) => {
     const currentItem = items.find(item => item._id === UpdatedItemId);
-    const oldLinkTitle = hasLinkTitle;
+    const oldLinkTitle = hasLinkInfo.title;
 
     if (!currentItem || !Array.isArray(currentItem.movies)) return;
 
@@ -290,7 +320,7 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     handlePrev,
     handleNext,
 
-    // Lado esqeurdo do modal
+    // Lado esquerdo do modal
     getMonths,
     closeAllDropdowns,
     isMoviesDropdownOpen, // Primeiro Dropdown dos filmes
@@ -304,11 +334,18 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     hasMovieNamed, // Modal de edição dos filmes
     hasMovieWatched, // Modal de edição dos filmes
     createEditMovie, // Modal de edição dos filmes
+
+    // Lado Direito do modal
+    hasAddEditEpisode,
+    openAddEditEpisode,
+    closeAddEditEpisode,
+    onAddEditEpisode,
+    onDeleteEpisode,
+    hasEpisodeInfo,
     hasAddEditLink, // Modal de edição de links
     openAddEditLink, // Modal de edição de links
     closeAddEditLink, // Modal de edição de links
-    hasLinkTitle, // Modal de edição de links
-    hasLinkUrl, // Modal de edição de links
+    hasLinkInfo, // Modal de edição de links
 
     setTimeWatched,
 
