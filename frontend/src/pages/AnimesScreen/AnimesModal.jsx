@@ -6,6 +6,7 @@ import useClickOutside from '../../hooks/useClickOutside';
 import { toTitleCase } from './utils/modalUtils';
 import ContextMenu from './ContextMenu';
 
+import { ModalScreen } from '../../components/Common/Modal/ModalComponents/ModalComponents';
 import SingleTextInputModal from '../../components/Common/Modal/TextInputModal/SingleTextInputModal';
 import SingleTextInputWithCheckboxModal from '../../components/Common/Modal/TextInputModal/SingleTextInputWithCheckboxModal';
 import DoubleTextInputModal from '../../components/Common/Modal/TextInputModal/DoubleTextInputModal';
@@ -77,6 +78,43 @@ function AddMovieModal({ onClose, title, initialMovieName, initialMovieValue, ch
       />
     </div>
   );
+}
+
+function AddEditSeasonModal({ onClose, title, onSubmit, submitButtonText = "Salvar" }) {
+  return (
+    <ModalScreen>
+      <div className='anime-season-add-edit-modal'>
+
+        {/* Header */}
+        <div className="asae-modal-header">
+          <div className='asae-modal-header-content'>
+            <h2>{title}</h2>
+          </div>
+          <button className="asae-modal-close-button" onClick={onClose}>
+            &times;
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="asae-modal-body">
+          
+        </div>
+
+        {/* Footer */}
+        <div className="asae-modal-footer">
+          {/* Mudei a ordem aqui: Botão de submit primeiro, depois o de cancelar */}
+          {onSubmit && (
+            <Button className="asae-modal-submit-button" onClick={onSubmit}>
+              {submitButtonText}
+            </Button>
+          )}
+          <Button className="asae-modal-cancel-button" onClick={onClose}>
+              Cancelar
+          </Button>
+        </div>
+      </div>
+    </ModalScreen>
+  )
 }
 
 function AddEditEpisodesModal({ onClose, title, initialEpisodeName, initialEpisodeValue, checkmarkSize, onSubmit }) {
@@ -178,6 +216,8 @@ function AnimeDetailsModal({
   // Lado Direito do modal
   openSeasonIndex,
   toggleSeason,
+  openAddEditSeason,
+  onDeleteSeason,
   openAddEditEpisode,
   onDeleteEpisode,
   handleOpenLink,
@@ -189,13 +229,7 @@ function AnimeDetailsModal({
 
   // Funções temporárias de ação
   const handleOpenEditModal = () => { console.log('Abrindo Modal de editar anime'); }
-  const addNewSeason = () => { console.log('Adicionando nova temporada na lista'); }
   const toggleWatchStatus = (seasonIndex, episodeIndex) => { console.log(`Temporada ${seasonIndex + 1}, Episódio ${episodeIndex + 1}: Status alterado!`);};
-  
-
-
-
-
 
   return (
     <div className='animes-modal-overlay'>
@@ -237,22 +271,26 @@ function AnimeDetailsModal({
           <ModalRightPanel
             // Dados
             item={item}
+
             // Temporadas
-            addNewSeason={addNewSeason}
             openSeasonIndex={openSeasonIndex}
             toggleSeason={toggleSeason}
             toggleWatchStatus={toggleWatchStatus}
+            // 🔑 PROPS DO CONTEXT MENU PARA tEMPORADAS
+            openAddEditSeason={openAddEditSeason}
+            onDeleteSeason={onDeleteSeason}
+            // 🔑 PROPS DO CONTEXT MENU PARA EPISÓDIOS
+            openAddEditEpisode={openAddEditEpisode}
+            onDeleteEpisode={onDeleteEpisode}
             // Links
             handleOpenLink={handleOpenLink}
+            // 🔑 PROPS DO CONTEXT MENU PARA LINKS
+            openAddEditLink={openAddEditLink}             // 👈 Passando a função do hook
+            onDeleteLink={onDeleteLink}         // 👈 Passando a função do hook
+
             // Buttons
             handleOpenEditModal={handleOpenEditModal}
             closeModal={closeModal}
-
-            // 🔑 PROPS DO CONTEXT MENU PARA LINKS
-            openAddEditEpisode={openAddEditEpisode}
-            onDeleteEpisode={onDeleteEpisode}
-            openAddEditLink={openAddEditLink}             // 👈 Passando a função do hook
-            onDeleteLink={onDeleteLink}         // 👈 Passando a função do hook
           />
         </div>
 
@@ -558,22 +596,48 @@ function GlobalCollectionsDropdown({
 //#region Lado Direito
 function ModalRightPanel ({ 
   item,
-  addNewSeason,
   openSeasonIndex,
   toggleSeason,
   toggleWatchStatus,
   handleOpenLink,
   handleOpenEditModal,
   closeModal,
+  openAddEditSeason,
+  onDeleteSeason,
   openAddEditEpisode,
   onDeleteEpisode,
   openAddEditLink,
   onDeleteLink
 }) {
-  const [linkContextMenu, setLinkContextMenu] = useState(null); // { url: string, title: string, x: number, y: number }
+  const [seasonContextMenu, setSeasonContextMenu] = useState(null);
   const [episodeContextMenu, setEpisodeContextMenu] = useState(null);
+  const [linkContextMenu, setLinkContextMenu] = useState(null); // { url: string, title: string, x: number, y: number }
 
-  // 2. Função para abrir o menu de contexto
+  // Função para abrir o menu de contexto
+  const handleSeasonContextMenu = (e, itemId, index, seasonItem) => {
+    e.preventDefault(); // Impede que o menu de contexto padrão do navegador apareça
+    setSeasonContextMenu({
+      _id: itemId,
+      seasonIndex: index,
+      title: seasonItem.title,
+      episodes: seasonItem.episodes,
+      x: e.clientX,
+      y: e.clientY
+    });
+  }
+
+  const handleEpisodeContextMenu = (e, itemId, index, episodeItem) => {
+    e.preventDefault(); // Impede que o menu de contexto padrão do navegador apareça
+    setEpisodeContextMenu({
+      _id: itemId,
+      seasonIndex: index,
+      title: episodeItem.title,
+      hasWacth: episodeItem.hasWacth,
+      x: e.clientX,
+      y: e.clientY
+    });
+  }
+
   const handleLinkContextMenu = (e, itemId, linkItem) => {
     e.preventDefault(); // Impede que o menu de contexto padrão do navegador apareça
     setLinkContextMenu({
@@ -585,26 +649,10 @@ function ModalRightPanel ({
     });
   };
 
-  const handleEpisodeContextMenu = (e, itemId, index, episodeItem) => {
-    e.preventDefault();
-    setEpisodeContextMenu({
-      _id: itemId,
-      seasonIndex: index,
-      title: episodeItem.title,
-      hasWacth: episodeItem.hasWacth,
-      x: e.clientX,
-      y: e.clientY
-    });
-  }
-
   // Função para fechar o menu de contexto
-  const handleCloseLinkContextMenu = () => {
-    setLinkContextMenu(null);
-  };
-
-  const handleCloseEpisodeContextMenu = () => {
-    setEpisodeContextMenu(null);
-  };
+  const handleCloseSeasonContextMenu = () => setSeasonContextMenu(null);
+  const handleCloseEpisodeContextMenu = () => setEpisodeContextMenu(null);
+  const handleCloseLinkContextMenu = () => setLinkContextMenu(null);
 
   return(
     <div className='modal-right-content'>
@@ -651,7 +699,7 @@ function ModalRightPanel ({
         <div className='seasons-section'>
           <div className='section-title-wrapper'>
             <span className='section-title'>Temporadas</span>
-            <span className='add-new-button' onClick={addNewSeason}><i className="fa-solid fa-plus"></i></span>
+            <span className='add-new-button' onClick={() => openAddEditSeason(item?._id)}><i className="fa-solid fa-plus"></i></span>
           </div>
           <hr className='section-divider' />
 
@@ -663,9 +711,9 @@ function ModalRightPanel ({
               return (
                 <li key={index} className='season-list-item'>
                   <div className='season-header'>
-                    <div className='season-title-wrapper' onClick={() => toggleSeason(index)}>
+                    <div className='season-title-wrapper' onClick={() => toggleSeason(index)} onContextMenu={(e) => handleSeasonContextMenu(e, item.id, index, season)}>
                       <i className={`fa-solid season-toggle-icon ${isSeasonOpen ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
-                      <span className='season-title'>{season.season}</span>
+                      <span className='season-title'>{season.title}</span>
                     </div>
                     <span className='add-episode-button' onClick={() => openAddEditEpisode(item._id, index)}><i className="fa-solid fa-plus"></i></span>
                   </div>
@@ -720,6 +768,17 @@ function ModalRightPanel ({
       </div>
 
       {/* Renderização Condicional do Menu de Contexto */}
+      {/* Menu de Contexto das temporadas */}
+      {seasonContextMenu && (
+        <ContextMenu
+          x={seasonContextMenu.x}
+          y={seasonContextMenu.y}
+          onRename={() => openAddEditSeason(seasonContextMenu._id, seasonContextMenu.seasonIndex, seasonContextMenu.episodes)}
+          onDelete={() => onDeleteSeason(seasonContextMenu._id, seasonContextMenu.seasonIndex)}
+          onClose={handleCloseSeasonContextMenu}
+          nameForDisplay={seasonContextMenu.title}
+        />
+      )}
       {/* Menu de Contexto dos episódios */}
       {episodeContextMenu && (
         <ContextMenu
@@ -750,6 +809,7 @@ function ModalRightPanel ({
 export {
   AddCollectionModal,
   AddMovieModal,
+  AddEditSeasonModal,
   AddEditEpisodesModal,
   AddEditLinksModal,
   AnimeDetailsModal,

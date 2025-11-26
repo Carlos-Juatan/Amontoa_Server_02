@@ -13,7 +13,7 @@ import useAnimeModalManager from './hooks/useAnimeModalManager';
 import { mapSeasonToOrder } from './utils/sortFilterUtils';
 
 // Modals (DOM)
-import { AddCollectionModal, AddMovieModal, AddEditEpisodesModal, AddEditLinksModal, AnimeDetailsModal } from './AnimesModal';
+import { AddCollectionModal, AddMovieModal, AddEditSeasonModal, AddEditEpisodesModal, AddEditLinksModal, AnimeDetailsModal } from './AnimesModal';
 import ContextMenu from './ContextMenu';
 
 // Components (DOM)
@@ -106,11 +106,17 @@ function AnimesScreen() {
     createEditMovie, // Modal de edição dos filmes
 
     // Lado Direito do modal
+    hasAddEditSeason,
+    openAddEditSeason,
+    closeAddEditSeason,
+    hasSeasonInfo,
+    onAddEditSeason,
+    onDeleteSeason,
     hasAddEditEpisode,
     openAddEditEpisode,
     closeAddEditEpisode,
-    onAddEditEpisode,
     hasEpisodeInfo,
+    onAddEditEpisode,
     onDeleteEpisode,
     hasAddEditLink, // Modal de edição de links
     openAddEditLink, // Modal de edição de links
@@ -269,6 +275,8 @@ function AnimesScreen() {
         // Lado Direito do modal
         openSeasonIndex={openSeasonIndex}
         toggleSeason={toggleSeason}
+        openAddEditSeason={openAddEditSeason}
+        onDeleteSeason={onDeleteSeason}
         openAddEditEpisode={openAddEditEpisode}
         onDeleteEpisode={onDeleteEpisode}
         handleOpenLink={handleOpenLink}
@@ -296,10 +304,18 @@ function AnimesScreen() {
         />
       )}
 
+      {hasAddEditSeason && (
+        <AddEditSeasonModal
+          onClose={closeAddEditSeason}
+          title={hasSeasonInfo.index === null ? "Crie a nova temporada" : "Altere a temporada"}
+          onSubmit={onAddEditSeason}
+        />
+      )}
+
       {hasAddEditEpisode && (
         <AddEditEpisodesModal
           onClose={closeAddEditEpisode}
-          title={hasEpisodeInfo.title === null ? "Dê um título ao episódio" : "Altere o título do episódio"}
+          title={hasEpisodeInfo.title === '' ? "Dê um título ao episódio" : "Altere o título do episódio"}
           initialEpisodeName={hasEpisodeInfo.title}
           initialEpisodeValue ={hasEpisodeInfo.hasWatched}
           checkmarkSize={20}
@@ -310,7 +326,7 @@ function AnimesScreen() {
       {hasAddEditLink && (
         <AddEditLinksModal
           onClose={closeAddEditLink}
-          title={hasLinkInfo.title === null ? "Dê um título ao link" : "Altere o título do link"}
+          title={hasLinkInfo.title === '' ? "Dê um título ao link" : "Altere o título do link"}
           initialLinkTitle={hasLinkInfo.title}
           initialUrl ={hasLinkInfo.url}
           onSubmit={onEditLink}

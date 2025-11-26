@@ -478,6 +478,7 @@
     cursor: pointer;
 }
 
+.seasons-and-links-block .add-episode-button:hover,
 .seasons-and-links-block .add-new-button:hover {
     color: var(--highlight-blue);
 }

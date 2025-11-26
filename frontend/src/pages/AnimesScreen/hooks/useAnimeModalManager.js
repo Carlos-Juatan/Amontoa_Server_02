@@ -20,9 +20,12 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   const [hasAddEditMovie, setHasAddEditMovie] = useState(false);
   const [hasMovieNamed, setHasMovieNamed] = useState(null);
   const [hasMovieWatched, setHasMovieWatched] = useState(false);
+  // para o modal de temporadas
+  const [hasAddEditSeason, setHasAddEditSeason] = useState(false);
+  const [hasSeasonInfo, setHasSeasonInfo] = useState(null);
   // para o modal de episodios
   const [hasAddEditEpisode, setHasAddEditEpisode] = useState(false);
-  const [hasEpisodeInfo, setHasEpisodeInfo] = useState(null)
+  const [hasEpisodeInfo, setHasEpisodeInfo] = useState(null);
   // para o modal de links
   const [hasAddEditLink, setHasAddEditLink] = useState(false);
   const [hasLinkInfo, setHasLinkInfo] = useState(null);
@@ -207,12 +210,36 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
 
   const handleOpenLink = (url) => { window.open(url, '_blank'); };
 
-  // --- FUNÇÕES DE MANIPULAÇÃO DE Episódios ---
+  // --- FUNÇÕES DE MANIPULAÇÃO DE TEMPORADAS ---
+
+  const openAddEditSeason = (itemId = '', seasonIndex = null, episodes = []) => {
+    setHasAddEditSeason(true);
+    setUpdatedItemId(itemId);
+    setHasSeasonInfo({
+      index: seasonIndex,
+      episodes: episodes
+    });
+  }
+
+  const closeAddEditSeason = () => {
+    setHasAddEditSeason(false);
+    setUpdatedItemId(null);
+    setHasSeasonInfo(null);
+  }
+
+  const onAddEditSeason = (newSeasonIndex, newEpisodes) => {
+    console.log(`Adicionando / Editando o modal de temporada: `);
+  }
+
+  const onDeleteSeason = (itemId = '', seasonIndex = null) => {
+    console.log(`Deletando o modal de temporada: `);
+  }
+
+  // --- FUNÇÕES DE MANIPULAÇÃO DE EPISÓDIOS ---
 
   const openAddEditEpisode = (itemId = '', seasonIndex = null, episodeTitle = '', hasWatched = false,) => {
     setHasAddEditEpisode(true);
     setUpdatedItemId(itemId);
-    console.log(seasonIndex);
     setHasEpisodeInfo({
       index: seasonIndex,
       title: episodeTitle,
@@ -336,12 +363,18 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     createEditMovie, // Modal de edição dos filmes
 
     // Lado Direito do modal
+    hasAddEditSeason,
+    openAddEditSeason,
+    closeAddEditSeason,
+    hasSeasonInfo,
+    onAddEditSeason,
+    onDeleteSeason,
     hasAddEditEpisode,
     openAddEditEpisode,
     closeAddEditEpisode,
+    hasEpisodeInfo,
     onAddEditEpisode,
     onDeleteEpisode,
-    hasEpisodeInfo,
     hasAddEditLink, // Modal de edição de links
     openAddEditLink, // Modal de edição de links
     closeAddEditLink, // Modal de edição de links
