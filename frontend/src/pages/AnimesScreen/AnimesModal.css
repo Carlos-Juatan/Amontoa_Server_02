@@ -590,7 +590,269 @@
 }
 
 
-/* 
-    overflow-y: auto;
-*/
 
+
+
+
+
+
+/* --- ESTILOS PARA O MODAL DE ADICIONAR/EDITAR TEMPORADA --- */
+
+.anime-season-add-edit-modal {
+    /* Base do modal: Similiar ao .animes-modal-content, mas menor */
+    width: 700px;
+    height: 700px;
+    /* Altura será determinada pelo conteúdo */
+    
+    border-radius: 12px;
+    padding: 20px;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    
+    /* Z-index Alto, assumindo que ModalScreen cuida do backdrop */
+    z-index: 1001; 
+}
+
+/* ---------------------------------------------------- */
+/* --- HEADER (Título e Botão Fechar) --- */
+/* ---------------------------------------------------- */
+
+.asae-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Alinha o cabeçalho no topo */
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+.asae-modal-header h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.asae-modal-close-button {
+    background: none;
+    border: none;
+    color: var(--text-gray);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.asae-modal-close-button:hover {
+    color: var(--button-delete); /* Cor de 'perigo' para fechar */
+}
+
+/* ---------------------------------------------------- */
+/* --- INPUT DE TÍTULO DA TEMPORADA --- */
+/* ---------------------------------------------------- */
+
+.asae-modal-header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-grow: 1;
+    margin-right: 20px;
+}
+
+.season-title-input {
+    /* Estilo de input que combina com o tema escuro */
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--text-light);
+    background-color: var(--card-item); /* Um pouco mais escuro que o fundo */
+    border: 1px solid var(--secondary-purple);
+    border-radius: 6px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.season-title-input:focus {
+    outline: none;
+    border-color: var(--highlight-blue);
+    box-shadow: 0 0 0 2px rgba(97, 218, 251, 0.2);
+}
+
+/* ---------------------------------------------------- */
+/* --- BODY (Controles e Lista de Episódios) --- */
+/* ---------------------------------------------------- */
+
+.asae-modal-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.episodes-control-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.episodes-control-header h4 {
+    margin: 0;
+    color: var(--primary-purple);
+}
+
+.episodes-control-header .control-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.episodes-control-header .control-buttons .small-button {
+    /* Estilo para Marcar Todos / Desmarcar Todos / Adicionar + */
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    font-weight: normal;
+    background-color: var(--card-item-selected);
+    border: 1px solid var(--secondary-purple);
+    color: var(--text-light);
+    border-radius: 5px;
+}
+
+.episodes-control-header .control-buttons .small-button:hover {
+    background-color: var(--primary-purple);
+    color: white;
+}
+
+.episodes-control-header .add-ep-button {
+    background-color: var(--button-confirm);
+    border-color: var(--button-confirm);
+}
+
+.episodes-control-header .add-ep-button:hover {
+    background-color: var(--button-confirm-hover);
+    border-color: var(--button-confirm-hover);
+}
+
+
+/* ---------------------------------------------------- */
+/* --- LISTA DE EPISÓDIOS EDITÁVEL --- */
+/* ---------------------------------------------------- */
+
+.episode-edit-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 40vh; /* Limite a altura da lista */
+    overflow-y: auto; /* Adiciona scroll se necessário */
+    padding-right: 15px; /* Espaço para a scrollbar */
+}
+
+/* Estilo de cada item da lista (li) */
+.episode-edit-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border-color); /* Separador sutil */
+}
+
+.episode-edit-item:last-child {
+    border-bottom: none;
+}
+
+.episode-edit-item .episode-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1;
+}
+
+/* Input do Título do Episódio */
+.episode-title-input {
+    /* Torna o input discreto, como se fosse um span */
+    flex-grow: 1;
+    padding: 5px 0;
+    font-size: 0.95rem;
+    color: var(--text-light);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    transition: border-color 0.1s, background-color 0.1s;
+    min-width: 0; /* Permite que o texto quebre ou encolha */
+}
+
+/* Realce ao focar para indicar que é editável */
+.episode-title-input:focus {
+    background-color: var(--card-item);
+    border-color: var(--primary-purple);
+    outline: none;
+}
+
+/* Ações Inline (Adicionar/Deletar) */
+.episode-edit-item .episode-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.episode-edit-item .add-inline-icon,
+.episode-edit-item .delete-icon {
+    font-size: 0.9rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s, color 0.2s;
+}
+
+.episode-edit-item .add-inline-icon {
+    color: var(--button-confirm); /* Ícone de adicionar */
+}
+
+.episode-edit-item .add-inline-icon:hover {
+    opacity: 1;
+    color: var(--button-confirm-hover);
+}
+
+.episode-edit-item .delete-icon {
+    color: var(--button-delete); /* Ícone de deletar */
+}
+
+.episode-edit-item .delete-icon:hover {
+    opacity: 1;
+    color: var(--button-delete-hover);
+}
+
+/* ---------------------------------------------------- */
+/* --- FOOTER (Botões de Ação) --- */
+/* ---------------------------------------------------- */
+
+.asae-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+.asae-modal-submit-button {
+    /* Estilo do botão Salvar/Adicionar */
+    padding: 10px 20px;
+    font-weight: bold;
+    background-color: var(--button-confirm);
+    border-color: var(--button-confirm-border);
+}
+
+.asae-modal-submit-button:hover {
+    background-color: var(--button-confirm-hover);
+    border-color: var(--button-confirm-hover-border);
+}
+
+.asae-modal-cancel-button {
+    /* Estilo do botão Cancelar */
+    padding: 10px 20px;
+    font-weight: bold;
+    background-color: var(--button-delete);
+    border-color: var(--button-delete);
+}
+
+.asae-modal-cancel-button:hover {
+    background-color: var(--button-delete-hover);
+    border-color: var(--button-delete-hover-border);
+}

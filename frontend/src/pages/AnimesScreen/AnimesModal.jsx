@@ -80,36 +80,217 @@ function AddMovieModal({ onClose, title, initialMovieName, initialMovieValue, ch
   );
 }
 
-function AddEditSeasonModal({ onClose, title, onSubmit, submitButtonText = "Salvar" }) {
+function AddEditSeasonModal({
+  onClose,
+  seasonIndex, // Index da temporada (null se for nova)
+  initialTitle = '', // Título inicial da temporada
+  initialEpisodes = [], // Lista de episódios inicial
+  onSubmit // Função de callback para salvar (passa title e episodes)
+}) {
+  // Estado interno para o Título da Temporada
+  const [seasonTitle, setSeasonTitle] = useState(initialTitle);
+
+  // Estado interno para a lista de Episódios
+  const [episodes, setEpisodes] = useState(initialEpisodes);
+
+  // Ajusta o título do modal
+  const modalTitle = seasonIndex !== null ? `Editar Temporada: ${initialTitle}` : 'Adicionar Nova Temporada';
+  const submitButtonText = seasonIndex !== null ? 'Salvar Alterações' : 'Adicionar Temporada';
+
+  // --- Função Auxiliar: Encontra o próximo número de episódio principal ---
+  const getPrimaryEpisodeCount = (currentEpisodes) => {
+    let maxNumber = 0;
+    currentEpisodes.forEach(ep => {
+      // Tenta extrair o número inteiro no início do título (Ex: "Episódio 15" -> 15)
+      const match = ep.title.match(/(\d+)/);
+      if (match) {
+        const number = parseInt(match[1], 10);
+        if (number > maxNumber) {
+          maxNumber = number;
+        }
+      }
+    });
+    return maxNumber;
+  };
+
+
+  // --- Funções de Manipulação de Episódios ---
+
+  // 1. Adicionar um novo episódio
+  const handleAddEpisode = (index = episodes.length) => {
+
+    // Calcula a numeração base
+    const maxEpisodeNumber = getPrimaryEpisodeCount(episodes);
+    let newTitle = `Episódio ${maxEpisodeNumber + 1}`;
+
+    // Caso de Adição no final (botão Add no header ou último item)
+    if (index === episodes.length) {
+      // Adiciona o próximo número inteiro sequencial
+      newTitle = `Episódio ${maxEpisodeNumber + 1}`;
+    } else {
+      // Caso de Adição entre itens (botão de '+' inline)
+      // Se inserido no meio, o episódio provavelmente é um OVA, Filler ou Filme.
+      // Usamos o título do episódio anterior como base para a numeração decimal (ex: 3.1)
+      // ou um título genérico se a numeração for muito complexa para automação.
+
+      // Para simplificar a lógica e evitar bugs de numeração, 
+      // vamos adicionar um título genérico que o usuário pode editar 
+      // para 3.1, OVA ou Extra, dependendo da necessidade.
+      newTitle = `Extra / OVA (Inserido após ${episodes[index - 1]?.title || 'Início'})`;
+    }
+
+    const newEpisode = { title: newTitle, hasWacth: false };
+
+    setEpisodes(prev => {
+      const newArr = [...prev];
+      // Insere na posição especificada
+      newArr.splice(index, 0, newEpisode);
+      return newArr;
+    });
+  };
+
+  // 2. Deletar um episódio
+  const handleDeleteEpisode = (index) => {
+    setEpisodes(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // 3. Editar o Título de um episódio
+  const handleEditEpisodeTitle = (index, newTitle) => {
+    setEpisodes(prev =>
+      prev.map((ep, i) => (i === index ? { ...ep, title: newTitle } : ep))
+    );
+  };
+
+  // 4. Alternar o status de visualização de um episódio
+  const handleToggleWatchStatus = (index) => {
+    setEpisodes(prev =>
+      prev.map((ep, i) => (i === index ? { ...ep, hasWacth: !ep.hasWacth } : ep))
+    );
+  };
+
+  // 5. Marcar/Desmarcar todos
+  const handleToggleAllWatched = (watchStatus) => {
+    setEpisodes(prev =>
+      prev.map(ep => ({ ...ep, hasWacth: watchStatus }))
+    );
+  };
+
+  // 6. Enviar o formulário
+  const handleSubmit = () => {
+    if (!seasonTitle.trim()) {
+      alert("O nome da temporada não pode ser vazio.");
+      return;
+    }
+
+    onSubmit(seasonTitle, episodes);
+    onClose();
+  };
+
+  // Use 'Enter' para renomear e 'Blur' (perda de foco) para salvar.
+  const handleTitleChange = (e, index) => {
+    handleEditEpisodeTitle(index, e.target.value);
+  };
+
+  const handleTitleKeyDown = (e, index) => {
+    if (e.key === 'Enter') {
+      e.target.blur(); // Perde o foco para acionar o onBlur
+    }
+  };
+
   return (
     <ModalScreen>
       <div className='anime-season-add-edit-modal'>
-
         {/* Header */}
         <div className="asae-modal-header">
           <div className='asae-modal-header-content'>
-            <h2>{title}</h2>
+            <h2>{modalTitle}</h2>
+            <input
+              className='season-title-input'
+              type="text"
+              value={seasonTitle}
+              onChange={(e) => setSeasonTitle(e.target.value)}
+              placeholder="Nome da Temporada"
+            />
           </div>
-          <button className="asae-modal-close-button" onClick={onClose}>
-            &times;
-          </button>
+          <button className="asae-modal-close-button" onClick={onClose}>&times;</button>
         </div>
 
-        {/* Body */}
+        {/* Body - Lista de Episódios */}
         <div className="asae-modal-body">
-          
+          <div className='episodes-control-header'>
+            <h4>Episódios ({episodes.length})</h4>
+            <div className='control-buttons'>
+              <Button
+                onClick={() => handleToggleAllWatched(true)}
+                className='small-button'
+              >
+                Marcar Todos
+              </Button>
+              <Button
+                onClick={() => handleToggleAllWatched(false)}
+                className='small-button'
+              >
+                Desmarcar Todos
+              </Button>
+              <Button
+                onClick={() => handleAddEpisode()} // Chamada sem índice, adiciona no final com a próxima numeração inteira
+                className='small-button add-ep-button'
+              >
+                Adicionar +
+              </Button>
+            </div>
+          </div>
+
+          {/* Lista de Episódios Editável */}
+          <ul className='episode-edit-list'>
+            {episodes.map((ep, index) => (
+              <li key={index} className='episode-edit-item'>
+                <div className='episode-info'>
+                  {/* Checkbox de status */}
+                  <CustomCheckbox
+                    checked={ep.hasWacth}
+                    onChange={() => handleToggleWatchStatus(index)}
+                    size={15}
+                  />
+
+                  {/* Input editável para o título */}
+                  <input
+                    type="text"
+                    className='episode-title-input'
+                    value={ep.title}
+                    onChange={(e) => handleTitleChange(e, index)}
+                    onKeyDown={(e) => handleTitleKeyDown(e, index)}
+                    onBlur={(e) => handleTitleChange(e, index)} // Salva ao perder o foco
+                    placeholder={`Episódio ${index + 1}`}
+                  />
+                </div>
+
+                <div className='episode-actions'>
+                  {/* Botão para Adicionar novo episódio logo abaixo */}
+                  <i
+                    className="fa-solid fa-plus add-inline-icon"
+                    onClick={() => handleAddEpisode(index + 1)} // Adiciona na próxima posição (inserção no meio)
+                    title="Adicionar episódio abaixo (Extra/OVA)"
+                  />
+                  {/* Botão de Deletar */}
+                  <i
+                    className="fa-solid fa-trash-can delete-icon"
+                    onClick={() => handleDeleteEpisode(index)}
+                    title="Deletar episódio"
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* Footer */}
         <div className="asae-modal-footer">
-          {/* Mudei a ordem aqui: Botão de submit primeiro, depois o de cancelar */}
-          {onSubmit && (
-            <Button className="asae-modal-submit-button" onClick={onSubmit}>
-              {submitButtonText}
-            </Button>
-          )}
+          <Button className="asae-modal-submit-button" onClick={handleSubmit}>
+            {submitButtonText}
+          </Button>
           <Button className="asae-modal-cancel-button" onClick={onClose}>
-              Cancelar
+            Cancelar
           </Button>
         </div>
       </div>
@@ -773,7 +954,12 @@ function ModalRightPanel ({
         <ContextMenu
           x={seasonContextMenu.x}
           y={seasonContextMenu.y}
-          onRename={() => openAddEditSeason(seasonContextMenu._id, seasonContextMenu.seasonIndex, seasonContextMenu.episodes)}
+          onRename={() => openAddEditSeason(
+            seasonContextMenu._id, 
+            seasonContextMenu.seasonIndex,
+            seasonContextMenu.title, 
+            seasonContextMenu.episodes
+          )}
           onDelete={() => onDeleteSeason(seasonContextMenu._id, seasonContextMenu.seasonIndex)}
           onClose={handleCloseSeasonContextMenu}
           nameForDisplay={seasonContextMenu.title}

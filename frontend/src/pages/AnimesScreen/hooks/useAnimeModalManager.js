@@ -212,11 +212,12 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
 
   // --- FUNÇÕES DE MANIPULAÇÃO DE TEMPORADAS ---
 
-  const openAddEditSeason = (itemId = '', seasonIndex = null, episodes = []) => {
+  const openAddEditSeason = (itemId = '', seasonIndex = null, title = '', episodes = []) => {
     setHasAddEditSeason(true);
     setUpdatedItemId(itemId);
     setHasSeasonInfo({
       index: seasonIndex,
+      title: title,
       episodes: episodes
     });
   }
@@ -227,7 +228,7 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     setHasSeasonInfo(null);
   }
 
-  const onAddEditSeason = (newSeasonIndex, newEpisodes) => {
+  const onAddEditSeason = (newTitle, newEpisodes) => {
     console.log(`Adicionando / Editando o modal de temporada: `);
   }
 
