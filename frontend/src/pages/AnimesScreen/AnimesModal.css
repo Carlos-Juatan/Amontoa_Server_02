@@ -486,7 +486,7 @@
 /* Lista de Temporadas e Links */
 .seasons-and-links-block .season-list,
 .seasons-and-links-block .links-list {
-    height: 140px;
+    height: 180px;
     list-style: none;
     margin: 0;
     padding: 0 10px 0 0;

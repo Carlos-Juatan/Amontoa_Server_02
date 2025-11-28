@@ -118,6 +118,7 @@ function AnimesScreen() {
     hasEpisodeInfo,
     onAddEditEpisode,
     onDeleteEpisode,
+    toggleEpisodeWatchStatus,
     hasAddEditLink, // Modal de edição de links
     openAddEditLink, // Modal de edição de links
     closeAddEditLink, // Modal de edição de links
@@ -279,12 +280,13 @@ function AnimesScreen() {
         onDeleteSeason={onDeleteSeason}
         openAddEditEpisode={openAddEditEpisode}
         onDeleteEpisode={onDeleteEpisode}
+        toggleEpisodeWatchStatus={toggleEpisodeWatchStatus}
         handleOpenLink={handleOpenLink}
         openAddEditLink={openAddEditLink}
         onDeleteLink={onDeleteLink}
       />
 
-      {hasAddCollection && isRenaming && (
+      {hasAddCollection && (
         <AddCollectionModal
           onClose={closeAddColletion}
           title={isRenaming === null ? "Dê um nome à sua coleção" : "Altere o nome desta coleção"}
@@ -293,7 +295,7 @@ function AnimesScreen() {
         />
       )}
 
-      {hasAddEditMovie && hasMovieNamed && (
+      {hasAddEditMovie && (
         <AddMovieModal
           onClose={closeAddEditMovie}
           title={hasMovieNamed === null ? "Dê um nome ao filme" : "Altere o nome do filme"}
@@ -326,7 +328,7 @@ function AnimesScreen() {
         />
       )}
 
-      {hasAddEditLink && (
+      {hasAddEditLink && hasLinkInfo && (
         <AddEditLinksModal
           onClose={closeAddEditLink}
           title={hasLinkInfo.title === '' ? "Dê um título ao link" : "Altere o título do link"}

@@ -401,6 +401,7 @@ function AnimeDetailsModal({
   onDeleteSeason,
   openAddEditEpisode,
   onDeleteEpisode,
+  toggleEpisodeWatchStatus,
   handleOpenLink,
   openAddEditLink,
   onDeleteLink,
@@ -410,7 +411,6 @@ function AnimeDetailsModal({
 
   // Funções temporárias de ação
   const handleOpenEditModal = () => { console.log('Abrindo Modal de editar anime'); }
-  const toggleWatchStatus = (seasonIndex, episodeIndex) => { console.log(`Temporada ${seasonIndex + 1}, Episódio ${episodeIndex + 1}: Status alterado!`);};
 
   return (
     <div className='animes-modal-overlay'>
@@ -456,7 +456,7 @@ function AnimeDetailsModal({
             // Temporadas
             openSeasonIndex={openSeasonIndex}
             toggleSeason={toggleSeason}
-            toggleWatchStatus={toggleWatchStatus}
+            toggleEpisodeWatchStatus={toggleEpisodeWatchStatus}
             // 🔑 PROPS DO CONTEXT MENU PARA tEMPORADAS
             openAddEditSeason={openAddEditSeason}
             onDeleteSeason={onDeleteSeason}
@@ -779,7 +779,7 @@ function ModalRightPanel ({
   item,
   openSeasonIndex,
   toggleSeason,
-  toggleWatchStatus,
+  toggleEpisodeWatchStatus,
   handleOpenLink,
   handleOpenEditModal,
   closeModal,
@@ -807,11 +807,12 @@ function ModalRightPanel ({
     });
   }
 
-  const handleEpisodeContextMenu = (e, itemId, index, episodeItem) => {
+  const handleEpisodeContextMenu = (e, itemId, sIndex, epIndex, episodeItem) => {
     e.preventDefault(); // Impede que o menu de contexto padrão do navegador apareça
     setEpisodeContextMenu({
       _id: itemId,
-      seasonIndex: index,
+      seasonIndex: sIndex,
+      episodeIndex: epIndex,
       title: episodeItem.title,
       hasWacth: episodeItem.hasWacth,
       x: e.clientX,
@@ -892,7 +893,7 @@ function ModalRightPanel ({
               return (
                 <li key={index} className='season-list-item'>
                   <div className='season-header'>
-                    <div className='season-title-wrapper' onClick={() => toggleSeason(index)} onContextMenu={(e) => handleSeasonContextMenu(e, item.id, index, season)}>
+                    <div className='season-title-wrapper' onClick={() => toggleSeason(index)} onContextMenu={(e) => handleSeasonContextMenu(e, item._id, index, season)}>
                       <i className={`fa-solid season-toggle-icon ${isSeasonOpen ? 'fa-angle-up' : 'fa-angle-down'}`}></i>
                       <span className='season-title'>{season.title}</span>
                     </div>
@@ -903,11 +904,11 @@ function ModalRightPanel ({
                   {isSeasonOpen && (
                     <div className='episodes-list-wrapper'>
                       {(season.episodes || []).map((ep, epIndex) => (
-                        <div key={epIndex} className='episode-item' onContextMenu={(e) => handleEpisodeContextMenu(e, item.id, index, ep)}>
+                        <div key={epIndex} className='episode-item' onContextMenu={(e) => handleEpisodeContextMenu(e, item._id, index, epIndex, ep)}>
                           <span className='episode-title'>{ep.title}</span>
                           <CustomCheckbox
                             checked={ep.hasWacth}
-                            onChange={() => toggleWatchStatus(index, epIndex)}
+                            onChange={() => toggleEpisodeWatchStatus(item._id, index, epIndex)}
                             size={13}
                           />
                         </div>
@@ -971,7 +972,7 @@ function ModalRightPanel ({
           x={episodeContextMenu.x}
           y={episodeContextMenu.y}
           onRename={() => openAddEditEpisode(episodeContextMenu._id, episodeContextMenu.seasonIndex, episodeContextMenu.title, episodeContextMenu.hasWacth)}
-          onDelete={() => onDeleteEpisode(episodeContextMenu._id, episodeContextMenu.seasonIndex, episodeContextMenu.title)}
+          onDelete={() => onDeleteEpisode(episodeContextMenu._id, episodeContextMenu.seasonIndex, episodeContextMenu.episodeIndex)}
           onClose={handleCloseEpisodeContextMenu}
           nameForDisplay={episodeContextMenu.title}
         />

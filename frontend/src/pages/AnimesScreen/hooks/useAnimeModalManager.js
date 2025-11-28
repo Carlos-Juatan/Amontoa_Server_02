@@ -15,7 +15,7 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   const [isGlobalCollectionsDropdownOpen, setIsGlobalCollectionsDropdownOpen] = useState(false); // 2° Dropdown das coleções
 
   // Controla os Modais de adicionar e editar
-  const [UpdatedItemId, setUpdatedItemId] = useState(null);
+  const [updatedItemId, setUpdatedItemId] = useState(null);
   // para o modal de filmes
   const [hasAddEditMovie, setHasAddEditMovie] = useState(false);
   const [hasMovieNamed, setHasMovieNamed] = useState(null);
@@ -58,24 +58,24 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   const toggleMovieWatchStatus = async (itemId, movieTitle) => {
     const currentItem = items.find(item => item._id === itemId);
 
-    if (currentItem && Array.isArray(currentItem.movies)) {
-      // Usa o método MAP para criar um NOVO ARRAY de filmes
-      const updatedMovies = currentItem.movies.map(movie => {
-        // Ao achar o item a ser modificado ele modifica e retorna um novo array
-        if (movie.title === movieTitle) {
-          return {
-            ...movie,
-            hasWatched: !movie.hasWatched
-          };
-        }
+    if (!currentItem || !Array.isArray(currentItem.movies)) return;
 
-        // Caso o item não seja encontrado ele retorna o array original sem modificações
-        return movie;
-      });
+    // Usa o método MAP para criar um NOVO ARRAY de filmes
+    const updatedMovies = currentItem.movies.map(movie => {
+      // Ao achar o item a ser modificado ele modifica e retorna um novo array
+      if (movie.title === movieTitle) {
+        return {
+          ...movie,
+          hasWatched: !movie.hasWatched
+        };
+      }
 
-      // Chama a função de atualização com o novo array completo
-      await handleUpdateItem(itemId, { movies: updatedMovies });
-    }
+      // Caso o item não seja encontrado ele retorna o array original sem modificações
+      return movie;
+    });
+
+    // Chama a função de atualização com o novo array completo
+    await handleUpdateItem(itemId, { movies: updatedMovies });
   }
 
   const openAddEditMovie = async (itemId = '', movieTitle = '', checkmarckValue = false) => {
@@ -94,7 +94,7 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   };
 
   const createEditMovie = async (newMovieTile, newCheckmarkValue) => {
-    const currentItem = items.find(item => item._id === UpdatedItemId);
+    const currentItem = items.find(item => item._id === updatedItemId);
     const oldMovieTitle = hasMovieNamed;
 
     if (!currentItem || !Array.isArray(currentItem.movies)) return;
@@ -135,24 +135,23 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     // 3. Ordena e Atualiza:
     finalMovies.sort((a, b) => a.title.localeCompare(b.title));
 
-    await handleUpdateItem(UpdatedItemId, { movies: finalMovies });
+    await handleUpdateItem(updatedItemId, { movies: finalMovies });
     closeAddEditMovie(); // Fecha o modal após a atualização bem-sucedida
   };
 
   const handleDeleteMovie = async (itemId, movieTitle) => {
     const currentItem = items.find(item => item._id === itemId);
 
-    if (currentItem && Array.isArray(currentItem.movies)) {
+    if (!currentItem || !Array.isArray(currentItem.movies)) return;
 
-      // 1. Usa o FILTER para criar um NOVO ARRAY que inclui APENAS os filmes cujo título NÃO É o filme a ser removido.
-      const updatedMovies = currentItem.movies.filter(movie => {
-        return movie.title !== movieTitle;
-      });
+    // 1. Usa o FILTER para criar um NOVO ARRAY que inclui APENAS os filmes cujo título NÃO É o filme a ser removido.
+    const updatedMovies = currentItem.movies.filter(movie => {
+      return movie.title !== movieTitle;
+    });
 
-      // 2. Chama a função de atualização com o novo array, se o filme foi removido
-      if (updatedMovies.length < currentItem.movies.length) {
-        await handleUpdateItem(itemId, { movies: updatedMovies });
-      }
+    // 2. Chama a função de atualização com o novo array, se o filme foi removido
+    if (updatedMovies.length < currentItem.movies.length) {
+      await handleUpdateItem(itemId, { movies: updatedMovies });
     }
   }
 
@@ -228,13 +227,52 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     setHasSeasonInfo(null);
   }
 
-  const onAddEditSeason = (newTitle, newEpisodes) => {
-    console.log(`Adicionando / Editando o modal de temporada: `);
+  const onAddEditSeason = async (newTitle, newEpisodes) => {
+    const currentItem = items.find(item => item._id === updatedItemId);
+
+    if (!currentItem || !Array.isArray(currentItem.seasons)) return;
+
+    const isEditing = hasSeasonInfo.index !== null;
+    let updatedSeasons = [...currentItem.seasons];
+
+    const newSeasonData = {
+      title: newTitle,
+      episodes: newEpisodes
+    };
+
+    if (isEditing) {
+      // Edição
+      updatedSeasons[hasSeasonInfo.index] = newSeasonData;
+    } else {
+      // Adição
+      updatedSeasons.push(newSeasonData);
+    }
+
+    // Atualiza o item no banco de dados
+    await handleUpdateItem(updatedItemId, { seasons: updatedSeasons });
   }
 
-  const onDeleteSeason = (itemId = '', seasonIndex = null) => {
-    console.log(`Deletando o modal de temporada: `);
-  }
+  const onDeleteSeason = async (itemId = '', seasonIndex = null) => {
+    // 1. Encontra o item (Anime) principal pelo ID.
+    const currentItem = items.find(item => item._id === itemId); 
+
+    // 2. Verifica se o item existe e se 'seasons' é um array.
+    if (!currentItem || !Array.isArray(currentItem.seasons)) return;
+      
+    // 3. CRIA um NOVO ARRAY de temporadas, excluindo a temporada no índice especificado.
+    const updatedSeasons = currentItem.seasons.filter((_, index) => {
+      return index !== seasonIndex; // Retorna TRUE para manter a temporada, FALSE para deletar.
+    });
+
+    // Forma alternativa reduzida para o filtro de cima
+    //const updatedSeasons = currentItem.seasons.filter((_, index) => index !== seasonIndex);
+
+    // 4. Confirma se a remoção realmente ocorreu (se o novo array é menor).
+    if (updatedSeasons.length < currentItem.seasons.length) {
+      // 5. Atualiza o item no banco de dados com a nova lista de temporadas.
+      await handleUpdateItem(itemId, { seasons: updatedSeasons });
+    }
+}
 
   // --- FUNÇÕES DE MANIPULAÇÃO DE EPISÓDIOS ---
 
@@ -242,7 +280,7 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     setHasAddEditEpisode(true);
     setUpdatedItemId(itemId);
     setHasEpisodeInfo({
-      index: seasonIndex,
+      sIndex: seasonIndex,
       title: episodeTitle,
       hasWatched: hasWatched
     });
@@ -254,12 +292,131 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     setHasEpisodeInfo(null);
   }
 
-  const onAddEditEpisode = (newEpisodeTitle, newEpisodeHasWacthed) => {
-    console.log(`Testando as funções de editar episódio: ${UpdatedItemId} - Temporada: ${hasEpisodeInfo.index} - Novo título: ${newEpisodeTitle} - novo hasWatched ${newEpisodeHasWacthed}`)
+  const onAddEditEpisode = async (newEpisodeTitle, newEpisodeHasWacthed) => {
+    const currentItem = items.find(item => item._id === updatedItemId);
+    const oldEpisodeTitle = hasEpisodeInfo?.title;
+
+    if (!currentItem || !Array.isArray(currentItem.seasons)) return;
+
+    let isEditing = false;
+    const updatedSeasons = currentItem.seasons.map((season, sIndex) => {
+
+      // Retorna a temporada original se não for a que estamos editando
+      if (sIndex !== hasEpisodeInfo.sIndex) return season;
+
+      // --- Lógica de Edição/Adição dentro da temporada correta ---
+
+      let updatedEpisodes = season.episodes;
+
+      // Tenta EDITAR um episódio existente
+      if (oldEpisodeTitle) {
+
+        updatedEpisodes = season.episodes.map(episode => {
+          if (episode.title === oldEpisodeTitle) {
+            isEditing = true;
+            return {
+              title: newEpisodeTitle || episode.title,
+              hasWacth: newEpisodeHasWacthed !== undefined ? newEpisodeHasWacthed : episode.hasWacth
+            };
+          }
+          return episode;
+        });
+      }
+
+      // Tenta ADICIONAR um novo episódio (se não for edição e newEpisodeTitle for válido)
+      if (!isEditing && newEpisodeTitle) {
+        const newEpisode = {
+          title: newEpisodeTitle,
+          hasWacth: newEpisodeHasWacthed !== undefined ? newEpisodeHasWacthed : false
+        };
+
+        const alreadyExists = season.episodes.some(ep => ep.title === newEpisodeTitle);
+
+        if (!alreadyExists) {
+          updatedEpisodes = [...season.episodes, newEpisode];
+        } else {
+          console.warn(`Episódio "${newEpisodeTitle}" já existe na Temporada ${sIndex + 1}.`);
+          // Se já existir, a edição/adição para
+          return season;
+        }
+      }
+
+      // Retorna o NOVO objeto de temporada com a lista de episódios atualizada
+      return {
+        ...season,
+        episodes: updatedEpisodes
+      };
+    });
+
+    // 2. Atualiza o item principal com o NOVO array de temporadas.
+    await handleUpdateItem(updatedItemId, { seasons: updatedSeasons });
+  };
+
+  const onDeleteEpisode = async (itemId = '', seasonIndex = null, episodeIndex = null) => {
+    const currentItem = items.find(item => item._id === itemId);
+    let hasEdited = false;
+
+    if (!currentItem || !Array.isArray(currentItem.seasons)) return;
+    
+    // 1. Mapeia o array de temporadas (Nível 1 de Imutabilidade).
+    const updatedSeasons = currentItem.seasons.map((season, sIndex) => {
+      
+      if (sIndex !== seasonIndex) return season; // Retorna a temporada original.
+      
+      // 2. Filtra os episódios (Nível 2 de Imutabilidade) para deletar o item.
+      const updatedEpisodes = season.episodes.filter((_, eIndex) => eIndex !== episodeIndex);
+
+      if(updatedEpisodes.length < season.episodes.length) hasEdited = true;
+      
+      // 3. Retorna a NOVA temporada com a lista de episódios filtrada.
+      // Usa `season.title` para garantir que o título da temporada seja preservado.
+      return {
+        ...season,
+        episodes: updatedEpisodes
+      };
+    });
+    
+    // 4. Atualiza o item principal.
+    if(hasEdited) await handleUpdateItem(itemId, { seasons: updatedSeasons });
   }
 
-  const onDeleteEpisode = (itemId = '', seasonIndex = null, episodeTitle = '') => {
-    console.log(`Testando as funções de deletar episódio: ${itemId} - Temporada: ${seasonIndex} - título: ${episodeTitle}`)
+  const toggleEpisodeWatchStatus = async (itemId, seasonIndex, episodeIndex) => {
+    // 1. Encontra o item (Anime) principal e faz a checagem inicial.
+    const currentItem = items.find(item => item._id === itemId);
+
+    if (!currentItem || !Array.isArray(currentItem.seasons)) return;
+
+    // 2. Mapeia o array de temporadas (Primeiro Nível de Imutabilidade)
+    const updatedSeasons = currentItem.seasons.map((season, sIndex) => {
+
+      // A. Se não for a temporada que queremos modificar, retorna a temporada original.
+      if (sIndex !== seasonIndex) return season;
+
+      // B. Se for a temporada correta, Mapeia o array de episódios dentro dela.
+      const updatedEpisodes = season.episodes.map((episode, eIndex) => {
+
+        // C. Se for o episódio que queremos modificar...
+        if (eIndex === episodeIndex) {
+          // ... retorna um NOVO objeto de episódio com 'hasWacth' invertido.
+          return {
+            ...episode,
+            hasWacth: !episode.hasWacth // <--- A inversão ocorre aqui
+          };
+        }
+
+        // D. Se não for o episódio, retorna o objeto de episódio original.
+        return episode;
+      });
+
+      // E. Retorna um NOVO objeto de temporada com a lista de episódios atualizada.
+      return {
+        ...season,
+        episodes: updatedEpisodes
+      };
+    });
+
+    // 3. Chama a função de atualização com o novo array completo de temporadas.
+    await handleUpdateItem(itemId, { seasons: updatedSeasons });
   }
 
   // --- FUNÇÕES DE MANIPULAÇÃO DE LINKS ---
@@ -281,7 +438,7 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   }
 
   const onEditLink = async (newLinkTitle, newLinkUrl) => {
-    const currentItem = items.find(item => item._id === UpdatedItemId);
+    const currentItem = items.find(item => item._id === updatedItemId);
     const oldLinkTitle = hasLinkInfo.title;
 
     if (!currentItem || !Array.isArray(currentItem.movies)) return;
@@ -317,20 +474,20 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
 
     finalLinks.sort((a, b) => a.title.localeCompare(b.title));
 
-    await handleUpdateItem(UpdatedItemId, { links: finalLinks });
+    await handleUpdateItem(updatedItemId, { links: finalLinks });
   };
 
   const onDeleteLink = async (itemId, linkToDelete) => {
     const currentItem = items.find(item => item._id === itemId);
 
-    if (currentItem && Array.isArray(currentItem.links)) {
-      const updatedLinks = currentItem.links.filter(link => {
-        return link.title !== linkToDelete;
-      });
+    if (!currentItem || !Array.isArray(currentItem.links)) return;
 
-      if (updatedLinks.length < currentItem.links.length) {
-        await handleUpdateItem(itemId, { links: updatedLinks });
-      }
+    const updatedLinks = currentItem.links.filter(link => {
+      return link.title !== linkToDelete;
+    });
+
+    if (updatedLinks.length < currentItem.links.length) {
+      await handleUpdateItem(itemId, { links: updatedLinks });
     }
   };
   //#endregion
@@ -376,6 +533,7 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     hasEpisodeInfo,
     onAddEditEpisode,
     onDeleteEpisode,
+    toggleEpisodeWatchStatus,
     hasAddEditLink, // Modal de edição de links
     openAddEditLink, // Modal de edição de links
     closeAddEditLink, // Modal de edição de links
