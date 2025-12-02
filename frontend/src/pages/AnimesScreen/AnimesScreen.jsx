@@ -13,7 +13,7 @@ import useAnimeModalManager from './hooks/useAnimeModalManager';
 import { mapSeasonToOrder } from './utils/sortFilterUtils';
 
 // Modals (DOM)
-import { AddCollectionModal, AddMovieModal, AddEditSeasonModal, AddEditEpisodesModal, AddEditLinksModal, AnimeDetailsModal } from './AnimesModal';
+import { AddCollectionModal, AddMovieModal, AddEditSeasonModal, AddEditEpisodesModal, AddEditLinksModal, AddEditTagModal, AnimeDetailsModal, AnimeNewEditModal } from './AnimesModal';
 import ContextMenu from './ContextMenu';
 
 // Components (DOM)
@@ -71,7 +71,6 @@ function AnimesScreen() {
     handleRemoveCollectionFromSingleItem,
     
     // Funções de Item
-    handleAddNewAnime,
     handleEditAnime,
     handleDeleteAnime,
     handleAddToExistingCollection,
@@ -83,7 +82,6 @@ function AnimesScreen() {
     openAnimeModal,
     closeAnimeModal,
     hasAnimeModal,
-    handleItemClick, // Abrir o modal ao clicar no item
 
     // Anime selecionado e funções de seleção
     currentIndex,
@@ -123,7 +121,10 @@ function AnimesScreen() {
     openAddEditLink, // Modal de edição de links
     closeAddEditLink, // Modal de edição de links
     hasLinkInfo, // Modal de edição de links
-
+    hasAddEditTag, // Modal de edição de tags
+    openAddEditTag,
+    closeAddEditTag,
+    onTagModalSubimit,
 
     setTimeWatched,
 
@@ -216,11 +217,11 @@ function AnimesScreen() {
                 globalCollections={globalData?.globalInfo?.collections || []}
                 openActionMenuId={openActionMenuId}
                 setOpenActionMenuId={setOpenActionMenuId}
-                onEditAnime={handleEditAnime}
+                onEditAnime={(index) => openAnimeModal(index, 'edit')}
                 onDeleteAnime={handleDeleteAnime}
                 onAddToExistingCollection={handleAddToExistingCollection}
                 onAddNewCollection={handleAddNewCollection}
-                handleItemClick={handleItemClick}
+                handleItemClick={(index) => openAnimeModal(index, 'details')}
               />
             </div>
           </div>
@@ -235,7 +236,7 @@ function AnimesScreen() {
             launchOptions={launchOptions}
             selectedLaunches={selectedLaunches}
             toggleLaunches={toggleLaunches}
-            onAddNewAnime={handleAddNewAnime}
+            onAddNewAnime={() => openAnimeModal(null, 'edit')}
           />
         </div>
       </div>
@@ -244,10 +245,11 @@ function AnimesScreen() {
         // Abrir e fechar o modal
         hasAnimeModal={hasAnimeModal}
         closeModal={closeAnimeModal}
-        handleModalType={openAnimeModal}
+        handleModalType={(index) => openAnimeModal(index, 'edit')}
 
         // Dados do item
         item={selectedObject}
+        itemIndex={currentIndex}
         prevAnime={handlePrev}
         nextAnime={handleNext}
 
@@ -284,6 +286,16 @@ function AnimesScreen() {
         handleOpenLink={handleOpenLink}
         openAddEditLink={openAddEditLink}
         onDeleteLink={onDeleteLink}
+      />
+
+      <AnimeNewEditModal
+        hasAnimeModal={hasAnimeModal}
+        closeModal={closeAnimeModal}
+        item={selectedObject}
+        openTagModal={openAddEditTag}
+        closeTagModal={closeAddEditTag}
+        onTagModalSubimit={onTagModalSubimit}
+        globalData={globalData}
       />
 
       {hasAddCollection && (
@@ -335,6 +347,15 @@ function AnimesScreen() {
           initialLinkTitle={hasLinkInfo.title}
           initialUrl ={hasLinkInfo.url}
           onSubmit={onEditLink}
+        />
+      )}
+
+      {hasAddEditTag && (
+        <AddEditTagModal
+          onClose={closeAddEditTag}
+          title={true ? "Dê um título a tag" : "Altere o título da tag"}
+          onSubmit={null}
+          initialValue={null}
         />
       )}
     </div>

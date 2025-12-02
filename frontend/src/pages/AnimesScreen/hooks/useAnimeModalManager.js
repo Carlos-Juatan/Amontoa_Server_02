@@ -29,6 +29,8 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   // para o modal de links
   const [hasAddEditLink, setHasAddEditLink] = useState(false);
   const [hasLinkInfo, setHasLinkInfo] = useState(null);
+  // para o modal de tags
+  const [hasAddEditTag, setHasAddEditTag] = useState(false);
 
   // Estado para controlar qual temporada está aberta.
   // Usamos null para nenhuma aberta, ou o índice da temporada.
@@ -41,13 +43,13 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   // Funcção para abrir o modal ao clicar no item
   const { currentIndex, setCurrentIndex, selectedObject, handleNext, handlePrev } = useSelectionIndex(items);
 
-  const openAnimeModal = (modalType) => setHasAnimeModal(modalType);
-  const closeAnimeModal = () => setHasAnimeModal(null);
-
-  const handleItemClick = (index) => {
+  const openAnimeModal = (index, modalType = 'details') => {
     setCurrentIndex(index);
-    openAnimeModal('details');
+    setHasAnimeModal(modalType);
   }
+  
+  const closeAnimeModal = () => setHasAnimeModal(null);
+  
   //#endregion
 
   //#region Lado esqeurdo do modal
@@ -492,12 +494,22 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   };
   //#endregion
 
+  const openAddEditTag = () => {
+    setHasAddEditTag(true);
+  }
+  const closeAddEditTag = () => {
+    setHasAddEditTag(false);
+  }
+
+  const onTagModalSubimit = (tag) => {
+    console.log(tag);
+  }
+
   return {
     // Abrir ou fechar o modal de animeModal de anime
     openAnimeModal,
     closeAnimeModal,
     hasAnimeModal,
-    handleItemClick, // Abrir o modal ao clicar no item
 
     // Anime selecionado e funções de seleção
     currentIndex,
@@ -519,6 +531,8 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     hasMovieNamed, // Modal de edição dos filmes
     hasMovieWatched, // Modal de edição dos filmes
     createEditMovie, // Modal de edição dos filmes
+    openAddEditTag,
+    closeAddEditTag,
 
     // Lado Direito do modal
     hasAddEditSeason,
@@ -538,6 +552,8 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     openAddEditLink, // Modal de edição de links
     closeAddEditLink, // Modal de edição de links
     hasLinkInfo, // Modal de edição de links
+    hasAddEditTag, // Modal de edição de tags
+    onTagModalSubimit,
 
     setTimeWatched,
 

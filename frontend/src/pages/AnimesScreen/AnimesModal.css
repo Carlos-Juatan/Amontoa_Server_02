@@ -33,6 +33,7 @@
     display: flex;
 }
 
+.animes-modal-overlay .animes-modal-anime-container .change-anime-button,
 .animes-modal-overlay .animes-modal-anime-container .change-anime-button {
     flex-grow: 1;
     display: flex;
@@ -42,7 +43,7 @@
     cursor: pointer;
 }
 
-.animes-modal-overlay .animes-modal-anime-container .change-anime-button:hover {
+.animes-modal-overlay .animes-modal-anime-container .change-anime-button-not-empyt:hover {
     background-color: var(--background-dark);
     color: var(--highlight-blue);
 }
@@ -50,7 +51,7 @@
 .animes-modal-overlay .animes-modal-anime-container .animes-modal-content {
     /* Largura e altura */
     width: 65%;
-    height: 70vh; /* Altura máxima da viewport */
+    /*height: 70vh; /* Altura máxima da viewport */
 
     /* Disposição de Itens */
     display: flex;
@@ -422,9 +423,12 @@
 }
 
 .anime-info-block .synopsis-text {
+    width: 100%;
+    height: 70px;
     line-height: 1.5;
     margin: 0;
     font-size: 0.95rem;
+    overflow-y: auto;
 }
 
 .anime-info-block .tags-list,
@@ -588,6 +592,133 @@
     background-color: var(--button-delete-hover);
     border-color: var(--button-delete-hover-border);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.anime-header-block .anime-titles {
+    max-width: 50%;
+}
+
+.anime-header-block #title_jp {
+    max-width: 100%;
+}
+
+.anime-header-block .score-value-input {
+    /* Estilo do bloco "Nota: 8" */
+    width: 50px;
+    display: flex;
+    gap: 5px;
+    background-color: var(--border-color); /* Fundo sutil */
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+
+
+.anime-info-block .synopsis-text-input {
+    width: 100%;
+    line-height: 1.5;
+    margin: 0;
+    font-size: 0.95rem;
+    resize: none;
+}
+
+.section-label-tags-edit {
+    margin-top: 4px;
+}
+
+.section-label-tags-input {
+    display: flex;
+    gap: 10px;
+}
+
+.tag-input-dropdown {
+    margin-bottom: 10px;
+}
+
+.tag-remove-icon {
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 0.8em;
+}
+
+.tag-remove-icon:hover {
+    color: var(--button-delete);
+}
+
+input, textarea, select {
+  border: 1px solid var(--card-item-selected);
+  background-color: var(--card-background);
+  color: #fff;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+textarea {
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 
 import useClickOutside from '../../hooks/useClickOutside'; 
 
+
 import { toTitleCase } from './utils/modalUtils';
 import ContextMenu from './ContextMenu';
 
@@ -361,6 +362,34 @@ function AddEditLinksModal({ onClose, title, initialLinkTitle, initialUrl, onSub
   )
 }
 
+function AddEditTagModal({ onClose, title, initialValue, onSubmit }) {
+  const [tagName, setTagName] = useState(initialValue || '');
+
+  const handleChange = (e) => setTagName(e.target.value);
+
+  const handleSubmit = () => {
+    if (tagName.trim()) {
+      const formattedName = toTitleCase(tagName); 
+      onSubmit(formattedName);
+      setTagName('');
+      onClose();
+    }
+  };
+
+  return (
+    <div className='animes-modal-add-edit-tags'>
+      <SingleTextInputModal 
+        onClose={onClose}
+        title={title}
+        onSubmit={handleSubmit}
+        inputValue={tagName}
+        handleChangeInput={handleChange}
+        handleChange={handleChange}
+      />
+    </div>
+  );
+}
+
 function AnimeDetailsModal({
   // Abrir e fechar o modal
   hasAnimeModal,
@@ -369,6 +398,7 @@ function AnimeDetailsModal({
 
   // Dados do item
   item,
+  itemIndex,
   prevAnime,
   nextAnime,
 
@@ -407,16 +437,13 @@ function AnimeDetailsModal({
   onDeleteLink,
 }) {
 
-  if (hasAnimeModal === null) return;
-
-  // Funções temporárias de ação
-  const handleOpenEditModal = () => { console.log('Abrindo Modal de editar anime'); }
+  if (hasAnimeModal !== 'details') return;
 
   return (
     <div className='animes-modal-overlay'>
       <div className='animes-modal-anime-container'>
         {/* Botão de navegação esquerda */}
-        <div className='change-anime-button' onClick={prevAnime}><i className="fa-solid fa-angle-left" /></div>
+        <div className='change-anime-button change-anime-button-not-empyt' onClick={prevAnime}><i className="fa-solid fa-angle-left" /></div>
 
         {/* Conteúdo principal do modal */}
         <div className='animes-modal-content'>
@@ -452,6 +479,7 @@ function AnimeDetailsModal({
           <ModalRightPanel
             // Dados
             item={item}
+            itemIndex={itemIndex}
 
             // Temporadas
             openSeasonIndex={openSeasonIndex}
@@ -470,13 +498,13 @@ function AnimeDetailsModal({
             onDeleteLink={onDeleteLink}         // 👈 Passando a função do hook
 
             // Buttons
-            handleOpenEditModal={handleOpenEditModal}
+            handleModalType={handleModalType}
             closeModal={closeModal}
           />
         </div>
 
         {/* Botão de navegação direita */}
-        <div className='change-anime-button' onClick={nextAnime}><i className="fa-solid fa-angle-right" /></div>
+        <div className='change-anime-button change-anime-button-not-empyt' onClick={nextAnime}><i className="fa-solid fa-angle-right" /></div>
       </div>
     </div>
   );
@@ -777,11 +805,12 @@ function GlobalCollectionsDropdown({
 //#region Lado Direito
 function ModalRightPanel ({ 
   item,
+  itemIndex,
   openSeasonIndex,
   toggleSeason,
   toggleEpisodeWatchStatus,
   handleOpenLink,
-  handleOpenEditModal,
+  handleModalType,
   closeModal,
   openAddEditSeason,
   onDeleteSeason,
@@ -941,12 +970,8 @@ function ModalRightPanel ({
 
       {/* Botões de Ação do Modal */}
       <div className='modal-action-buttons'>
-        <Button className='action-button button-edit' onClick={handleOpenEditModal}>Editar</Button>
+        <Button className='action-button button-edit' onClick={() => handleModalType(itemIndex)}>Editar</Button>
         <Button className='action-button button-close' onClick={closeModal}>Fechar</Button>
-        {/*
-        <span className='action-button button-edit' onClick={handleOpenEditModal}>Editar</span>
-        <span className='action-button button-close' onClick={closeModal}>Fechar</span>
-        */}
       </div>
 
       {/* Renderização Condicional do Menu de Contexto */}
@@ -993,11 +1018,298 @@ function ModalRightPanel ({
 }
 //#endregion
 
+function AnimeNewEditModal({
+  hasAnimeModal, // 'new', 'edit', ou null
+  closeModal,
+  item, // Item do anime para edição (se hasAnimeModal === 'edit')
+  globalData, // Contém globalData.globalInfo.tags
+  openTagModal,
+  closeTagModal,
+  onTagModalSubimit,
+  onSave // Função para salvar/atualizar os dados do anime
+}) {
+
+  if (hasAnimeModal !== 'edit') return;
+
+//#region Functions and variables
+  const isEditing = hasAnimeModal === 'edit';
+  const initialState = {
+    imageUrl: item?.imageUrl || '',
+    title_en: item?.name?.english || '',
+    title_jp: item?.name?.japonese || '',
+    score: item?.score || '',
+    sinopse: item?.description || '',
+    tags: item?.tags || [],
+    date: {
+      launched: {
+        season: item?.date?.launched?.season || 'Inverno', // Padrão
+        year: item?.date?.launched?.year || new Date().getFullYear(), // Padrão
+      }
+    }
+  };
+
+  const [formData, setFormData] = useState(initialState);
+
+  // Atualiza o estado se o item de edição mudar (útil se o modal for reutilizado)
+  useEffect(() => {
+    if (isEditing && item) {
+      setFormData(initialState);
+    } else if (hasAnimeModal === 'new') {
+      setFormData(initialState);
+    }
+  }, [item, hasAnimeModal]);
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'score' && value !== '' && isNaN(Number(value))) return;
+    
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+  
+  const handleDateChange = (e) => {
+      const { name, value } = e.target;
+      setFormData(prev => ({ 
+          ...prev, 
+          date: { 
+              ...prev.date,
+              launched: { 
+                  ...prev.date.launched, 
+                  [name]: value
+              } 
+          } 
+      }));
+  };
+
+  const handleAddTag = (newTag) => {
+    const trimmedTag = newTag.trim();
+    if (trimmedTag && !formData.tags.includes(trimmedTag)) {
+      setFormData(prev => ({
+        ...prev,
+        tags: [...prev.tags, trimmedTag].sort((a, b) => a.localeCompare(b))
+      }));
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }));
+  };
+  // Função chamada quando o usuário salva a tag no segundo modal
+  const handleSaveNewTag = (newTag) => {
+    handleAddTag(newTag); // Reutiliza sua função de adicionar ao array
+    onTagModalSubimit(newTag);
+    closeTagModal(); // Fecha o modal
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Apenas loga para simular a ação. Em um caso real, chamaria `onSave(formData)`
+    console.log(`${isEditing ? 'Salvando Edição' : 'Adicionando Novo'} Anime:`, formData);
+    // onSave(formData);
+    // closeModal();
+  };
+
+  if (hasAnimeModal !== 'edit' && hasAnimeModal !== 'new') return null;
+  
+  // Opções para o dropdown de data
+  const seasons = ['Inverno', 'Primavera', 'Verão', 'Outono'];
+  const currentYear = new Date().getFullYear();
+  const yearDiference = currentYear - 1969;
+  const years = Array.from({length: yearDiference}, (_, i) => currentYear - i); // Exemplo: 5 anos para trás e 4 para frente
+//#endregion
+
+  return (
+    <div className='animes-modal-overlay'>
+      <div className='animes-modal-anime-container'>
+        {/* Botão de navegação esquerda - Vazio no modo de edição */}
+        <div className='change-anime-button'></div>
+
+        <div className='animes-modal-content'>
+          {/* Painel Esquerdo: Imagem e Informações Auxiliares */}
+          
+          <div className='modal-left-panel'>
+            <div className='modal-image-wrapper'>
+              <img src={formData.imageUrl} alt='Anime cover' className='anime-cover-image' />
+            </div>
+      
+            <div className='modal-info-details'>
+              {/* URL da Imagem */}
+              <div className="info-detail-item">
+                <span className="info-label">Imagem url:</span>
+                <div className='info-value date-value'>
+                  <input
+                    className="anime-edit-modal-input"
+                    type="text"
+                    id="imageUrl"
+                    name="imageUrl"
+                    value={formData.imageUrl}
+                    onChange={handleChange}
+                    placeholder="Ex: https://link.para/sua-imagem.jpg"
+                  />
+                </div>
+              </div>
+              
+              {/* Data de Lançamento */}
+              <div className='info-detail-item'>
+                <span className='info-label'>Data:</span>
+                <div className='info-value date-value'>
+                  <select
+                    className="anime-edit-modal-input"
+                    id="season"
+                    name="season"
+                    value={formData.date.launched.season}
+                    onChange={handleDateChange}
+                  >
+                    {seasons.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                  <select
+                    className="anime-edit-modal-input"
+                    id="year"
+                    name="year"
+                    value={formData.date.launched.year}
+                    onChange={handleDateChange}
+                  >
+                    {years.map(y => <option key={y} value={y}>{y}</option>)}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Conteúdo Direito: Títulos, Sinopse, Temporadas, Links */}
+          <div className='modal-right-content'>
+
+            {/* Bloco de Título e Nota */}
+            <div className='anime-header-block'>
+              <div className='anime-titles'>
+                <input
+                  className='title-japanese anime-edit-modal-input'
+                  type="text"
+                  id="title_jp"
+                  name="title_jp"
+                  value={formData.title_jp}
+                  onChange={handleChange}
+                />
+                <input
+                  className='title-english anime-edit-modal-input'
+                  type="text"
+                  id="title_en"
+                  name="title_en"
+                  value={formData.title_en}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className='anime-score-wrapper'>
+                <div className='anime-score'>
+                  <div className='score-label'>Nota:</div>
+                  <input
+                    className='score-value-input anime-edit-modal-input'
+                    type="text"
+                    id="score"
+                    name="score"
+                    value={formData.score}
+                    onChange={handleChange}
+                    maxLength="2"
+                    placeholder="Ex: 8.5"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Bloco de Informações: Sinopse, Tags, Coleções */}
+            <div className='anime-info-block'>
+
+              {/* Sinopse */}
+              <div className='info-section synopsis-section'>
+                <div className='section-label'>Sinopse:</div>
+                <textarea
+                  className='synopsis-text-input anime-edit-modal-input'
+                  id="sinopse"
+                  name="sinopse"
+                  value={formData.sinopse}
+                  onChange={handleChange}
+                  rows="4"
+                />
+              </div>
+
+              {/* Tags */}
+              <div className='info-section tags-section'>
+                <div className='section-label-tags-input'>
+                  <span className='section-label section-label-tags-edit'>tags:</span>
+                  <TagInputDropdown 
+                    globalTags={globalData?.globalInfo?.tags || []} // Global tags simuladas
+                    currentTags={formData.tags}
+                    onAddTag={handleAddTag}
+                    onOpenNewTagModal={openTagModal} 
+                  />
+                </div>
+                <div className='tags-list'>
+                  {(formData?.tags || 'Undefined').map(tag => (
+                    <span key={tag} className='tag-item'>
+                      {tag}
+                      <i className="fa-solid fa-xmark tag-remove-icon" onClick={() => handleRemoveTag(tag)} />
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Botões de Ação do Modal */}
+            <div className='modal-action-buttons'>
+              <Button className='action-button button-edit' onClick={handleSubmit}>Salvar</Button>
+              <Button className='action-button button-close' onClick={closeModal}>Fechar</Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Botão de navegação direita - Vazio no modo de edição */}
+        <div className='change-anime-button'></div>
+      </div>
+    </div>
+  );
+}
+
+const TagInputDropdown = ({ globalTags, currentTags, onAddTag, onOpenNewTagModal }) => {
+  
+  const handleSelectChange = (e) => {
+    const value = e.target.value;
+
+    if (value === "NEW_TAG") {
+      // MUDANÇA: Dispara a abertura do modal em vez de mostrar input
+      onOpenNewTagModal();
+    } else if (value && !currentTags.includes(value)) {
+      onAddTag(value);
+    }
+  };
+  
+  const availableTags = globalTags.filter(tag => !currentTags.includes(tag));
+
+  return (
+    <div className="tag-input-dropdown">
+      <select value="" onChange={handleSelectChange}>
+        <option value="" disabled>Selecione uma tag</option>
+        {availableTags.map(tag => (
+          <option key={tag} value={tag}>{tag}</option>
+        ))}
+        {/* Opção especial */}
+        <option value="NEW_TAG" style={{ fontWeight: 'bold' }}>+ Adicionar Nova Tag...</option>
+      </select>
+    </div>
+  );
+};
+
 export {
   AddCollectionModal,
   AddMovieModal,
   AddEditSeasonModal,
   AddEditEpisodesModal,
   AddEditLinksModal,
+  AddEditTagModal,
   AnimeDetailsModal,
+  AnimeNewEditModal,
 };

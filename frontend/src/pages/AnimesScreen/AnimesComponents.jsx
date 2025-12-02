@@ -112,8 +112,7 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo,
           <li className='animes-item-grid' key={item._id}>
             <AnimesItemGrid
               id={item._id}
-              index={index}
-              onItemClick={handleItemClick}
+              onItemClick={() => handleItemClick(index)}
               imageUrl={item.imageUrl || "N/A"}
               japoneseTitle={item.name?.japonese || "N/A"}
               englishTitle={item.name?.english || "N/A"}
@@ -147,8 +146,7 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo,
           <li className='animes-item-list' key={item._id}>
             <AnimesItemList
               id={item._id}
-              index={index}
-              onItemClick={handleItemClick}
+              onItemClick={() => handleItemClick(index)}
               imageUrl={item.imageUrl || "N/A"}
               japoneseTitle={item.name?.japonese || "N/A"}
               englishTitle={item.name?.english || "N/A"}
@@ -171,7 +169,7 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo,
   );
 }
 
-function AnimesItemGrid({ id, index, onItemClick, imageUrl, japoneseTitle, englishTitle, collections, isMenuOpen, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onAddNewCollection }) {
+function AnimesItemGrid({ id, onItemClick, imageUrl, japoneseTitle, englishTitle, collections, isMenuOpen, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onAddNewCollection }) {
 
   // CHAVE: Previne o clique normal no item para abrir o menu
   const handleMenuToggle = (e) => {
@@ -181,7 +179,7 @@ function AnimesItemGrid({ id, index, onItemClick, imageUrl, japoneseTitle, engli
 
   return (
     // Adicionar onClick para abrir o MediaSourceHandle
-    <div className='animes-item-grid-content' onClick={() => onItemClick(index)}>
+    <div className='animes-item-grid-content' onClick={onItemClick}>
       <div className='up'>
         <img src={imageUrl} alt="" />
         <div className='img-filter' />
@@ -214,7 +212,7 @@ function AnimesItemGrid({ id, index, onItemClick, imageUrl, japoneseTitle, engli
   );
 }
 
-function AnimesItemList({ id, index, onItemClick, imageUrl, japoneseTitle, englishTitle, seasons, timeWhatched, score, launcheData, collections, isMenuOpen, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onAddNewCollection }) {
+function AnimesItemList({ id, onItemClick, imageUrl, japoneseTitle, englishTitle, seasons, timeWhatched, score, launcheData, collections, isMenuOpen, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onAddNewCollection }) {
 
   const handleMenuToggle = (e) => {
     e.stopPropagation();
@@ -222,7 +220,7 @@ function AnimesItemList({ id, index, onItemClick, imageUrl, japoneseTitle, engli
   };
 
   return (
-    <div className='animes-item-list-content' onClick={() => onItemClick(index)}>
+    <div className='animes-item-list-content' onClick={onItemClick}>
       <div className='animes-item-list-title'>
         <img src={imageUrl} alt="" />
         <div className='animes-item-list-title-text'>

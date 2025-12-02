@@ -183,15 +183,6 @@ export default function useAnimeManager(dataCollectionName = 'animes', items, gl
   //#region --- 3. FUNÇÃO DOS MODAL DOS ANIMES ---
 
   //#region --- 3 - 2. FUNÇÕES DOS ANIMES ---
-  const handleAddNewAnime = () => {
-    console.log('Adicionando novo Anime');
-  }
-
-  const handleEditAnime = (itemId) => {
-    console.log(`Editando Anime: ${itemId}`);
-    setOpenActionMenuId(null);
-  };
-
   const handleDeleteAnime = async (item) => {
     // Simplificando o try/catch pelo .then() e .catch()
     await handleDeleteItem(item).catch((e) => { /* Tratar Erro: Opcional */ });
@@ -238,8 +229,6 @@ export default function useAnimeManager(dataCollectionName = 'animes', items, gl
     handleRemoveCollectionFromSingleItem,
 
     // Funções de Item
-    handleAddNewAnime,
-    handleEditAnime,
     handleDeleteAnime,
     handleAddToExistingCollection,
   };
