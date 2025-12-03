@@ -30,6 +30,7 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   const [hasAddEditLink, setHasAddEditLink] = useState(false);
   const [hasLinkInfo, setHasLinkInfo] = useState(null);
   // para o modal de tags
+  const [tagSubmitCallback, setTagSubmitCallback] = useState(null);
   const [hasAddEditTag, setHasAddEditTag] = useState(false);
 
   // Estado para controlar qual temporada está aberta.
@@ -37,7 +38,7 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   const [openSeasonIndex, setOpenSeasonIndex] = useState(null);
   //#endregion
 
-  //#region Functions
+//#region Functions
 
   //#region Manipulação do anime selecionado
   // Funcção para abrir o modal ao clicar no item
@@ -494,16 +495,47 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   };
   //#endregion
 
-  const openAddEditTag = () => {
+//#endregion
+  
+//#region Animes Modal Edit
+
+  //#region Modal de tags
+  const openAddEditTag = (callback) => {
+    if (callback) {
+      // Guardamos a função que o filho enviou (ex: adicionar ao formData)
+      setTagSubmitCallback(() => callback);
+    }
     setHasAddEditTag(true);
   }
+
   const closeAddEditTag = () => {
     setHasAddEditTag(false);
+    setTagSubmitCallback(null); // Limpa o callback ao fechar
   }
 
-  const onTagModalSubimit = (tag) => {
-    console.log(tag);
-  }
+  // Esta função será chamada pelo AddEditTagModal no Pai
+  const handleAddNewTag = (newTag) => {
+    // 1. Aqui você pode adicionar lógica para salvar a tag no GlobalData (Backend/Contexto) se necessário
+    // ... lógica global ...
+
+    // 2. Executa o callback do filho (para atualizar o visual do formulário imediatamente)
+    if (tagSubmitCallback) {
+      tagSubmitCallback(newTag);
+    }
+
+    // 3. Fecha o modal
+    closeAddEditTag();
+  };
+  //#endregion
+  
+
+  const handleAddEditAnime = (formData) => {
+    console.log(`${hasAnimeModal == 'edit' ? 'Salvando Edição' : 'Adicionando Novo'} Anime:`, formData);
+    
+    // Salva no banco de dados e abre o modal de animes com o index do novo item
+    // (index) => openAnimeModal(index, 'edit')
+  };
+//#endregion
 
   return {
     // Abrir ou fechar o modal de animeModal de anime
@@ -531,8 +563,6 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     hasMovieNamed, // Modal de edição dos filmes
     hasMovieWatched, // Modal de edição dos filmes
     createEditMovie, // Modal de edição dos filmes
-    openAddEditTag,
-    closeAddEditTag,
 
     // Lado Direito do modal
     hasAddEditSeason,
@@ -552,8 +582,6 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     openAddEditLink, // Modal de edição de links
     closeAddEditLink, // Modal de edição de links
     hasLinkInfo, // Modal de edição de links
-    hasAddEditTag, // Modal de edição de tags
-    onTagModalSubimit,
 
     setTimeWatched,
 
@@ -568,5 +596,12 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     handleOpenLink,
     onEditLink,
     onDeleteLink,
+
+    // modal de dição
+    hasAddEditTag, // Modal de edição de tags
+    openAddEditTag,
+    closeAddEditTag,
+    handleAddNewTag,
+    handleAddEditAnime,
   };
 }

@@ -71,7 +71,6 @@ function AnimesScreen() {
     handleRemoveCollectionFromSingleItem,
     
     // Funções de Item
-    handleEditAnime,
     handleDeleteAnime,
     handleAddToExistingCollection,
   } = useAnimeManager(collectionName, items, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem);
@@ -121,10 +120,6 @@ function AnimesScreen() {
     openAddEditLink, // Modal de edição de links
     closeAddEditLink, // Modal de edição de links
     hasLinkInfo, // Modal de edição de links
-    hasAddEditTag, // Modal de edição de tags
-    openAddEditTag,
-    closeAddEditTag,
-    onTagModalSubimit,
 
     setTimeWatched,
 
@@ -139,6 +134,13 @@ function AnimesScreen() {
     handleOpenLink,
     onEditLink,
     onDeleteLink,
+
+    // modal de dição
+    hasAddEditTag, // Modal de edição de tags
+    openAddEditTag,
+    closeAddEditTag,
+    handleAddNewTag,
+    handleAddEditAnime,
    } = useAnimeModalManager( finalSortedItems, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem );
 
   //Formata as opções de lançamento para o CollapsibleMenu
@@ -236,7 +238,7 @@ function AnimesScreen() {
             launchOptions={launchOptions}
             selectedLaunches={selectedLaunches}
             toggleLaunches={toggleLaunches}
-            onAddNewAnime={() => openAnimeModal(null, 'edit')}
+            onAddNewAnime={() => openAnimeModal(null, 'new')}
           />
         </div>
       </div>
@@ -290,12 +292,12 @@ function AnimesScreen() {
 
       <AnimeNewEditModal
         hasAnimeModal={hasAnimeModal}
+        openAnimeModal={() => openAnimeModal(currentIndex, 'details')}
         closeModal={closeAnimeModal}
         item={selectedObject}
-        openTagModal={openAddEditTag}
-        closeTagModal={closeAddEditTag}
-        onTagModalSubimit={onTagModalSubimit}
         globalData={globalData}
+        openTagModal={openAddEditTag}
+        onSave={handleAddEditAnime}
       />
 
       {hasAddCollection && (
@@ -353,9 +355,9 @@ function AnimesScreen() {
       {hasAddEditTag && (
         <AddEditTagModal
           onClose={closeAddEditTag}
-          title={true ? "Dê um título a tag" : "Altere o título da tag"}
-          onSubmit={null}
-          initialValue={null}
+          title={true ? "Dê um título a tag" : "Altere o título da tag"} // Caso eu adicione a função de editar uma tag passar o valor da tag
+          onSubmit={handleAddNewTag}
+          initialValue={null} // Caso eu adicione a função de editar uma tag passar o valor da tag
         />
       )}
     </div>

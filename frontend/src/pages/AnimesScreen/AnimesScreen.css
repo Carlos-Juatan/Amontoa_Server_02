@@ -159,8 +159,9 @@
 /* Ajuste na imagem (se necessário) */
 .animes-container .animes-content .animes-display .animes-list .animes-list-grid .animes-item-grid  .up img {
     display: block; /* Remove o espaço extra que alguns navegadores adicionam a imagens */
-    width: 100%;
-    height: auto;
+    width: 180px;
+    height: 250px;
+    object-fit: cover;
 }
 
 /* 2. Posiciona a div de filtro para cobrir 100% da imagem */
@@ -272,6 +273,8 @@
 
 .animes-container .animes-content .animes-display .animes-list .animes-list-list .animes-item-list .animes-item-list-content .animes-item-list-title img {
   width: 50px;
+  height: 70px;
+  object-fit: cover;
 }
 
 .animes-container .animes-content .animes-display .animes-list .animes-list-list .animes-item-list .animes-item-list-content .animes-item-list-title .animes-item-list-title-text {

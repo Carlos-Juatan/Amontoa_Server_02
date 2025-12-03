@@ -1,7 +1,7 @@
 // src/pages/AnimesScreen/AnimesModal.jsx
 import React, { useState, useRef, useEffect } from 'react';
 
-import useClickOutside from '../../hooks/useClickOutside'; 
+import useClickOutside from '../../hooks/useClickOutside';
 
 
 import { toTitleCase } from './utils/modalUtils';
@@ -26,7 +26,7 @@ function AddCollectionModal({ onClose, title, initialValue, onSubmit }) {
 
   const handleSubmit = () => {
     if (collectionName.trim()) {
-      const formattedName = toTitleCase(collectionName); 
+      const formattedName = toTitleCase(collectionName);
       onSubmit(formattedName);
       setCollectionName('');
       onClose();
@@ -35,7 +35,7 @@ function AddCollectionModal({ onClose, title, initialValue, onSubmit }) {
 
   return (
     <div className='animes-modal-add-collection'>
-      <SingleTextInputModal 
+      <SingleTextInputModal
         onClose={onClose}
         title={title}
         onSubmit={handleSubmit}
@@ -50,13 +50,13 @@ function AddCollectionModal({ onClose, title, initialValue, onSubmit }) {
 function AddMovieModal({ onClose, title, initialMovieName, initialMovieValue, checkmarkSize, onSubmit }) {
   const [movieName, setMovieName] = useState(initialMovieName || '');
   const [movieValue, setMovieValue] = useState(initialMovieValue || false);
-  
+
   const handleChangeName = (e) => setMovieName(e.target.value);
   const handleChangeValue = () => setMovieValue(!movieValue);
 
   const handleSubmit = () => {
     if (movieName.trim()) {
-      const formattedName = toTitleCase(movieName); 
+      const formattedName = toTitleCase(movieName);
       onSubmit(formattedName, movieValue);
       setMovieName('');
       setMovieValue(false);
@@ -66,7 +66,7 @@ function AddMovieModal({ onClose, title, initialMovieName, initialMovieValue, ch
 
   return (
     <div className='animes-modal-add-collection'>
-      <SingleTextInputWithCheckboxModal 
+      <SingleTextInputWithCheckboxModal
         onClose={onClose}
         title={title}
         inputValue={movieName}
@@ -302,13 +302,13 @@ function AddEditSeasonModal({
 function AddEditEpisodesModal({ onClose, title, initialEpisodeName, initialEpisodeValue, checkmarkSize, onSubmit }) {
   const [episodeName, setEpisodeName] = useState(initialEpisodeName || '');
   const [episodeValue, setEpisodeValue] = useState(initialEpisodeValue || false);
-  
+
   const handleChangeName = (e) => setEpisodeName(e.target.value);
   const handleChangeValue = () => setEpisodeValue(!episodeValue);
 
   const handleSubmit = () => {
     if (episodeName.trim()) {
-      const formattedName = toTitleCase(episodeName); 
+      const formattedName = toTitleCase(episodeName);
       onSubmit(formattedName, episodeValue);
       setEpisodeName('');
       setEpisodeValue(false);
@@ -318,7 +318,7 @@ function AddEditEpisodesModal({ onClose, title, initialEpisodeName, initialEpiso
 
   return (
     <div className='animes-modal-add-collection'>
-      <SingleTextInputWithCheckboxModal 
+      <SingleTextInputWithCheckboxModal
         onClose={onClose}
         title={title}
         inputValue={episodeName}
@@ -336,18 +336,18 @@ function AddEditEpisodesModal({ onClose, title, initialEpisodeName, initialEpiso
 function AddEditLinksModal({ onClose, title, initialLinkTitle, initialUrl, onSubmit }) {
   const [linkTitle, setLinkTitle] = useState(initialLinkTitle || '');
   const [url, setUrl] = useState(initialUrl || '');
-  
+
   const handleChangeTitle = (e) => setLinkTitle(e.target.value);
   const handleChangeUrl = (e) => setUrl(e.target.value);
-  
+
   const handleSubmit = () => {
     if (linkTitle.trim()) {
-        onSubmit(linkTitle, url);
-        setLinkTitle('');
-        setUrl('');
-        onClose();
-      }
+      onSubmit(linkTitle, url);
+      setLinkTitle('');
+      setUrl('');
+      onClose();
     }
+  }
 
   return (
     <DoubleTextInputModal
@@ -369,7 +369,7 @@ function AddEditTagModal({ onClose, title, initialValue, onSubmit }) {
 
   const handleSubmit = () => {
     if (tagName.trim()) {
-      const formattedName = toTitleCase(tagName); 
+      const formattedName = toTitleCase(tagName);
       onSubmit(formattedName);
       setTagName('');
       onClose();
@@ -378,7 +378,7 @@ function AddEditTagModal({ onClose, title, initialValue, onSubmit }) {
 
   return (
     <div className='animes-modal-add-edit-tags'>
-      <SingleTextInputModal 
+      <SingleTextInputModal
         onClose={onClose}
         title={title}
         onSubmit={handleSubmit}
@@ -451,10 +451,10 @@ function AnimeDetailsModal({
           {/* Painel Esquerdo: Imagem e Informações Auxiliares */}
           <ModalLeftPanel
             // Dados do item
-            item={item} 
+            item={item}
             // Dados Globais
             globalData={globalData}
-            getMonths={getMonths} 
+            getMonths={getMonths}
             closeAllDropdowns={closeAllDropdowns}
             // Filmes
             isMoviesDropdownOpen={isMoviesDropdownOpen}
@@ -512,15 +512,15 @@ function AnimeDetailsModal({
 
 //#region Lado Esquerdo
 
-function ModalLeftPanel({ 
+function ModalLeftPanel({
   // Dados do item
-  item, 
+  item,
 
   // Dados Globais
   globalData,
 
   // Função dos meses da temporada
-  getMonths, 
+  getMonths,
 
   // Primeiro Dropdown dos filmes
   isMoviesDropdownOpen,
@@ -546,13 +546,13 @@ function ModalLeftPanel({
   onAddCollection,
   addNewCollection,
 }) {
-  
+
   return (
     <div className='modal-left-panel'>
       <div className='modal-image-wrapper'>
         <img src={item?.imageUrl} alt='Anime cover' className='anime-cover-image' />
       </div>
-      
+
       <div className='modal-info-details'>
         {/* Data de Lançamento */}
         <div className='info-detail-item'>
@@ -567,19 +567,19 @@ function ModalLeftPanel({
         <div className='info-detail-item'>
           <span className='info-label'>Filmes:</span>
           <div className='info-value movies-value-wrapper'> {/* wrapper para posicionamento */}
-            <div 
-              className='info-value movies-value' 
+            <div
+              className='info-value movies-value'
               onClick={openMoviesDropdown} // Usa a nova função
             >
               <span>{item?.movies?.length || 0}</span>
               <div className='info-details'>Detalhes</div>
             </div>
-            
+
             {/* Renderiza o Dropdown de Filmes condicionalmente */}
             {isMoviesDropdownOpen && (
-              <MoviesDropdown 
-                movies={item?.movies} 
-                onClose={closeAllDropdowns} 
+              <MoviesDropdown
+                movies={item?.movies}
+                onClose={closeAllDropdowns}
                 toggleMovieWatchStatus={(movieTitle) => toggleMovieWatchStatus(item?._id, movieTitle)}
                 handleAddNewMovie={() => handleAddNewMovie(item?._id, '', false)}
                 handleEditMovie={(movieTitle, checkmarkValue) => handleAddNewMovie(item?._id, movieTitle, checkmarkValue)}
@@ -605,17 +605,17 @@ function ModalLeftPanel({
         <div className='info-detail-item'>
           <span className='info-label'>Coleções:</span>
           <div className='info-value collection-value-wrapper'> {/* wrapper para posicionamento */}
-            <div 
-              className='info-value collection-value' 
+            <div
+              className='info-value collection-value'
               onClick={openCollectionDropdown} // Usa a nova função
             >
               <div className='info-details'>Detalhes</div>
             </div>
-            
+
             {/* Renderiza o Dropdown de Coleções condicionalmente */}
             {isCollectionsDropdownOpen && (
-              <CollectionsDropdown 
-                collections={item?.collections} 
+              <CollectionsDropdown
+                collections={item?.collections}
                 onClose={closeAllDropdowns}
                 handleAddNewCollection={handleAddNewCollection}
                 onRemoveCollection={(col) => onRemoveCollection(item._id, col)}
@@ -634,13 +634,13 @@ function ModalLeftPanel({
   );
 }
 
-function MoviesDropdown({ 
-  movies = [], 
-  onClose, 
-  toggleMovieWatchStatus, 
-  handleAddNewMovie, 
-  handleEditMovie, 
-  handleDeleteMovie 
+function MoviesDropdown({
+  movies = [],
+  onClose,
+  toggleMovieWatchStatus,
+  handleAddNewMovie,
+  handleEditMovie,
+  handleDeleteMovie
 }) {
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, movieTitle: null, checkmarkValue: false });
 
@@ -666,8 +666,8 @@ function MoviesDropdown({
         {/* Renderiza a lista de Filmes */}
         {movies.length > 0 ? (
           movies.map((movie, index) => (
-            <li 
-              key={index} 
+            <li
+              key={index}
               className='movie-item-row'
               onContextMenu={(e) => handleContextMenu(e, movie.title, movie.hasWatched)} // Clique direito
             >
@@ -704,10 +704,10 @@ function MoviesDropdown({
   );
 }
 
-function CollectionsDropdown({ 
-  collections = [], 
-  onClose, 
-  handleAddNewCollection, 
+function CollectionsDropdown({
+  collections = [],
+  onClose,
+  handleAddNewCollection,
   onRemoveCollection,
   // NOVOS PROPS
   globalCollections,
@@ -724,8 +724,8 @@ function CollectionsDropdown({
         {collections.length > 0 ? (
           collections.map((collectionName, index) => (
             <li key={index} className='collection-item-row'>
-              <span 
-                className='remove-collection-action' 
+              <span
+                className='remove-collection-action'
                 onClick={() => onRemoveCollection(collectionName)}
               >
                 Remover de <div className='remove-collection-action-col'>{collectionName}</div>
@@ -737,10 +737,10 @@ function CollectionsDropdown({
         )}
 
         {/* Opção para Adicionar Nova Coleção */}
-        <ListItemAction 
-          iconClass="fa-plus" 
-          text="Adicionar Nova Coleção" 
-          onClick={handleAddNewCollection} 
+        <ListItemAction
+          iconClass="fa-plus"
+          text="Adicionar Nova Coleção"
+          onClick={handleAddNewCollection}
         />
       </ul>
 
@@ -758,12 +758,12 @@ function CollectionsDropdown({
   );
 }
 
-function GlobalCollectionsDropdown({ 
-  currentCollections = [], 
-  globalCollections, 
-  onClose, 
-  onSelectCollection, 
-  onNewCollection 
+function GlobalCollectionsDropdown({
+  currentCollections = [],
+  globalCollections,
+  onClose,
+  onSelectCollection,
+  onNewCollection
 }) {
 
   // Lista as coleções que o anime NÃO tem
@@ -789,12 +789,12 @@ function GlobalCollectionsDropdown({
         ) : (
           <li className='no-available-collections-message'>Todas as coleções já estão incluídas.</li>
         )}
-        
+
         {/* Opção para Criar Nova Coleção (Abre o modal de input) */}
-        <ListItemAction 
-          iconClass="fa-folder-plus" 
-          text="Criar Nova Coleção" 
-          onClick={onNewCollection} 
+        <ListItemAction
+          iconClass="fa-folder-plus"
+          text="Criar Nova Coleção"
+          onClick={onNewCollection}
         />
       </ul>
     </ActionDropdownContainer>
@@ -803,7 +803,7 @@ function GlobalCollectionsDropdown({
 //#endregion
 
 //#region Lado Direito
-function ModalRightPanel ({ 
+function ModalRightPanel({
   item,
   itemIndex,
   openSeasonIndex,
@@ -865,9 +865,9 @@ function ModalRightPanel ({
   const handleCloseEpisodeContextMenu = () => setEpisodeContextMenu(null);
   const handleCloseLinkContextMenu = () => setLinkContextMenu(null);
 
-  return(
+  return (
     <div className='modal-right-content'>
-      
+
       {/* Bloco de Título e Nota */}
       <div className='anime-header-block'>
         <div className='anime-titles'>
@@ -913,8 +913,6 @@ function ModalRightPanel ({
             <span className='add-new-button' onClick={() => openAddEditSeason(item?._id)}><i className="fa-solid fa-plus"></i></span>
           </div>
           <hr className='section-divider' />
-
-
           <ul className='season-list'>
             {(item?.seasons || []).map((season, index) => {
               const isSeasonOpen = openSeasonIndex === index; // Varifica se o índice atual for o índice aberto
@@ -981,9 +979,9 @@ function ModalRightPanel ({
           x={seasonContextMenu.x}
           y={seasonContextMenu.y}
           onRename={() => openAddEditSeason(
-            seasonContextMenu._id, 
+            seasonContextMenu._id,
             seasonContextMenu.seasonIndex,
-            seasonContextMenu.title, 
+            seasonContextMenu.title,
             seasonContextMenu.episodes
           )}
           onDelete={() => onDeleteSeason(seasonContextMenu._id, seasonContextMenu.seasonIndex)}
@@ -1020,21 +1018,17 @@ function ModalRightPanel ({
 
 function AnimeNewEditModal({
   hasAnimeModal, // 'new', 'edit', ou null
+  openAnimeModal,
   closeModal,
   item, // Item do anime para edição (se hasAnimeModal === 'edit')
   globalData, // Contém globalData.globalInfo.tags
   openTagModal,
-  closeTagModal,
-  onTagModalSubimit,
-  onSave // Função para salvar/atualizar os dados do anime
+  onSave, // Função para salvar/atualizar os dados do anime
 }) {
 
-  if (hasAnimeModal !== 'edit') return;
-
-//#region Functions and variables
-  const isEditing = hasAnimeModal === 'edit';
+  //#region Animes Modal Edit
   const initialState = {
-    imageUrl: item?.imageUrl || '',
+    imageUrl: item?.imageUrl || 'http://localhost:3000/assets/images/placeholder.avif', // Padrão
     title_en: item?.name?.english || '',
     title_jp: item?.name?.japonese || '',
     score: item?.score || '',
@@ -1047,38 +1041,76 @@ function AnimeNewEditModal({
       }
     }
   };
+  const newState = {
+    imageUrl: 'http://localhost:3000/assets/images/placeholder.avif',
+    title_en: '',
+    title_jp: '',
+    score: '',
+    sinopse: '',
+    tags: [],
+    date: {
+      launched: {
+        season: 'Inverno',
+        year: new Date().getFullYear()
+      }
+    }
+  };
 
   const [formData, setFormData] = useState(initialState);
+  const [previewImageUrl, setPreviewImageUrl] = useState(initialState.imageUrl);
 
   // Atualiza o estado se o item de edição mudar (útil se o modal for reutilizado)
   useEffect(() => {
-    if (isEditing && item) {
+    if (hasAnimeModal === 'edit' && item) {
       setFormData(initialState);
+      setPreviewImageUrl(initialState.imageUrl); 
     } else if (hasAnimeModal === 'new') {
-      setFormData(initialState);
+      setFormData(newState);
+      setPreviewImageUrl('http://localhost:3000/assets/images/placeholder.avif'); 
     }
   }, [item, hasAnimeModal]);
 
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'score' && value !== '' && isNaN(Number(value))) return;
-    
-    setFormData(prev => ({ ...prev, [name]: value }));
+  //#region change inputs
+  // Função auxiliar para verificar a URL
+  const checkImageExists = (url) => {
+    return new Promise((resolve) => {
+      // Se a URL estiver vazia, retornamos o placeholder
+      if (!url.trim()) {
+        return resolve('http://localhost:3000/assets/images/placeholder.avif');
+      }
+      
+      const img = new Image();
+      img.onload = () => resolve(url); // Se carregar com sucesso, resolve com a URL válida
+      img.onerror = () => resolve('http://localhost:3000/assets/images/placeholder.avif'); // Se falhar, resolve com o placeholder
+      img.src = url;
+    });
   };
+
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+    if (name === 'score' && value !== '' && isNaN(Number(value)) || Number(value) > 10) return;
+
+    setFormData(prev => ({ ...prev, [name]: value }));
   
+    if (name === 'imageUrl') {
+      // 2. Se for o campo de URL, verificar a URL e atualizar o preview
+      const validUrl = await checkImageExists(value);
+      setPreviewImageUrl(validUrl);
+    }
+  };
+
   const handleDateChange = (e) => {
-      const { name, value } = e.target;
-      setFormData(prev => ({ 
-          ...prev, 
-          date: { 
-              ...prev.date,
-              launched: { 
-                  ...prev.date.launched, 
-                  [name]: value
-              } 
-          } 
-      }));
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      date: {
+        ...prev.date,
+        launched: {
+          ...prev.date.launched,
+          [name]: value
+        }
+      }
+    }));
   };
 
   const handleAddTag = (newTag) => {
@@ -1097,29 +1129,35 @@ function AnimeNewEditModal({
       tags: prev.tags.filter(tag => tag !== tagToRemove)
     }));
   };
-  // Função chamada quando o usuário salva a tag no segundo modal
-  const handleSaveNewTag = (newTag) => {
-    handleAddTag(newTag); // Reutiliza sua função de adicionar ao array
-    onTagModalSubimit(newTag);
-    closeTagModal(); // Fecha o modal
-  };
+  //#endregion 
+
+  const handleCloseEditModal = (e) => {
+    e.preventDefault();
+    if (hasAnimeModal === 'edit') {
+      openAnimeModal();
+    } else {
+      closeModal();
+    }
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Apenas loga para simular a ação. Em um caso real, chamaria `onSave(formData)`
-    console.log(`${isEditing ? 'Salvando Edição' : 'Adicionando Novo'} Anime:`, formData);
-    // onSave(formData);
-    // closeModal();
+    onSave(formData);
+    if (hasAnimeModal === 'edit') {
+      openAnimeModal();
+    } else {
+      closeModal();
+    }
   };
 
-  if (hasAnimeModal !== 'edit' && hasAnimeModal !== 'new') return null;
-  
   // Opções para o dropdown de data
   const seasons = ['Inverno', 'Primavera', 'Verão', 'Outono'];
   const currentYear = new Date().getFullYear();
   const yearDiference = currentYear - 1969;
-  const years = Array.from({length: yearDiference}, (_, i) => currentYear - i); // Exemplo: 5 anos para trás e 4 para frente
-//#endregion
+  const years = Array.from({ length: yearDiference }, (_, i) => currentYear - i); // Exemplo: 5 anos para trás e 4 para frente
+
+  if (hasAnimeModal !== 'edit' && hasAnimeModal !== 'new') return null;
+  //#endregion
 
   return (
     <div className='animes-modal-overlay'>
@@ -1129,12 +1167,12 @@ function AnimeNewEditModal({
 
         <div className='animes-modal-content'>
           {/* Painel Esquerdo: Imagem e Informações Auxiliares */}
-          
+
           <div className='modal-left-panel'>
             <div className='modal-image-wrapper'>
-              <img src={formData.imageUrl} alt='Anime cover' className='anime-cover-image' />
+              <img src={previewImageUrl} alt='Anime cover' className='anime-cover-image' />
             </div>
-      
+
             <div className='modal-info-details'>
               {/* URL da Imagem */}
               <div className="info-detail-item">
@@ -1151,7 +1189,7 @@ function AnimeNewEditModal({
                   />
                 </div>
               </div>
-              
+
               {/* Data de Lançamento */}
               <div className='info-detail-item'>
                 <span className='info-label'>Data:</span>
@@ -1188,6 +1226,7 @@ function AnimeNewEditModal({
                 <input
                   className='title-japanese anime-edit-modal-input'
                   type="text"
+                  placeholder='Título em inglês'
                   id="title_jp"
                   name="title_jp"
                   value={formData.title_jp}
@@ -1196,6 +1235,7 @@ function AnimeNewEditModal({
                 <input
                   className='title-english anime-edit-modal-input'
                   type="text"
+                  placeholder='Título em japonês'
                   id="title_en"
                   name="title_en"
                   value={formData.title_en}
@@ -1215,7 +1255,7 @@ function AnimeNewEditModal({
                     value={formData.score}
                     onChange={handleChange}
                     maxLength="2"
-                    placeholder="Ex: 8.5"
+                    placeholder="-"
                   />
                 </div>
               </div>
@@ -1229,6 +1269,7 @@ function AnimeNewEditModal({
                 <div className='section-label'>Sinopse:</div>
                 <textarea
                   className='synopsis-text-input anime-edit-modal-input'
+                  placeholder='Descrição do anime...'
                   id="sinopse"
                   name="sinopse"
                   value={formData.sinopse}
@@ -1241,11 +1282,11 @@ function AnimeNewEditModal({
               <div className='info-section tags-section'>
                 <div className='section-label-tags-input'>
                   <span className='section-label section-label-tags-edit'>tags:</span>
-                  <TagInputDropdown 
+                  <TagInputDropdown
                     globalTags={globalData?.globalInfo?.tags || []} // Global tags simuladas
                     currentTags={formData.tags}
                     onAddTag={handleAddTag}
-                    onOpenNewTagModal={openTagModal} 
+                    onOpenNewTagModal={() => openTagModal(handleAddTag)}
                   />
                 </div>
                 <div className='tags-list'>
@@ -1262,7 +1303,7 @@ function AnimeNewEditModal({
             {/* Botões de Ação do Modal */}
             <div className='modal-action-buttons'>
               <Button className='action-button button-edit' onClick={handleSubmit}>Salvar</Button>
-              <Button className='action-button button-close' onClick={closeModal}>Fechar</Button>
+              <Button className='action-button button-close' onClick={handleCloseEditModal}>Fechar</Button>
             </div>
           </div>
         </div>
@@ -1275,7 +1316,7 @@ function AnimeNewEditModal({
 }
 
 const TagInputDropdown = ({ globalTags, currentTags, onAddTag, onOpenNewTagModal }) => {
-  
+
   const handleSelectChange = (e) => {
     const value = e.target.value;
 
@@ -1286,12 +1327,12 @@ const TagInputDropdown = ({ globalTags, currentTags, onAddTag, onOpenNewTagModal
       onAddTag(value);
     }
   };
-  
+
   const availableTags = globalTags.filter(tag => !currentTags.includes(tag));
 
   return (
     <div className="tag-input-dropdown">
-      <select value="" onChange={handleSelectChange}>
+      <select className="anime-edit-modal-input" value="" onChange={handleSelectChange}>
         <option value="" disabled>Selecione uma tag</option>
         {availableTags.map(tag => (
           <option key={tag} value={tag}>{tag}</option>
