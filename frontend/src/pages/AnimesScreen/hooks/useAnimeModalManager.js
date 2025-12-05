@@ -1,10 +1,10 @@
 // src/pages/AnimesScreen/hooks/useAnimeModalManager.js
 
-import { useState, useMemo, use } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
 import useSelectionIndex from '../../../hooks/useSelectionIndex'
 
-export default function useAnimeModalManager(items, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem) {
+export default function useAnimeModalManager(items, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem, handleCreateTag) {
   //#region Variables
   // Tipo de Modal de Animes Oberto ou null para fechado
   const [hasAnimeModal, setHasAnimeModal] = useState(null);
@@ -38,7 +38,7 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   const [openSeasonIndex, setOpenSeasonIndex] = useState(null);
   //#endregion
 
-//#region Functions
+  //#region Functions
 
   //#region Manipulação do anime selecionado
   // Funcção para abrir o modal ao clicar no item
@@ -48,9 +48,9 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     setCurrentIndex(index);
     setHasAnimeModal(modalType);
   }
-  
+
   const closeAnimeModal = () => setHasAnimeModal(null);
-  
+
   //#endregion
 
   //#region Lado esqeurdo do modal
@@ -203,7 +203,7 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   };
   //#endregion
   //#endregion
-  
+
   //#endregion
 
   //#region Lado Direito do modal
@@ -257,11 +257,11 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
 
   const onDeleteSeason = async (itemId = '', seasonIndex = null) => {
     // 1. Encontra o item (Anime) principal pelo ID.
-    const currentItem = items.find(item => item._id === itemId); 
+    const currentItem = items.find(item => item._id === itemId);
 
     // 2. Verifica se o item existe e se 'seasons' é um array.
     if (!currentItem || !Array.isArray(currentItem.seasons)) return;
-      
+
     // 3. CRIA um NOVO ARRAY de temporadas, excluindo a temporada no índice especificado.
     const updatedSeasons = currentItem.seasons.filter((_, index) => {
       return index !== seasonIndex; // Retorna TRUE para manter a temporada, FALSE para deletar.
@@ -275,7 +275,7 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
       // 5. Atualiza o item no banco de dados com a nova lista de temporadas.
       await handleUpdateItem(itemId, { seasons: updatedSeasons });
     }
-}
+  }
 
   // --- FUNÇÕES DE MANIPULAÇÃO DE EPISÓDIOS ---
 
@@ -360,17 +360,17 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     let hasEdited = false;
 
     if (!currentItem || !Array.isArray(currentItem.seasons)) return;
-    
+
     // 1. Mapeia o array de temporadas (Nível 1 de Imutabilidade).
     const updatedSeasons = currentItem.seasons.map((season, sIndex) => {
-      
+
       if (sIndex !== seasonIndex) return season; // Retorna a temporada original.
-      
+
       // 2. Filtra os episódios (Nível 2 de Imutabilidade) para deletar o item.
       const updatedEpisodes = season.episodes.filter((_, eIndex) => eIndex !== episodeIndex);
 
-      if(updatedEpisodes.length < season.episodes.length) hasEdited = true;
-      
+      if (updatedEpisodes.length < season.episodes.length) hasEdited = true;
+
       // 3. Retorna a NOVA temporada com a lista de episódios filtrada.
       // Usa `season.title` para garantir que o título da temporada seja preservado.
       return {
@@ -378,9 +378,9 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
         episodes: updatedEpisodes
       };
     });
-    
+
     // 4. Atualiza o item principal.
-    if(hasEdited) await handleUpdateItem(itemId, { seasons: updatedSeasons });
+    if (hasEdited) await handleUpdateItem(itemId, { seasons: updatedSeasons });
   }
 
   const toggleEpisodeWatchStatus = async (itemId, seasonIndex, episodeIndex) => {
@@ -424,10 +424,10 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
 
   // --- FUNÇÕES DE MANIPULAÇÃO DE LINKS ---
 
-  const openAddEditLink = (itemId = '', linkTitle = '', url = '' ) => {
+  const openAddEditLink = (itemId = '', linkTitle = '', url = '') => {
     setHasAddEditLink(true);
     setUpdatedItemId(itemId);
-    setHasLinkInfo({ 
+    setHasLinkInfo({
       title: linkTitle,
       url: url
     });
@@ -495,9 +495,211 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   };
   //#endregion
 
-//#endregion
+  //#endregion
+
+  //#region Animes Modal Edit
+  //#region Manter Dados do modo edição
   
-//#region Animes Modal Edit
+  // Adicione esta referência no início do seu hook:
+  const [initialLoadRef, setInitialLoadRef] = useState(false);
+  // Opcionalmente, você pode usar um useRef: const initialLoadRef = useRef(false);
+  // Usaremos useState para forçar o useEffect a rodar na primeira vez.
+
+  const createInitialState = (item, type) => {
+    // Sua lógica de initialState (edit) e newState (new) aqui
+    if (type === 'edit') {
+      // Retorna o objeto de edição
+      return {
+        _id: item?._id || null,
+        imageUrl: item?.imageUrl || 'http://localhost:3000/assets/images/placeholder.avif', // Padrão
+        title_en: item?.name?.english || '',
+        title_jp: item?.name?.japonese || '',
+        score: item?.score ?? null,
+        sinopse: item?.description || '',
+        tags: item?.tags || [],
+        date: {
+          launched: {
+            season: item?.date?.launched?.season || 'Inverno', // Padrão
+            year: item?.date?.launched?.year || new Date().getFullYear(), // Padrão
+          }
+        }
+      };
+    }
+    // Retorna o objeto novo
+    return {
+      _id: null,
+      imageUrl: 'http://localhost:3000/assets/images/placeholder.avif',
+      title_en: '',
+      title_jp: '',
+      score: '',
+      sinopse: '',
+      tags: [],
+      date: {
+        launched: {
+          season: 'Inverno',
+          year: new Date().getFullYear()
+        }
+      }
+    };
+  }
+  
+  // 1. Crie o estado inicial memorizado
+  const newInitialState = useMemo(() => {
+      return createInitialState(selectedObject, hasAnimeModal);
+  }, [selectedObject, hasAnimeModal]);
+
+  // 2. O estado inicial usa a função, mas a recriação é controlada pelo useMemo acima
+  const [formData, setFormData] = useState(() => createInitialState(selectedObject, hasAnimeModal));
+  const [previewImageUrl, setPreviewImageUrl] = useState(() => formData.imageUrl); // Usa o resultado inicial do formData
+
+  
+  // 3. Atualize o useEffect com a lógica de prevenção de reset:
+ 
+// src/hooks/useAnimeModalManager.js
+
+  useEffect(() => {
+    // Objeto sendo editado atualmente (do seu estado)
+    const currentFormDataId = formData._id;
+    // Novo objeto passado pelo pai
+    const newSelectedId = selectedObject?._id;
+
+    // ----------------------------------------------------
+    // Condições para RESETAR o formulário:
+    // ----------------------------------------------------
+      
+    // ----------------------------------------------------
+    // LÓGICA DE RESET/CANCELAMENTO
+    // ----------------------------------------------------
+
+    // Condição de Reset/Cancelamento:
+    // ✅ Prevenção de Perda de Dados em Edição: A lógica if (hasAnimeModal === 'edit' && currentFormDataId !== newSelectedId) e o return no final garantem que o estado 
+    // seja mantido se o ID for o mesmo.
+    // Se o modal estiver aberto, mas não estiver em modo 'edit' ou 'new' 
+    // (ou seja, está em 'details' ou 'null', dependendo da sua implementação de fechamento)
+    if (hasAnimeModal !== 'edit' && hasAnimeModal !== 'new') {
+      // Reseta o formData para o estado inicial baseado no item que está sendo visualizado
+      const itemToView = selectedObject; // O item original antes das edições
+
+      if (itemToView) {
+        const originalState = createInitialState(itemToView, 'edit');
+        setFormData(originalState);
+        setPreviewImageUrl(originalState.imageUrl);
+      }
+
+      setInitialLoadRef(false); // Reseta a flag para a próxima vez que abrir 'new'
+      return; // Sai do useEffect
+    }
+    
+    // ----------------------------------------------------
+    // LÓGICA DE ABERTURA (New/Edit)
+    // ----------------------------------------------------
+
+    // MODO NEW:
+    // ✅ Prevenção de Perda de Dados em Novo: A lógica if (hasAnimeModal === 'new') usando o !initialLoadRef garante que o formulário só resete na abertura inicial, 
+    // mantendo o estado durante as re-renderizações (como após adicionar uma tag).
+    if (hasAnimeModal === 'new') {
+      // O formulário só deve ser resetado se for a primeira vez que abriu, 
+      // ou se o modo de edição for explicitamente fechado e reaberto
+
+      // Se a referência de carga inicial for falsa, inicialize o formulário
+      if (!initialLoadRef) {
+        const newState = createInitialState(null, 'new');
+        setFormData(newState);
+        setPreviewImageUrl(newState.imageUrl);
+        setInitialLoadRef(true); // Indica que o estado NEW foi carregado
+      }
+
+      // Se for TRUE, o formulário já está em uso, e a atualização global (fetchData)
+      // não causará o reset, pois o useEffect não executa mais esta parte.
+      return;
+    }
+
+    //✅ Reset ao Cancelar Edição: A primeira cláusula if (hasAnimeModal !== 'edit' && hasAnimeModal !== 'new') reseta explicitamente o formData para os valores 
+    // originais (selectedObject) sempre que o modal sai dos modos de edição/criação, resolvendo o problema de persistência.
+    // 2. MODO 'EDIT' e MUDANÇA DE ITEM: O ID do formulário atual (currentFormDataId) é diferente do novo item (newSelectedId).
+    // Ou seja, o usuário clicou em outro anime.
+    if (hasAnimeModal === 'edit' && currentFormDataId !== newSelectedId) {
+      // Se o novo ID for null ou se for um ID diferente, recalcule e resete o estado.
+      const newState = createInitialState(selectedObject, 'edit');
+      setFormData(newState);
+      setPreviewImageUrl(newState.imageUrl);
+      return;
+    }
+
+    // ----------------------------------------------------
+    // PREVENÇÃO DE PERDA DE DADOS:
+    // ----------------------------------------------------
+
+    // Se hasAnimeModal === 'edit' E currentFormDataId === newSelectedId,
+    // (O fetchData rodou e recriou o selectedObject, mas é o mesmo item)
+    // NADA ACONTECE. O estado (formData) com as edições não salvas é mantido.
+    setInitialLoadRef(false);
+
+  }, [selectedObject, hasAnimeModal]); // Dependências
+  // Você pode precisar adicionar formData._id (se existir) na lista de dependências
+  // Mas não o formData inteiro, senão ele vai rodar a cada digitação!
+  //#endregion
+
+  //#region change inputs
+  // Função auxiliar para verificar a URL
+  const checkImageExists = (url) => {
+    return new Promise((resolve) => {
+      // Se a URL estiver vazia, retornamos o placeholder
+      if (!url.trim()) {
+        return resolve('http://localhost:3000/assets/images/placeholder.avif');
+      }
+
+      const img = new Image();
+      img.onload = () => resolve(url); // Se carregar com sucesso, resolve com a URL válida
+      img.onerror = () => resolve('http://localhost:3000/assets/images/placeholder.avif'); // Se falhar, resolve com o placeholder
+      img.src = url;
+    });
+  };
+
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+    if (name === 'score' && value !== '' && isNaN(Number(value)) || Number(value) > 10) return;
+
+    setFormData(prev => ({ ...prev, [name]: value }));
+
+    if (name === 'imageUrl') {
+      // 2. Se for o campo de URL, verificar a URL e atualizar o preview
+      const validUrl = await checkImageExists(value);
+      setPreviewImageUrl(validUrl);
+    }
+  };
+
+  const handleDateChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      date: {
+        ...prev.date,
+        launched: {
+          ...prev.date.launched,
+          [name]: value
+        }
+      }
+    }));
+  };
+
+  const handleAddTag = (newTag) => {
+    const trimmedTag = newTag.trim();
+    if (trimmedTag && !formData.tags.includes(trimmedTag)) {
+      setFormData(prev => ({
+        ...prev,
+        tags: [...prev.tags, trimmedTag].sort((a, b) => a.localeCompare(b))
+      }));
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }));
+  };
+  //#endregion 
 
   //#region Modal de tags
   const openAddEditTag = (callback) => {
@@ -517,6 +719,7 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
   const handleAddNewTag = (newTag) => {
     // 1. Aqui você pode adicionar lógica para salvar a tag no GlobalData (Backend/Contexto) se necessário
     // ... lógica global ...
+    handleCreateTag(newTag);
 
     // 2. Executa o callback do filho (para atualizar o visual do formulário imediatamente)
     if (tagSubmitCallback) {
@@ -527,15 +730,7 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     closeAddEditTag();
   };
   //#endregion
-  
-
-  const handleAddEditAnime = (formData) => {
-    console.log(`${hasAnimeModal == 'edit' ? 'Salvando Edição' : 'Adicionando Novo'} Anime:`, formData);
-    
-    // Salva no banco de dados e abre o modal de animes com o index do novo item
-    // (index) => openAnimeModal(index, 'edit')
-  };
-//#endregion
+  //#endregion
 
   return {
     // Abrir ou fechar o modal de animeModal de anime
@@ -602,6 +797,13 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     openAddEditTag,
     closeAddEditTag,
     handleAddNewTag,
-    handleAddEditAnime,
+
+    // ... estados e funções existentes ...
+    formData,
+    previewImageUrl,
+    handleChange,
+    handleDateChange,
+    handleAddTag,
+    handleRemoveTag,
   };
 }

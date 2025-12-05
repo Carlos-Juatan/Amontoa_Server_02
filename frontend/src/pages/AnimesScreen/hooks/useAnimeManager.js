@@ -4,15 +4,15 @@ import { useState, useMemo } from 'react';
 
 export default function useAnimeManager(dataCollectionName = 'animes', items, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem) {
 
-  //#region --- 1. ESTADOS DE AÇÃO/MODAL ---
+  //#region --- ESTADOS DE AÇÃO/MODAL ---
   const [openActionMenuId, setOpenActionMenuId] = useState(null);
   const [hasAddCollection, setHasAddColletion] = useState(false);
   const [isRenaming, setIsRenaming] = useState(null); // Armazena o nome da coleção a ser renomeada
   const [addItemToNewCollection, setAddItemToNewCollection] = useState(null);
   //#endregion
 
-  //#region --- 2. FUNÇÕES DO MODAL COLEÇÃO ---
-  //#region --- 2 - 1. FUNÇÕES DE ABRIR E FECHAR A MODAL DE ADICIONAR COLEÇÃO ---
+  //#region --- FUNÇÕES DO MODAL COLEÇÃO ---
+  //#region --- FUNÇÕES DE ABRIR E FECHAR A MODAL DE ADICIONAR COLEÇÃO ---
   const openAddColletion = () => setHasAddColletion(true);
   const closeAddColletion = () => {
     setHasAddColletion(false);
@@ -34,7 +34,7 @@ export default function useAnimeManager(dataCollectionName = 'animes', items, gl
   };
   //#endregion
 
-  //#region --- 2 - 2. LÓGICA DE COLEÇÕES ---
+  //#region --- LÓGICA DE COLEÇÕES ---
 
   // Handler para criar ou renomear coleção
   const createCollection = async (newCollectionName) => {
@@ -178,11 +178,93 @@ export default function useAnimeManager(dataCollectionName = 'animes', items, gl
     }
   }
   //#endregion
+  
+  //#region  --- LÓGICA DE COLEÇÕES
+
+  const handleCreateTag = async (newTagName) => {
+    const existingGlobalInfo = globalData?.globalInfo || {};
+    let updatedTags = [...(existingGlobalInfo.tags || [])];
+    
+    if (newTagName && !updatedTags.includes(newTagName)) {
+      updatedTags.push(newTagName);
+      updatedTags.sort((a, b) => a.localeCompare(b));
+      const payload = {
+        globalInfo: {
+          ...existingGlobalInfo,
+          tags: updatedTags
+        }
+      };
+      await handleUpdateItem(globalData._id, payload);
+    }
+  }
+
   //#endregion
 
-  //#region --- 3. FUNÇÃO DOS MODAL DOS ANIMES ---
+  //#region --- FUNÇÃO DOS MODAL DOS ANIMES ---
 
-  //#region --- 3 - 2. FUNÇÕES DOS ANIMES ---
+  //#region --- FUNÇÕES DOS ANIMES ---
+
+  const animeEmptyData = {
+    imageUrl: "http://localhost:3000/assets/images/placeholder.avif",
+    name: {
+      japonese: "",
+      english: ""
+    },
+    seasons: [],
+    movies: [],
+    links: [],
+    description: "",
+    score: null,
+    tags: [],
+    collections: [],
+    date: {
+      launched: {
+        season: "Inverno", // Melhor ter um padrão aqui
+        year: new Date().getFullYear() // Melhor ter um padrão aqui
+      },
+      lastEdit: null
+    },
+    timeWhatched: 0
+  }
+
+  const handleAddEditAnime = async (formData) => {
+    const currentItem = items.find(item => item._id === formData?._id) || animeEmptyData;
+
+    // Geração do timestamp de última edição (pega a data e hora atuais)
+    const formatedTime = new Date().toISOString();
+    // Saída de exemplo: "2025-12-04T13:27:24.123Z"
+
+    // Converte o score para um número. Se for uma string vazia ou inválida, resultará em NaN.
+    const scoreValue = Number(formData?.score);
+    
+    // Começa com todos os dados do item original (preserva seasons, movies, links, etc.)
+    const payload = {
+      ...currentItem,
+
+      // Sobrescreve campos do formulário
+      imageUrl: formData?.imageUrl || animeEmptyData.imageUrl,
+      name: {
+        japonese: formData?.title_jp || "",
+        english: formData?.title_en || ""
+      },
+      description: formData?.sinopse || "",
+      score: isNaN(scoreValue) ? null : scoreValue,
+      tags: formData?.tags || [],
+      date: {
+        launched: formData?.date?.launched || animeEmptyData.date.launched,
+        lastEdit: formatedTime
+      }
+    }
+
+    if (formData?._id != null) {
+      await handleUpdateItem(formData._id, payload);
+    } else {
+      await handleCreateItem(payload);
+    }
+    // Salva no banco de dados e abre o modal de animes com o index do novo item
+    // (index) => openAnimeModal(index, 'edit')
+  };
+
   const handleDeleteAnime = async (item) => {
     // Simplificando o try/catch pelo .then() e .catch()
     await handleDeleteItem(item).catch((e) => { /* Tratar Erro: Opcional */ });
@@ -228,7 +310,11 @@ export default function useAnimeManager(dataCollectionName = 'animes', items, gl
     handleAddCollectionToSingleItem,
     handleRemoveCollectionFromSingleItem,
 
+    // Funções de tags
+    handleCreateTag,
+
     // Funções de Item
+    handleAddEditAnime,
     handleDeleteAnime,
     handleAddToExistingCollection,
   };

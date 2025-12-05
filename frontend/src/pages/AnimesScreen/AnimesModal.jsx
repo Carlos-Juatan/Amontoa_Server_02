@@ -1024,112 +1024,15 @@ function AnimeNewEditModal({
   globalData, // Contém globalData.globalInfo.tags
   openTagModal,
   onSave, // Função para salvar/atualizar os dados do anime
+
+  // NOVAS PROPS RECEBIDAS DO PAI/HOOK:
+  formData,            // Estado atualizado do formulário
+  previewImageUrl,     // Estado atualizado da imagem
+  handleChange,        // Função de manipulação de input
+  handleDateChange,    // Função de manipulação de data
+  handleAddTag,        // Função de adicionar tag
+  handleRemoveTag,     // Função de remover tag
 }) {
-
-  //#region Animes Modal Edit
-  const initialState = {
-    imageUrl: item?.imageUrl || 'http://localhost:3000/assets/images/placeholder.avif', // Padrão
-    title_en: item?.name?.english || '',
-    title_jp: item?.name?.japonese || '',
-    score: item?.score || '',
-    sinopse: item?.description || '',
-    tags: item?.tags || [],
-    date: {
-      launched: {
-        season: item?.date?.launched?.season || 'Inverno', // Padrão
-        year: item?.date?.launched?.year || new Date().getFullYear(), // Padrão
-      }
-    }
-  };
-  const newState = {
-    imageUrl: 'http://localhost:3000/assets/images/placeholder.avif',
-    title_en: '',
-    title_jp: '',
-    score: '',
-    sinopse: '',
-    tags: [],
-    date: {
-      launched: {
-        season: 'Inverno',
-        year: new Date().getFullYear()
-      }
-    }
-  };
-
-  const [formData, setFormData] = useState(initialState);
-  const [previewImageUrl, setPreviewImageUrl] = useState(initialState.imageUrl);
-
-  // Atualiza o estado se o item de edição mudar (útil se o modal for reutilizado)
-  useEffect(() => {
-    if (hasAnimeModal === 'edit' && item) {
-      setFormData(initialState);
-      setPreviewImageUrl(initialState.imageUrl); 
-    } else if (hasAnimeModal === 'new') {
-      setFormData(newState);
-      setPreviewImageUrl('http://localhost:3000/assets/images/placeholder.avif'); 
-    }
-  }, [item, hasAnimeModal]);
-
-  //#region change inputs
-  // Função auxiliar para verificar a URL
-  const checkImageExists = (url) => {
-    return new Promise((resolve) => {
-      // Se a URL estiver vazia, retornamos o placeholder
-      if (!url.trim()) {
-        return resolve('http://localhost:3000/assets/images/placeholder.avif');
-      }
-      
-      const img = new Image();
-      img.onload = () => resolve(url); // Se carregar com sucesso, resolve com a URL válida
-      img.onerror = () => resolve('http://localhost:3000/assets/images/placeholder.avif'); // Se falhar, resolve com o placeholder
-      img.src = url;
-    });
-  };
-
-  const handleChange = async (e) => {
-    const { name, value } = e.target;
-    if (name === 'score' && value !== '' && isNaN(Number(value)) || Number(value) > 10) return;
-
-    setFormData(prev => ({ ...prev, [name]: value }));
-  
-    if (name === 'imageUrl') {
-      // 2. Se for o campo de URL, verificar a URL e atualizar o preview
-      const validUrl = await checkImageExists(value);
-      setPreviewImageUrl(validUrl);
-    }
-  };
-
-  const handleDateChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      date: {
-        ...prev.date,
-        launched: {
-          ...prev.date.launched,
-          [name]: value
-        }
-      }
-    }));
-  };
-
-  const handleAddTag = (newTag) => {
-    const trimmedTag = newTag.trim();
-    if (trimmedTag && !formData.tags.includes(trimmedTag)) {
-      setFormData(prev => ({
-        ...prev,
-        tags: [...prev.tags, trimmedTag].sort((a, b) => a.localeCompare(b))
-      }));
-    }
-  };
-
-  const handleRemoveTag = (tagToRemove) => {
-    setFormData(prev => ({
-      ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
-    }));
-  };
-  //#endregion 
 
   const handleCloseEditModal = (e) => {
     e.preventDefault();

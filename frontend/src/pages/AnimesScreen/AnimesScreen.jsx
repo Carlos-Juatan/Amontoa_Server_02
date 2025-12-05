@@ -69,8 +69,12 @@ function AnimesScreen() {
     handleDeleteCollection,
     handleAddCollectionToSingleItem,
     handleRemoveCollectionFromSingleItem,
+
+    // Funções de tags
+    handleCreateTag,
     
     // Funções de Item
+    handleAddEditAnime,
     handleDeleteAnime,
     handleAddToExistingCollection,
   } = useAnimeManager(collectionName, items, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem);
@@ -140,8 +144,15 @@ function AnimesScreen() {
     openAddEditTag,
     closeAddEditTag,
     handleAddNewTag,
-    handleAddEditAnime,
-   } = useAnimeModalManager( finalSortedItems, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem );
+
+    // ... estados e funções existentes ...
+    formData,
+    previewImageUrl,
+    handleChange,
+    handleDateChange,
+    handleAddTag,
+    handleRemoveTag,
+   } = useAnimeModalManager( finalSortedItems, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem, handleCreateTag );
 
   //Formata as opções de lançamento para o CollapsibleMenu
   const launchOptions = useMemo(() => {
@@ -161,7 +172,6 @@ function AnimesScreen() {
 //#region ... Functions ...
   const handleBackToDashboard = () => navigate('/');
   const handleDisplayStyle = (value) => setDisplayStyle(value);
-
 
   //#region ... Animes ...
   const seasonInfo = (date) => {
@@ -298,6 +308,15 @@ function AnimesScreen() {
         globalData={globalData}
         openTagModal={openAddEditTag}
         onSave={handleAddEditAnime}
+        
+
+        // NOVAS PROPS RECEBIDAS DO PAI/HOOK:
+        formData={formData}            // Estado atualizado do formulário
+        previewImageUrl={previewImageUrl}     // Estado atualizado da imagem
+        handleChange={handleChange}        // Função de manipulação de input
+        handleDateChange={handleDateChange}    // Função de manipulação de data
+        handleAddTag={handleAddTag}        // Função de adicionar tag
+        handleRemoveTag={handleRemoveTag}     // Função de remover tag
       />
 
       {hasAddCollection && (
