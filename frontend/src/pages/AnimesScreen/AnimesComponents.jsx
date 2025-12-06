@@ -1,5 +1,5 @@
 // src/pages/AnimesScreen/AnimesComponents.jsx
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 import { sortOptions } from './utils/sortFilterUtils';
 
@@ -98,7 +98,7 @@ function AnimeOrganizationControls({ displaySort, handleSortSelect, displayStyle
   );
 }
 
-function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo, globalCollections, openActionMenuId, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onRemoveCollection, onAddNewCollection, handleItemClick }) {
+function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo, globalCollections, openActionMenu, setOpenActionMenu, onEditAnime, onDeleteAnime, onAddToExistingCollection, onRemoveCollection, onAddNewCollection, handleItemClick }) {
 
   // Mensagem de Feedback
   if (finalSortedItems.length === 0 && !loading) return <p>Nenhum item corresponde à sua busca.</p>;
@@ -118,9 +118,9 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo,
               japoneseTitle={item.name?.japonese || "N/A"}
               englishTitle={item.name?.english || "N/A"}
               collections={globalCollections}
-              isMenuOpen={openActionMenuId === item._id}
-              setOpenActionMenuId={setOpenActionMenuId}
-              onEditAnime={onEditAnime}
+              isMenuOpen={openActionMenu && openActionMenu.id === item._id ? openActionMenu : null}
+              setOpenActionMenu={setOpenActionMenu}
+              onEditAnime={() => onEditAnime(index)}
               onDeleteAnime={onDeleteAnime}
               onAddToExistingCollection={onAddToExistingCollection}
               onRemoveCollection={onRemoveCollection}
@@ -158,9 +158,9 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo,
               score={item.score || "-"}
               launcheData={seasonInfo(item.date?.launched)}
               collections={globalCollections}
-              isMenuOpen={openActionMenuId === item._id}
-              setOpenActionMenuId={setOpenActionMenuId}
-              onEditAnime={onEditAnime}
+              isMenuOpen={openActionMenu && openActionMenu.id === item._id ? openActionMenu : null} 
+              setOpenActionMenu={setOpenActionMenu}
+              onEditAnime={() => onEditAnime(index)}
               onDeleteAnime={onDeleteAnime}
               onAddToExistingCollection={onAddToExistingCollection}
               onRemoveCollection={onRemoveCollection}
@@ -173,12 +173,35 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo,
   );
 }
 
-function AnimesItemGrid({ id, itemColections, onItemClick, imageUrl, japoneseTitle, englishTitle, collections, isMenuOpen, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onRemoveCollection, onAddNewCollection }) {
+function AnimesItemGrid({ id, itemColections, onItemClick, imageUrl, japoneseTitle, englishTitle, collections, isMenuOpen, setOpenActionMenu, onEditAnime, onDeleteAnime, onAddToExistingCollection, onRemoveCollection, onAddNewCollection }) {
 
-  // CHAVE: Previne o clique normal no item para abrir o menu
+  const menuRef = useRef(null); // Ref para o ícone de reticências
+
+  // Função para abrir/fechar o menu e calcular a direção
   const handleMenuToggle = (e) => {
-    e.stopPropagation(); // Impede que o clique suba para o item (abertura do MediaSourceHandle)
-    setOpenActionMenuId(isMenuOpen ? null : id);
+    e.stopPropagation(); 
+    
+    if (isMenuOpen) {
+      setOpenActionMenu(null); // Fechar
+      return;
+    }
+
+    // --- LÓGICA DE CÁLCULO DE POSIÇÃO ---
+    if (menuRef.current) {
+      const rect = menuRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const estimatedMenuHeight = 350; // Estimar a altura máxima do menu (4-5 itens * 40px)
+      
+      let direction = 'down';
+
+      // Se a parte inferior do botão + a altura estimada do menu > a altura da janela
+      if (rect.bottom + estimatedMenuHeight > viewportHeight) {
+        direction = 'up';
+      }
+      
+      // Abre o menu, passando a direção
+      setOpenActionMenu({ id: id, direction: direction }); 
+    }
   };
 
   return (
@@ -196,7 +219,8 @@ function AnimesItemGrid({ id, itemColections, onItemClick, imageUrl, japoneseTit
         <div className='right'>
           <i
             className="fa-solid fa-ellipsis"
-            onClick={handleMenuToggle} // NOVO: Clique para abrir/fechar o menu
+            ref={menuRef}
+            onClick={handleMenuToggle}
           />
         
           {isMenuOpen && (
@@ -209,7 +233,8 @@ function AnimesItemGrid({ id, itemColections, onItemClick, imageUrl, japoneseTit
               onRemoveCollection={onRemoveCollection}
               onAddToCollection={onAddToExistingCollection}
               onAddNewCollection={onAddNewCollection}
-              onClose={() => setOpenActionMenuId(null)}
+              direction={isMenuOpen.direction}
+              onClose={() => setOpenActionMenu(null)}
             />
           )}
         </div>
@@ -218,13 +243,36 @@ function AnimesItemGrid({ id, itemColections, onItemClick, imageUrl, japoneseTit
   );
 }
 
-function AnimesItemList({ id, itemColections, onItemClick, imageUrl, japoneseTitle, englishTitle, seasons, timeWhatched, score, launcheData, collections, isMenuOpen, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onRemoveCollection, onAddNewCollection }) {
+function AnimesItemList({ id, itemColections, onItemClick, imageUrl, japoneseTitle, englishTitle, seasons, timeWhatched, score, launcheData, collections, isMenuOpen, setOpenActionMenu, onEditAnime, onDeleteAnime, onAddToExistingCollection, onRemoveCollection, onAddNewCollection }) {
 
+  const menuRef = useRef(null); // Ref para o ícone de reticências
+
+  // Função para abrir/fechar o menu e calcular a direção
   const handleMenuToggle = (e) => {
-    e.stopPropagation();
-    setOpenActionMenuId(isMenuOpen ? null : id);
-  };
+    e.stopPropagation(); 
+    
+    if (isMenuOpen) {
+      setOpenActionMenu(null); // Fechar
+      return;
+    }
+    
+    // --- LÓGICA DE CÁLCULO DE POSIÇÃO ---
+    if (menuRef.current) {
+      const rect = menuRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const estimatedMenuHeight = 350; // Estimar a altura máxima do menu (4-5 itens * 40px)
+      
+      let direction = 'down';
 
+      // Se a parte inferior do botão + a altura estimada do menu > a altura da janela
+      if (rect.bottom + estimatedMenuHeight > viewportHeight) {
+        direction = 'up';
+      }
+      
+      // Abre o menu, passando a direção
+      setOpenActionMenu({ id: id, direction: direction }); 
+    }
+  };
   return (
     <div className='animes-item-list-content' onClick={onItemClick}>
       <div className='animes-item-list-title'>
@@ -244,6 +292,7 @@ function AnimesItemList({ id, itemColections, onItemClick, imageUrl, japoneseTit
       <div className="animes-item-list-item animes-item-list-options">
         <i
           className="fa-solid fa-ellipsis"
+          ref={menuRef}
           onClick={handleMenuToggle} // NOVO: Clique para abrir/fechar o menu
         />
       
@@ -257,7 +306,8 @@ function AnimesItemList({ id, itemColections, onItemClick, imageUrl, japoneseTit
             onRemoveCollection={onRemoveCollection}
             onAddToCollection={onAddToExistingCollection}
             onAddNewCollection={onAddNewCollection}
-            onClose={() => setOpenActionMenuId(null)}
+            direction={isMenuOpen.direction}
+            onClose={() => setOpenActionMenu(null)}
           />
         )}
       </div>

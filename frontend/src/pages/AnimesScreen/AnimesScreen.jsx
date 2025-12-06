@@ -55,8 +55,8 @@ function AnimesScreen() {
   // Lógica de Gerenciamento de Animes e Coleções
   const { 
     // Estados de UI
-    openActionMenuId, 
-    setOpenActionMenuId,
+    openActionMenu, 
+    setOpenActionMenu,
     hasAddCollection, 
     isRenaming, 
     
@@ -227,8 +227,8 @@ function AnimesScreen() {
                 loading={loading}
                 seasonInfo={seasonInfo}
                 globalCollections={globalData?.globalInfo?.collections || []}
-                openActionMenuId={openActionMenuId}
-                setOpenActionMenuId={setOpenActionMenuId}
+                openActionMenu={openActionMenu}
+                setOpenActionMenu={setOpenActionMenu}
                 onEditAnime={(index) => openAnimeModal(index, 'edit')}
                 onDeleteAnime={handleDeleteAnime}
                 onAddToExistingCollection={handleAddToExistingCollection}

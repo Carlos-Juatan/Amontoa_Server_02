@@ -1,0 +1,31 @@
+/* src/components/Common/ActionDropdownContainer/ActionDropdownContainer.css */
+
+.floating-container {
+  position: absolute;
+  z-index: 2000;
+  /* Adicionar estilos básicos do menu aqui, se eles não estiverem no custom-options */
+  /* Exemplo: */
+  background-color: var(--card-background, #333);
+  border: 1px solid var(--border-color, #555);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px var(--background-dark);
+}
+
+/* ------------------------------------------- */
+/* 1. Direção Padrão (para baixo) */
+/* ------------------------------------------- */
+.floating-container.direction-down {
+  top: 10%;
+  right: 10%;
+  transform: translateY(5px);
+}
+
+/* ------------------------------------------- */
+/* 2. Direção para CIMA (quando não há espaço embaixo) */
+/* ------------------------------------------- */
+.floating-container.direction-up {
+  /* Alinha a parte inferior do menu com a parte superior do botão (bottom: 0 do menu = top: 0 do pai) */
+  bottom: 400%;
+  right: 10%;
+  transform: translateY(-5px);
+}

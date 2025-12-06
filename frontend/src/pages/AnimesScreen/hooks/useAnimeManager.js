@@ -5,7 +5,8 @@ import { useState, useMemo } from 'react';
 export default function useAnimeManager(dataCollectionName = 'animes', items, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem, handleCollectionFilter ) {
 
   //#region --- ESTADOS DE AÇÃO/MODAL ---
-  const [openActionMenuId, setOpenActionMenuId] = useState(null);
+  // Ex: { id: string, direction: 'up' | 'down' }
+  const [openActionMenu, setOpenActionMenu] = useState(null);
   const [hasAddCollection, setHasAddColletion] = useState(false);
   const [isRenaming, setIsRenaming] = useState(null); // Armazena o nome da coleção a ser renomeada
   const [addItemToNewCollection, setAddItemToNewCollection] = useState(null);
@@ -30,7 +31,7 @@ export default function useAnimeManager(dataCollectionName = 'animes', items, gl
   const handleAddNewCollection = (itemId) => {
     setAddItemToNewCollection(itemId); // Salva o ID do anime para adicionar após a criação da coleção
     setHasAddColletion(true);
-    setOpenActionMenuId(null);
+    setOpenActionMenu(null);
   };
   //#endregion
 
@@ -334,12 +335,12 @@ export default function useAnimeManager(dataCollectionName = 'animes', items, gl
   const handleDeleteAnime = async (item) => {
     // Simplificando o try/catch pelo .then() e .catch()
     await handleDeleteItem(item).catch((e) => { /* Tratar Erro: Opcional */ });
-    setOpenActionMenuId(null);
+    setOpenActionMenu(null);
   };
   /* // Forma alternativa de Escrever a mesma função 'handleDeleteAnime'
   const handleDeleteAnime = async (item) => {
     try { await handleDeleteItem(item); } catch (e) { }
-    setOpenActionMenuId(null);
+    setOpenActionMenu(null);
   };
   */
 
@@ -351,7 +352,7 @@ const handleAddToExistingCollection = async (itemId, collectionName) => {
 
     // 1. Verifica se a coleção já existe antes de fazer qualquer coisa
     if (newCollections.includes(collectionName)) {
-      setOpenActionMenuId(null);
+      setOpenActionMenu(null);
       return; // Não faz a atualização se a coleção já estiver lá
     }
 
@@ -376,14 +377,14 @@ const handleAddToExistingCollection = async (itemId, collectionName) => {
     // Chama a função de atualização
     await handleUpdateItem(itemId, updatePayload);
   }
-  setOpenActionMenuId(null);
+  setOpenActionMenu(null);
 };
   //#endregion
 
   return {
     // Estados de UI
-    openActionMenuId,
-    setOpenActionMenuId,
+    openActionMenu,
+    setOpenActionMenu,
     hasAddCollection,
     isRenaming,
 

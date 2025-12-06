@@ -4,7 +4,7 @@ import ActionDropdownContainer from '../../components/Common/ActionDropdownConta
 import '../../components/Common/CustomDropdown/CustomDropdown.css'; // Reutilizando os estilos
 
 
-function AnimeActionsMenu({ itemId, itemColections, collections, onEdit, onDelete, onAddToCollection, onRemoveCollection, onAddNewCollection, onClose }) {
+function AnimeActionsMenu({ itemId, itemColections, collections, onEdit, onDelete, onAddToCollection, onRemoveCollection, onAddNewCollection, direction, onClose }) {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
 
   const isAlreadyAddOnColection = (col) => {
@@ -18,12 +18,12 @@ function AnimeActionsMenu({ itemId, itemColections, collections, onEdit, onDelet
   }
 
   return (
-    <ActionDropdownContainer onClose={onClose} className="custom-select-wrapper">
+    <ActionDropdownContainer onClose={onClose} direction = {direction}>
       <ul className="custom-options" role="menu">
         {/* 1. Editar */}
         <li
           className="custom-option"
-          onClick={(e) => { e.stopPropagation(); onEdit(itemId); onClose(); }}
+          onClick={(e) => { e.stopPropagation(); onEdit(); onClose(); }}
           role="menuitem"
         >
           Editar
