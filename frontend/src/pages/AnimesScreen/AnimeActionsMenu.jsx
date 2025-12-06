@@ -4,8 +4,12 @@ import ActionDropdownContainer from '../../components/Common/ActionDropdownConta
 import '../../components/Common/CustomDropdown/CustomDropdown.css'; // Reutilizando os estilos
 
 
-function AnimeActionsMenu({ itemId, collections, onEdit, onDelete, onAddToCollection, onAddNewCollection, onClose }) {
+function AnimeActionsMenu({ itemId, itemColections, collections, onEdit, onDelete, onAddToCollection, onRemoveCollection, onAddNewCollection, onClose }) {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
+
+  const isAlreadyAddOnColection = (col) => {
+    return itemColections.includes(col);
+  }
 
   // Função para fechar o sub-menu ao selecionar uma coleção ou adicionar uma nova
   const handleCloseSubMenu = () => {
@@ -28,10 +32,10 @@ function AnimeActionsMenu({ itemId, collections, onEdit, onDelete, onAddToCollec
         {/* 2. Adicionar aos Favoritos */}
         <li
           className="custom-option"
-          onClick={(e) => { e.stopPropagation(); onAddToCollection(itemId, 'Favoritos'); onClose(); }}
+          onClick={(e) => { e.stopPropagation(); isAlreadyAddOnColection('Favoritos') ? onRemoveCollection(itemId, 'Favoritos') : onAddToCollection(itemId, 'Favoritos'); onClose(); }}
           role="menuitem"
         >
-          Adicionar aos Favoritos
+          {isAlreadyAddOnColection('Favoritos') ? "Remover dos Favoritos" : "Adicionar aos Favoritos"}
         </li>
 
         {/* 3. Adicionar à Coleção (Com Sub-Menu) */}
@@ -49,6 +53,8 @@ function AnimeActionsMenu({ itemId, collections, onEdit, onDelete, onAddToCollec
             <CollectionSubMenu
               collections={collections}
               onAddToCollection={(col) => onAddToCollection(itemId, col)}
+              isAlreadyAddOnColection={isAlreadyAddOnColection}
+              onRemoveCollection={(col) => onRemoveCollection(itemId, col)}
               onAddNewCollection={() => onAddNewCollection(itemId)}
               onClose={handleCloseSubMenu}
             />
@@ -69,7 +75,7 @@ function AnimeActionsMenu({ itemId, collections, onEdit, onDelete, onAddToCollec
 }
 
 // Sub-componente (necessário para o menu de coleções)
-function CollectionSubMenu({ collections, onAddToCollection, onAddNewCollection, onClose }) {
+function CollectionSubMenu({ collections, onAddToCollection, isAlreadyAddOnColection, onRemoveCollection, onAddNewCollection, onClose }) {
   return (
     <ul 
       className="custom-options"
@@ -85,9 +91,9 @@ function CollectionSubMenu({ collections, onAddToCollection, onAddNewCollection,
         <li
           key={col}
           className="custom-option"
-          onClick={(e) => { e.stopPropagation(); onAddToCollection(col); onClose(); }}
+          onClick={(e) => { e.stopPropagation(); isAlreadyAddOnColection(col) ? onRemoveCollection(col) : onAddToCollection(col); onClose(); }}
         >
-          {col}
+          {isAlreadyAddOnColection(col) ? "Remover de " : "Adicionar à "}{col}
         </li>
       ))}
       <li

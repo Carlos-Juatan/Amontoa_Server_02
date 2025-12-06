@@ -98,7 +98,7 @@ function AnimeOrganizationControls({ displaySort, handleSortSelect, displayStyle
   );
 }
 
-function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo, globalCollections, openActionMenuId, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onAddNewCollection, handleItemClick }) {
+function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo, globalCollections, openActionMenuId, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onRemoveCollection, onAddNewCollection, handleItemClick }) {
 
   // Mensagem de Feedback
   if (finalSortedItems.length === 0 && !loading) return <p>Nenhum item corresponde à sua busca.</p>;
@@ -112,6 +112,7 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo,
           <li className='animes-item-grid' key={item._id}>
             <AnimesItemGrid
               id={item._id}
+              itemColections={item.collections}
               onItemClick={() => handleItemClick(index)}
               imageUrl={item.imageUrl || "N/A"}
               japoneseTitle={item.name?.japonese || "N/A"}
@@ -122,6 +123,7 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo,
               onEditAnime={onEditAnime}
               onDeleteAnime={onDeleteAnime}
               onAddToExistingCollection={onAddToExistingCollection}
+              onRemoveCollection={onRemoveCollection}
               onAddNewCollection={onAddNewCollection}
             />
           </li>
@@ -146,6 +148,7 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo,
           <li className='animes-item-list' key={item._id}>
             <AnimesItemList
               id={item._id}
+              itemColections={item.collections}
               onItemClick={() => handleItemClick(index)}
               imageUrl={item.imageUrl || "N/A"}
               japoneseTitle={item.name?.japonese || "N/A"}
@@ -160,6 +163,7 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo,
               onEditAnime={onEditAnime}
               onDeleteAnime={onDeleteAnime}
               onAddToExistingCollection={onAddToExistingCollection}
+              onRemoveCollection={onRemoveCollection}
               onAddNewCollection={onAddNewCollection}
             />
           </li>
@@ -169,7 +173,7 @@ function AnimeDisplayList({ displayStyle, finalSortedItems, loading, seasonInfo,
   );
 }
 
-function AnimesItemGrid({ id, onItemClick, imageUrl, japoneseTitle, englishTitle, collections, isMenuOpen, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onAddNewCollection }) {
+function AnimesItemGrid({ id, itemColections, onItemClick, imageUrl, japoneseTitle, englishTitle, collections, isMenuOpen, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onRemoveCollection, onAddNewCollection }) {
 
   // CHAVE: Previne o clique normal no item para abrir o menu
   const handleMenuToggle = (e) => {
@@ -198,9 +202,11 @@ function AnimesItemGrid({ id, onItemClick, imageUrl, japoneseTitle, englishTitle
           {isMenuOpen && (
             <AnimeActionsMenu
               itemId={id}
+              itemColections={itemColections}
               collections={collections}
               onEdit={onEditAnime}
               onDelete={onDeleteAnime}
+              onRemoveCollection={onRemoveCollection}
               onAddToCollection={onAddToExistingCollection}
               onAddNewCollection={onAddNewCollection}
               onClose={() => setOpenActionMenuId(null)}
@@ -212,7 +218,7 @@ function AnimesItemGrid({ id, onItemClick, imageUrl, japoneseTitle, englishTitle
   );
 }
 
-function AnimesItemList({ id, onItemClick, imageUrl, japoneseTitle, englishTitle, seasons, timeWhatched, score, launcheData, collections, isMenuOpen, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onAddNewCollection }) {
+function AnimesItemList({ id, itemColections, onItemClick, imageUrl, japoneseTitle, englishTitle, seasons, timeWhatched, score, launcheData, collections, isMenuOpen, setOpenActionMenuId, onEditAnime, onDeleteAnime, onAddToExistingCollection, onRemoveCollection, onAddNewCollection }) {
 
   const handleMenuToggle = (e) => {
     e.stopPropagation();
@@ -244,9 +250,11 @@ function AnimesItemList({ id, onItemClick, imageUrl, japoneseTitle, englishTitle
         {isMenuOpen && (
           <AnimeActionsMenu
             itemId={id}
+            itemColections={itemColections}
             collections={collections}
             onEdit={onEditAnime}
             onDelete={onDeleteAnime}
+            onRemoveCollection={onRemoveCollection}
             onAddToCollection={onAddToExistingCollection}
             onAddNewCollection={onAddNewCollection}
             onClose={() => setOpenActionMenuId(null)}

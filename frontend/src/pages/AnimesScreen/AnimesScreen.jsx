@@ -67,6 +67,7 @@ function AnimesScreen() {
     handleAddNewCollection,
     createCollection,
     handleDeleteCollection,
+    handleAddToExistingCollection,
     handleAddCollectionToSingleItem,
     handleRemoveCollectionFromSingleItem,
 
@@ -76,8 +77,7 @@ function AnimesScreen() {
     // Funções de Item
     handleAddEditAnime,
     handleDeleteAnime,
-    handleAddToExistingCollection,
-  } = useAnimeManager(collectionName, items, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem);
+  } = useAnimeManager(collectionName, items, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem, handleCollectionFilter);
 
   // Lógica para o modal de detalhes de animes
   const { 
@@ -232,6 +232,7 @@ function AnimesScreen() {
                 onEditAnime={(index) => openAnimeModal(index, 'edit')}
                 onDeleteAnime={handleDeleteAnime}
                 onAddToExistingCollection={handleAddToExistingCollection}
+                onRemoveCollection={handleRemoveCollectionFromSingleItem}
                 onAddNewCollection={handleAddNewCollection}
                 handleItemClick={(index) => openAnimeModal(index, 'details')}
               />

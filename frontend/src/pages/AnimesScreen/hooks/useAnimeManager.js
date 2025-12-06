@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 
-export default function useAnimeManager(dataCollectionName = 'animes', items, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem) {
+export default function useAnimeManager(dataCollectionName = 'animes', items, globalData, handleCreateItem, handleUpdateItem, handleDeleteItem, handleCollectionFilter ) {
 
   //#region --- ESTADOS DE AÇÃO/MODAL ---
   const [openActionMenuId, setOpenActionMenuId] = useState(null);
@@ -46,6 +46,8 @@ export default function useAnimeManager(dataCollectionName = 'animes', items, gl
       const index = updatedCollections.indexOf(isRenaming);
       if (index !== -1) {
         updatedCollections[index] = newCollectionName; // Substitui o nome antigo
+        handleRenameAllItensColection(newCollectionName);
+        handleCollectionFilter(newCollectionName);
       }
     } else {
       // Lógica de Criar Novo
@@ -70,6 +72,47 @@ export default function useAnimeManager(dataCollectionName = 'animes', items, gl
 
     await handleAddToExistingCollection(addItemToNewCollection, newCollectionName);
     setAddItemToNewCollection(null);
+  };
+
+  const handleRenameAllItensColection = async (newColName) => {
+
+    // 1. Filtrar os itens que contêm a coleção a ser deletada
+    const listToRenameCollection = items.filter(e => {
+      return Array.isArray(e.collections) && e.collections.includes(isRenaming);
+    })
+
+    // Se não houver itens para atualizar, encerra a função
+    if (listToRenameCollection.length === 0) return;
+
+    // 2. Preparar os payloads de atualização para cada item
+    const updatePromises = listToRenameCollection.map(item => {
+      // Cria um novo array de coleções, excluindo a coleção a ser renomeada
+      const newCollections = item.collections.filter(
+        (collection) => collection !== isRenaming
+      );
+
+      // Adiciona a coleção renomeada
+      newCollections.push(newColName);
+
+      // Cria o payload de atualização
+      const payload = {
+        ...item, // Mantém todos os outros dados do item
+        collections: newCollections // Sobrescreve o campo 'collections'
+      };
+
+      // Retorna a Promise da função de atualização do item
+      // Assumimos que 'handleUpdateItem' pode lidar com um ID de item e o payload completo/parcial
+      return handleUpdateItem(item._id, payload);
+    });
+
+    // 3. Executar todas as atualizações simultaneamente
+    try {
+      await Promise.all(updatePromises);
+      console.log(`Coleção '${collectionToDelete}' removida de ${updatePromises.length} itens com sucesso.`);
+    } catch (error) {
+      console.error("Erro ao remover a coleção dos itens:", error);
+      // Você pode adicionar um tratamento de erro mais sofisticado aqui
+    }
   };
 
   // Função que irá deletar a coleção do banco de dados
@@ -152,8 +195,15 @@ export default function useAnimeManager(dataCollectionName = 'animes', items, gl
         // Adicionar a nova coleção e reorganizar as coleções em ordem alfabética
         updatedCollections.push(colectionToAdd); 
         updatedCollections.sort((a, b) => a.localeCompare(b));
+        
+        const formatedTime = new Date().toISOString();
+        const updatedDate = {
+          ...(itemToUpdate.date),
+          lastEdit: formatedTime
+        };
+
         // Chama a função de atualização
-        await handleUpdateItem(itemId, { collections: updatedCollections }); 
+        await handleUpdateItem(itemId, { collections: updatedCollections, date: updatedDate }); 
       }
     }
   }
@@ -162,7 +212,7 @@ export default function useAnimeManager(dataCollectionName = 'animes', items, gl
     const itemToUpdate = items.find(item => item._id === itemId);
 
     if (itemToUpdate) {
-      // Garante que a lista de coleções é um array, senão usa um vazio
+      // 1. Lógica de remoção da coleção
       const currentCollections = itemToUpdate.collections || [];
       const initialLength = currentCollections.length;
 
@@ -171,9 +221,25 @@ export default function useAnimeManager(dataCollectionName = 'animes', items, gl
         (collection) => collection !== colectionToRemove
       );
 
-      // Só atualiza se a coleção foi realmente removida (o tamanho do array mudou)
+      // 2. Só atualiza se a coleção foi realmente removida
       if (updatedCollections.length < initialLength) {
-        await handleUpdateItem(itemId, { collections: updatedCollections });
+
+        // 3. Cria o objeto de data atualizada
+        const formatedTime = new Date().toISOString();
+
+        // Preserva as propriedades de 'date' e sobrescreve 'lastEdit'
+        const updatedDate = {
+          // Copia o objeto 'date' existente (inclui 'launched', etc.)
+          ...(itemToUpdate.date),
+          // Sobrescreve 'lastEdit'
+          lastEdit: formatedTime
+        };
+
+        // 4. Envia o payload de atualização
+        await handleUpdateItem(itemId, {
+          collections: updatedCollections,
+          date: updatedDate
+        });
       }
     }
   }
@@ -277,20 +343,41 @@ export default function useAnimeManager(dataCollectionName = 'animes', items, gl
   };
   */
 
-  const handleAddToExistingCollection = async (itemId, collectionName) => {
-    const itemToUpdate = items.find(item => item._id === itemId);
+const handleAddToExistingCollection = async (itemId, collectionName) => {
+  const itemToUpdate = items.find(item => item._id === itemId);
 
-    if (itemToUpdate) {
-      const newCollections = [...(itemToUpdate.collections || [])];
-      if (!newCollections.includes(collectionName)) {
-        newCollections.push(collectionName);
-      }
+  if (itemToUpdate) {
+    const newCollections = [...(itemToUpdate.collections || [])];
 
-      // Chama a função de atualização (collectionName é 'animes' do hook)
-      await handleUpdateItem(itemId, { collections: newCollections });
+    // 1. Verifica se a coleção já existe antes de fazer qualquer coisa
+    if (newCollections.includes(collectionName)) {
+      setOpenActionMenuId(null);
+      return; // Não faz a atualização se a coleção já estiver lá
     }
-    setOpenActionMenuId(null);
-  };
+
+    // 2. Adiciona a nova coleção
+    newCollections.push(collectionName);
+
+    // 3. Cria o novo objeto 'date'
+    const formatedTime = new Date().toISOString();
+
+    // COPIA o objeto 'date' existente e SOBRESCEVE 'lastEdit'
+    const updatedDate = {
+      ...(itemToUpdate.date),
+      lastEdit: formatedTime
+    };
+
+    // 4. Cria o payload apenas com as propriedades a serem atualizadas
+    const updatePayload = {
+      collections: newCollections,
+      date: updatedDate
+    };
+
+    // Chama a função de atualização
+    await handleUpdateItem(itemId, updatePayload);
+  }
+  setOpenActionMenuId(null);
+};
   //#endregion
 
   return {

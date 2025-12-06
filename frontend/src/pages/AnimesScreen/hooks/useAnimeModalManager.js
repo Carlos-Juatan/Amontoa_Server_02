@@ -77,8 +77,14 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
       return movie;
     });
 
+    const formatedTime = new Date().toISOString();
+    const updatedDate = {
+      ...(currentItem.date),
+      lastEdit: formatedTime
+    };
+
     // Chama a função de atualização com o novo array completo
-    await handleUpdateItem(itemId, { movies: updatedMovies });
+    await handleUpdateItem(itemId, { movies: updatedMovies, date: updatedDate });
   }
 
   const openAddEditMovie = async (itemId = '', movieTitle = '', checkmarckValue = false) => {
@@ -138,7 +144,13 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
     // 3. Ordena e Atualiza:
     finalMovies.sort((a, b) => a.title.localeCompare(b.title));
 
-    await handleUpdateItem(updatedItemId, { movies: finalMovies });
+    const formatedTime = new Date().toISOString();
+    const updatedDate = {
+      ...(currentItem.date),
+      lastEdit: formatedTime
+    };
+
+    await handleUpdateItem(updatedItemId, { movies: finalMovies, date: updatedDate });
     closeAddEditMovie(); // Fecha o modal após a atualização bem-sucedida
   };
 
@@ -154,7 +166,14 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
 
     // 2. Chama a função de atualização com o novo array, se o filme foi removido
     if (updatedMovies.length < currentItem.movies.length) {
-      await handleUpdateItem(itemId, { movies: updatedMovies });
+      
+        const formatedTime = new Date().toISOString();
+        const updatedDate = {
+          ...(currentItem.date),
+          lastEdit: formatedTime
+        };
+
+      await handleUpdateItem(itemId, { movies: updatedMovies, date: updatedDate });
     }
   }
 
@@ -167,8 +186,15 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
       const calcValue = currentCount + value;
       const updatedCount = calcValue >= 0 ? calcValue : 0;
       // Chama a função de atualização
-      if (updatedCount != currentCount)
-        await handleUpdateItem(itemId, { timeWhatched: updatedCount });
+      if (updatedCount != currentCount) {
+        const formatedTime = new Date().toISOString();
+        const updatedDate = {
+          ...(itemToUpdate.date),
+          lastEdit: formatedTime
+        };
+        
+        await handleUpdateItem(itemId, { timeWhatched: updatedCount, date: updatedDate });
+      }
     }
   }
 
@@ -251,8 +277,14 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
       updatedSeasons.push(newSeasonData);
     }
 
+    const formatedTime = new Date().toISOString();
+    const updatedDate = {
+      ...(currentItem.date),
+      lastEdit: formatedTime
+    };
+
     // Atualiza o item no banco de dados
-    await handleUpdateItem(updatedItemId, { seasons: updatedSeasons });
+    await handleUpdateItem(updatedItemId, { seasons: updatedSeasons, date: updatedDate });
   }
 
   const onDeleteSeason = async (itemId = '', seasonIndex = null) => {
@@ -272,8 +304,15 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
 
     // 4. Confirma se a remoção realmente ocorreu (se o novo array é menor).
     if (updatedSeasons.length < currentItem.seasons.length) {
+
+      const formatedTime = new Date().toISOString();
+      const updatedDate = {
+        ...(currentItem.date),
+        lastEdit: formatedTime
+      };
+      
       // 5. Atualiza o item no banco de dados com a nova lista de temporadas.
-      await handleUpdateItem(itemId, { seasons: updatedSeasons });
+      await handleUpdateItem(itemId, { seasons: updatedSeasons, date: updatedDate });
     }
   }
 
@@ -351,8 +390,14 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
       };
     });
 
+    const formatedTime = new Date().toISOString();
+    const updatedDate = {
+      ...(currentItem.date),
+      lastEdit: formatedTime
+    };
+
     // 2. Atualiza o item principal com o NOVO array de temporadas.
-    await handleUpdateItem(updatedItemId, { seasons: updatedSeasons });
+    await handleUpdateItem(updatedItemId, { seasons: updatedSeasons, date: updatedDate });
   };
 
   const onDeleteEpisode = async (itemId = '', seasonIndex = null, episodeIndex = null) => {
@@ -379,8 +424,14 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
       };
     });
 
+    const formatedTime = new Date().toISOString();
+    const updatedDate = {
+      ...(currentItem.date),
+      lastEdit: formatedTime
+    };
+
     // 4. Atualiza o item principal.
-    if (hasEdited) await handleUpdateItem(itemId, { seasons: updatedSeasons });
+    if (hasEdited) await handleUpdateItem(itemId, { seasons: updatedSeasons, date: updatedDate });
   }
 
   const toggleEpisodeWatchStatus = async (itemId, seasonIndex, episodeIndex) => {
@@ -418,8 +469,14 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
       };
     });
 
+    const formatedTime = new Date().toISOString();
+    const updatedDate = {
+      ...(currentItem.date),
+      lastEdit: formatedTime
+    };
+
     // 3. Chama a função de atualização com o novo array completo de temporadas.
-    await handleUpdateItem(itemId, { seasons: updatedSeasons });
+    await handleUpdateItem(itemId, { seasons: updatedSeasons, date: updatedDate });
   }
 
   // --- FUNÇÕES DE MANIPULAÇÃO DE LINKS ---
@@ -477,7 +534,13 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
 
     finalLinks.sort((a, b) => a.title.localeCompare(b.title));
 
-    await handleUpdateItem(updatedItemId, { links: finalLinks });
+    const formatedTime = new Date().toISOString();
+    const updatedDate = {
+      ...(currentItem.date),
+      lastEdit: formatedTime
+    };
+
+    await handleUpdateItem(updatedItemId, { links: finalLinks, date: updatedDate });
   };
 
   const onDeleteLink = async (itemId, linkToDelete) => {
@@ -489,8 +552,14 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
       return link.title !== linkToDelete;
     });
 
+    const formatedTime = new Date().toISOString();
+    const updatedDate = {
+      ...(currentItem.date),
+      lastEdit: formatedTime
+    };
+
     if (updatedLinks.length < currentItem.links.length) {
-      await handleUpdateItem(itemId, { links: updatedLinks });
+      await handleUpdateItem(itemId, { links: updatedLinks, date: updatedDate });
     }
   };
   //#endregion
