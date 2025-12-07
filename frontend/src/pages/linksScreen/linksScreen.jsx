@@ -18,7 +18,9 @@ function LinksScreen() {
   const collectionName = 'links-work';
   const navigate = useNavigate(); // to navegate between pages
   const { data, fetchData, updateRecord, isMutating, mutationError, handleCreateItem, handleUpdateItem, handleDeleteItem } = useDataCRUD(collectionName); // to get data from mongoDB
-  const { searchTerm, setSearchTerm, filteredItems, handleSearchChange } = useSearchFilter(data, '', ['title', 'description', 'group']); // to filter the 'data'
+  const globalData = data?.length > 0 ? data[0] : null;
+  const items = data?.length > 1 ? data.slice(1) : [];
+  const { searchTerm, setSearchTerm, filteredItems, handleSearchChange } = useSearchFilter(items, '', ['title', 'description', 'group']); // to filter the 'data'
   //#endregion
 
   //#region ... Hooks ...
@@ -197,7 +199,7 @@ function LinksScreen() {
           <div className='links-container-header-tabs'>
             {groupsList.map((groupName) => (
               <span
-                key={groupName}
+                key={`group-header-${groupName}`}
                 className={groupName === selectedGroup ? 'selected' : 'unselected'}
                 onClick={() => handleGroupSelection(groupName)}
               >
@@ -253,6 +255,7 @@ function LinksScreen() {
           isOpen={isAddItemModalOpen}
           onClose={closeAddModal}
           onSubmit={handleCreateItemLocal} // Função que cria o item
+          globalData={globalData}
           groupsList={groupsList.filter(g => g !== 'Todos')} // Passa a lista de grupos, excluindo 'Todos'
           isMutating={isMutating}
           mutationError={mutationError}

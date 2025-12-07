@@ -4,16 +4,19 @@ import React, { useState, useEffect } from 'react';
 import Modal from '../../components/Common/Modal/Modal';
 
 const NEW_GROUP_VALUE = '--- NOVO GRUPO ---'; // Valor especial para indicar a criação
+const NEW_ICON_VALUE = '--- NOVO ÍCONE ---'; // NOVO: Valor especial para indicar a criação de ícone
 const defaultLinkData = { title: '', url: '', description: '', group: 'Acesso Rápido', icon: 'fa-solid fa-globe', };
 
 import './AddItemModal.css';
 
-function AddItemModal({ isOpen, onClose, onSubmit, groupsList, isMutating, mutationError }) {
+function AddItemModal({ isOpen, onClose, onSubmit, globalData, groupsList, isMutating, mutationError }) {
 
   //#region ... Hooks ...
   const [formData, setFormData] = useState(defaultLinkData);
-  // NOVO: Estado para gerenciar o nome de um grupo recém-criado
+  // Estado para gerenciar o nome de um grupo recém-criado
   const [newGroupName, setNewGroupName] = useState('');
+  // NOVO: Estado para gerenciar a classe de um ícone recém-criado
+  const [newIconClass, setNewIconClass] = useState('');
   //#endregion
 
   //#region ... Functions ...
@@ -22,6 +25,7 @@ function AddItemModal({ isOpen, onClose, onSubmit, groupsList, isMutating, mutat
     if (isOpen) {
       setFormData(defaultLinkData);
       setNewGroupName(''); // Limpa o nome do novo grupo
+      setNewIconClass(''); // NOVO: Limpa a classe do novo ícone
     }
   }, [isOpen]);
 
@@ -29,17 +33,22 @@ function AddItemModal({ isOpen, onClose, onSubmit, groupsList, isMutating, mutat
     const { name, value } = e.target;
 
     if (name === 'group' && value === NEW_GROUP_VALUE) {
-      // Se o usuário selecionou 'Novo Grupo', apenas limpamos o estado do grupo no form.
-      setFormData(prev => ({ ...prev, group: '' }));
+      setFormData(prev => ({ ...prev, group: '' })); // Define group como vazio para acionar o input
       setNewGroupName('');
+    } else if (name === 'icon' && value === NEW_ICON_VALUE) { // NOVO: Lógica para Novo Ícone
+      setFormData(prev => ({ ...prev, icon: '' })); // Define icon como vazio para acionar o input
+      setNewIconClass('');
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
   const handleNewGroupNameChange = (e) => {
-    // Atualiza o estado do novo nome, que será usado no submit
     setNewGroupName(e.target.value);
+  }
+
+  const handleNewIconClassChange = (e) => { // NOVO: Função para o novo ícone
+    setNewIconClass(e.target.value);
   }
 
   const handleSubmit = () => {
@@ -57,8 +66,16 @@ function AddItemModal({ isOpen, onClose, onSubmit, groupsList, isMutating, mutat
         alert('O nome do novo grupo não pode ser vazio.');
         return;
       }
-      // Usa o novo nome digitado
       finalFormData.group = newGroupName.trim();
+    }
+
+    // 3. NOVO: Lógica de Novo Ícone
+    if (!finalFormData.icon || finalFormData.icon === '') {
+      if (!newIconClass.trim()) {
+        alert('A classe do novo ícone não pode ser vazia.');
+        return;
+      }
+      finalFormData.icon = newIconClass.trim();
     }
 
     onSubmit(finalFormData);
@@ -67,6 +84,10 @@ function AddItemModal({ isOpen, onClose, onSubmit, groupsList, isMutating, mutat
 
   // Lista de grupos a exibir no select, incluindo a opção de criar
   const availableGroups = [...groupsList.filter(g => g !== 'Todos'), NEW_GROUP_VALUE];
+
+  // NOVO: Lista de ícones, incluindo a opção de criar
+  const baseIcons = globalData?.icons || [];
+  const availableIcons = [...baseIcons, NEW_ICON_VALUE];
 
 
   //#region ... Dom Display ...
@@ -85,14 +106,39 @@ function AddItemModal({ isOpen, onClose, onSubmit, groupsList, isMutating, mutat
         {/* Ícone */}
         <div className='item-add-form-icon'>
           <label>Ícone:</label>
-          <input
-            type="text"
+          <select
             name="icon"
-            value={formData.icon}
+            // O valor será vazio se a opção 'Novo Ícone' for selecionada
+            value={formData.icon || NEW_ICON_VALUE}
             onChange={handleChange}
             disabled={isMutating}
-          />
-          <i className={`${formData.icon}`}></i>
+          >
+            {availableIcons.map(iconClass => (
+              <option
+                key={`icon-${iconClass}`}
+                value={iconClass}
+              >
+                {iconClass}
+              </option>
+            ))}
+          </select>
+
+          {/* INPUT CONDICIONAL PARA NOVO ÍCONE */}
+          {(!formData.icon || formData.icon === '') && (
+            <div className='new-icon-input'>
+              <input
+                id="newIconClassInput"
+                type="text"
+                value={newIconClass}
+                onChange={handleNewIconClassChange}
+                placeholder="Classe do ícone (ex: fa-solid fa-star)"
+                disabled={isMutating}
+              />
+            </div>
+          )}
+
+          {/* Pré-visualização do Ícone Selecionado (ou Novo Ícone Digitado) */}
+          <i className={`${(formData.icon || newIconClass) || defaultLinkData.icon}`}></i>
         </div>
 
         <div className='item-add-form-info'>
@@ -132,7 +178,7 @@ function AddItemModal({ isOpen, onClose, onSubmit, groupsList, isMutating, mutat
                 disabled={isMutating}
               >
                 {availableGroups.map(group => (
-                  <option key={group} value={group}>{group}</option>
+                  <option key={`group-${group}`} value={group}>{group}</option>
                 ))}
               </select>
 
