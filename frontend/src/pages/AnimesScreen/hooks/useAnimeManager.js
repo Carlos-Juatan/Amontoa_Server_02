@@ -305,6 +305,15 @@ export default function useAnimeManager(dataCollectionName = 'animes', items, gl
     const scoreValue = Number(formData?.score);
     
     // Começa com todos os dados do item original (preserva seasons, movies, links, etc.)
+    // Normaliza o campo 'launched.year' para número antes de salvar
+    const rawLaunched = formData?.date?.launched || animeEmptyData.date.launched;
+    const normalizedLaunched = {
+      season: rawLaunched?.season || animeEmptyData.date.launched.season,
+      year: rawLaunched?.year !== undefined && rawLaunched?.year !== null
+        ? Number(rawLaunched.year)
+        : animeEmptyData.date.launched.year
+    };
+
     const payload = {
       ...currentItem,
 
@@ -318,7 +327,7 @@ export default function useAnimeManager(dataCollectionName = 'animes', items, gl
       score: isNaN(scoreValue) ? null : scoreValue,
       tags: formData?.tags || [],
       date: {
-        launched: formData?.date?.launched || animeEmptyData.date.launched,
+        launched: normalizedLaunched,
         lastEdit: formatedTime
       }
     }

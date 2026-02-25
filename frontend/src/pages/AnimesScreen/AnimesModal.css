@@ -381,7 +381,7 @@
 }
 
 .anime-header-block .title-japanese {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: bold;
     display: block;
 }
@@ -634,7 +634,7 @@
 
 
 .anime-header-block .anime-titles {
-    max-width: 50%;
+    max-width: 90%;
 }
 
 .anime-header-block #title_jp {

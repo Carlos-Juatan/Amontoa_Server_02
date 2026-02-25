@@ -740,13 +740,17 @@ export default function useAnimeModalManager(items, globalData, handleCreateItem
 
   const handleDateChange = (e) => {
     const { name, value } = e.target;
+    const parsedValue = name === 'year'
+      ? (value === '' ? '' : parseInt(value, 10))
+      : value;
+
     setFormData(prev => ({
       ...prev,
       date: {
         ...prev.date,
         launched: {
           ...prev.date.launched,
-          [name]: value
+          [name]: parsedValue
         }
       }
     }));
