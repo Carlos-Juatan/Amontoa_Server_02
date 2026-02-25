@@ -125,6 +125,10 @@
     color: var(--highlight-blue);
 }
 
+.modal-left-panel .favorite-value {
+    cursor: pointer;
+}
+
 .modal-left-panel .watch-controls {
     display: flex;
     align-items: center;

@@ -414,6 +414,7 @@ function AnimeDetailsModal({
   handleAddNewMovie, // 1°
   handleDeleteMovie, // Segundo Dropdown dos filmes
 
+  // Quantidade de vezes assistidas
   setTimeWatched,
 
   isCollectionsDropdownOpen, // Primeiro Dropdown das coleções
@@ -422,6 +423,7 @@ function AnimeDetailsModal({
   handleIsGlobalCollectionsDropdownOpen, // 2°
   addNewCollection,
   onAddCollection,
+  onAddToCollection,
   onRemoveCollection,
 
   // Lado Direito do modal
@@ -438,6 +440,10 @@ function AnimeDetailsModal({
 }) {
 
   if (hasAnimeModal !== 'details') return;
+
+  const isAlreadyAddOnFavorite = () => {
+    return item.collections.includes('Favoritos');
+  }
 
   return (
     <div className='animes-modal-overlay'>
@@ -464,9 +470,12 @@ function AnimeDetailsModal({
             toggleMovieWatchStatus={toggleMovieWatchStatus}
             // Vezes Assistido
             setTimeWatched={setTimeWatched}
+            //Botão para favoritar
+            isAlreadyAddOnFavorite={isAlreadyAddOnFavorite}
             // Coleções
             isCollectionsDropdownOpen={isCollectionsDropdownOpen}
             openCollectionDropdown={openCollectionDropdown}
+            onAddToCollection={onAddToCollection}
             onRemoveCollection={onRemoveCollection}
             handleAddNewCollection={() => handleIsGlobalCollectionsDropdownOpen(true)}
             isGlobalCollectionsDropdownOpen={isGlobalCollectionsDropdownOpen}
@@ -534,10 +543,14 @@ function ModalLeftPanel({
   // Quantidade de vezes assistidas
   setTimeWatched,
 
+  // Botão para favoritar
+  isAlreadyAddOnFavorite,
+
   // Primeiro Dropdown das coleções
   isCollectionsDropdownOpen,
   openCollectionDropdown,
   handleAddNewCollection,
+  onAddToCollection,
   onRemoveCollection,
 
   // Segundo Dropdown das coleções
@@ -598,6 +611,18 @@ function ModalLeftPanel({
               <span className='watch-count'>{item?.timeWhatched || 0}</span>
               <i className="fa-solid fa-angle-right" onClick={() => setTimeWatched(item._id, 1)} />
             </div>
+          </div>
+        </div>
+
+        {/* Favorito */}
+        <div className='info-detail-item'>
+          <span className='info-label'>Favorito:</span>
+          <div className='info-value favorite-value'>
+            {isAlreadyAddOnFavorite() ? (
+              <i className="fa-solid fa-star" onClick={() => onRemoveCollection(item._id, 'Favoritos')} />
+            ) : (
+              <i className="fa-regular fa-star" onClick={() => onAddToCollection(item._id, 'Favoritos')} />
+            )}
           </div>
         </div>
 
@@ -1129,7 +1154,7 @@ function AnimeNewEditModal({
                 <input
                   className='title-japanese anime-edit-modal-input'
                   type="text"
-                  placeholder='Título em inglês'
+                  placeholder='Título em japonês'
                   id="title_jp"
                   name="title_jp"
                   value={formData.title_jp}
@@ -1138,7 +1163,7 @@ function AnimeNewEditModal({
                 <input
                   className='title-english anime-edit-modal-input'
                   type="text"
-                  placeholder='Título em japonês'
+                  placeholder='Título em inglês'
                   id="title_en"
                   name="title_en"
                   value={formData.title_en}

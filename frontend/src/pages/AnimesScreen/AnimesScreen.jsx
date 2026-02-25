@@ -125,8 +125,10 @@ function AnimesScreen() {
     closeAddEditLink, // Modal de edição de links
     hasLinkInfo, // Modal de edição de links
 
+    // Vezes Assistido
     setTimeWatched,
 
+    // Coleções
     isCollectionsDropdownOpen, // Primeiro Dropdown das coleções
     openCollectionDropdown, // 1°
     isGlobalCollectionsDropdownOpen, // Segundo Dropdown das coleções
@@ -277,15 +279,16 @@ function AnimesScreen() {
         toggleMovieWatchStatus={toggleMovieWatchStatus} // 1°
         handleAddNewMovie={openAddEditMovie} // 1°
         handleDeleteMovie={handleDeleteMovie} // Segundo Dropdown dos filmes
-        
+        // Vezes Assistido
         setTimeWatched={setTimeWatched}
-
+        // Coleções
         isCollectionsDropdownOpen={isCollectionsDropdownOpen} // Primeiro Dropdown das coleções
         openCollectionDropdown={openCollectionDropdown} // 1°
         isGlobalCollectionsDropdownOpen={isGlobalCollectionsDropdownOpen} // Segundo Dropdown das coleções
         handleIsGlobalCollectionsDropdownOpen={handleIsGlobalCollectionsDropdownOpen} // 2°
         addNewCollection={handleAddNewCollection}
         onAddCollection={handleAddCollectionToSingleItem}
+        onAddToCollection={handleAddToExistingCollection}
         onRemoveCollection={handleRemoveCollectionFromSingleItem}
         
         // Lado Direito do modal

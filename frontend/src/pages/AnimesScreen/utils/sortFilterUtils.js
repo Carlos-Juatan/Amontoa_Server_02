@@ -83,10 +83,10 @@ const sortItems = (items, sortKey) => {
 
       // ORDENAÇÃO POR NOTA PESSOAL
       case 'MN': // Maior Nota (10 -> 0)
-        return (b.score?.personal || 0) - (a.score?.personal || 0);
+        return (b.score || 0) - (a.score || 0);
 
       case 'MM': // Menor Nota (0 -> 10)
-        return (a.score?.personal || 0) - (b.score?.personal || 0);
+        return (a.score || 0) - (b.score || 0);
 
       case 'LR': { // Lançamento mais recente (novos) -> ORDEM DECRESCENTE
         const yearA = a.date?.launched?.year || 0;

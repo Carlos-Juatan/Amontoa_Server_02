@@ -15,6 +15,10 @@
   /* ou max-width: 200px; */ 
 }
 
+.truncar-sub-texto {
+  color: var(--text-gray);
+}
+
 .animes-screen-container {
   padding: 40px 20px;
   background-color: var(--background-dark);

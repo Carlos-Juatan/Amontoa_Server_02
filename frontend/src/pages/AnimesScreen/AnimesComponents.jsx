@@ -214,7 +214,7 @@ function AnimesItemGrid({ id, itemColections, onItemClick, imageUrl, japoneseTit
       <div className='bottom'>
         <div className='left'>
           <h3 className="truncar-texto">{japoneseTitle}</h3>
-          <span className="truncar-texto">{englishTitle}</span>
+          <div className="truncar-texto truncar-sub-texto">{englishTitle}</div>
         </div>
         <div className='right'>
           <i
@@ -279,7 +279,7 @@ function AnimesItemList({ id, itemColections, onItemClick, imageUrl, japoneseTit
         <img src={imageUrl} alt="" />
         <div className='animes-item-list-title-text'>
           <h3 className="truncar-texto">{japoneseTitle}</h3>
-          <span className="truncar-texto">{englishTitle}</span>
+          <div className="truncar-texto truncar-sub-texto">{englishTitle}</div>
         </div>
       </div>
       <span className='animes-item-list-item'>{seasons}</span>
